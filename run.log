@@ -1,0 +1,470 @@
+Traceback (most recent call last):
+  File "serve.py", line 3, in <module>
+    app = create_app()
+  File "/home/yjy/xingtangvpn-project/CTFd/__init__.py", line 19, in create_app
+    db.create_all() 
+  File "/usr/local/lib/python2.7/dist-packages/flask_sqlalchemy/__init__.py", line 895, in create_all
+    self._execute_for_all_tables(app, bind, 'create_all')
+  File "/usr/local/lib/python2.7/dist-packages/flask_sqlalchemy/__init__.py", line 887, in _execute_for_all_tables
+    op(bind=self.get_engine(app, bind), **extra)
+  File "/usr/local/lib/python2.7/dist-packages/sqlalchemy/sql/schema.py", line 3404, in create_all
+    tables=tables)
+  File "/usr/local/lib/python2.7/dist-packages/sqlalchemy/engine/base.py", line 1615, in _run_visitor
+    with self._optional_conn_ctx_manager(connection) as conn:
+  File "/usr/lib/python2.7/contextlib.py", line 17, in __enter__
+    return self.gen.next()
+  File "/usr/local/lib/python2.7/dist-packages/sqlalchemy/engine/base.py", line 1608, in _optional_conn_ctx_manager
+    with self.contextual_connect() as conn:
+  File "/usr/local/lib/python2.7/dist-packages/sqlalchemy/engine/base.py", line 1798, in contextual_connect
+    self.pool.connect(),
+  File "/usr/local/lib/python2.7/dist-packages/sqlalchemy/pool.py", line 338, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/usr/local/lib/python2.7/dist-packages/sqlalchemy/pool.py", line 644, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/usr/local/lib/python2.7/dist-packages/sqlalchemy/pool.py", line 440, in checkout
+    rec = pool._do_get()
+  File "/usr/local/lib/python2.7/dist-packages/sqlalchemy/pool.py", line 963, in _do_get
+    return self._create_connection()
+  File "/usr/local/lib/python2.7/dist-packages/sqlalchemy/pool.py", line 285, in _create_connection
+    return _ConnectionRecord(self)
+  File "/usr/local/lib/python2.7/dist-packages/sqlalchemy/pool.py", line 411, in __init__
+    self.connection = self.__connect()
+  File "/usr/local/lib/python2.7/dist-packages/sqlalchemy/pool.py", line 538, in __connect
+    connection = self.__pool._creator()
+  File "/usr/local/lib/python2.7/dist-packages/sqlalchemy/engine/strategies.py", line 96, in connect
+    connection_invalidated=invalidated
+  File "/usr/local/lib/python2.7/dist-packages/sqlalchemy/util/compat.py", line 199, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb)
+  File "/usr/local/lib/python2.7/dist-packages/sqlalchemy/engine/strategies.py", line 90, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/usr/local/lib/python2.7/dist-packages/sqlalchemy/engine/default.py", line 377, in connect
+    return self.dbapi.connect(*cargs, **cparams)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/__init__.py", line 81, in Connect
+    return Connection(*args, **kwargs)
+  File "/usr/lib/python2.7/dist-packages/MySQLdb/connections.py", line 187, in __init__
+    super(Connection, self).__init__(*args, **kwargs2)
+sqlalchemy.exc.OperationalError: (OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)") None None
+ * Running on http://0.0.0.0:84/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger pin code: 287-516-347
+10.15.8.10 - - [19/Sep/2016 21:05:20] "GET / HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:20] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:20] "GET /static/css/bootstrap-datetimepicker.min.css HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:20] "GET /static/css/app.css HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:21] "GET /static/js/jquery.min-1.11.2.js HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:21] "GET /static/js/bootstrap.min.js HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:21] "GET /static/img/home.jpg HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:23] "GET /static/img/BFS_logo.gif HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:23] "GET /static/img/favicon.ico HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:24] "GET /restart HTTP/1.1" 302 -
+10.15.8.10 - - [19/Sep/2016 21:05:24] "GET /home HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:24] "GET /static/img/back.jpg HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:26] "GET /setup HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:26] "GET /static/img/back3.jpg HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:30] "POST /setup HTTP/1.1" 302 -
+10.15.8.10 - - [19/Sep/2016 21:05:30] "GET /initial1 HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:30] "GET /static/css/acc-wizard.min.css HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:30] "GET /static/js/enc.js HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:30] "GET /static/fonts/glyphicons-halflings-regular.woff2 HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:36] "GET /initial6 HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 21:05:36] "GET /static/js/judgeip.js HTTP/1.1" 404 -
+10.15.8.10 - - [19/Sep/2016 21:05:37] "GET /initial8 HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 22:02:35] "GET /static/js/jquery.min.map HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 22:04:29] "GET / HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 22:04:30] "GET /login HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 22:04:32] "GET /restart HTTP/1.1" 302 -
+10.15.8.10 - - [19/Sep/2016 22:04:32] "GET /home HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 22:04:33] "GET /setup HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 22:04:38] "POST /setup HTTP/1.1" 302 -
+10.15.8.10 - - [19/Sep/2016 22:04:38] "GET /initial1 HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 22:04:40] "GET /initial6 HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 22:04:40] "GET /static/js/judgeip.js HTTP/1.1" 404 -
+10.15.8.10 - - [19/Sep/2016 22:04:40] "GET /static/js/judgeip.js HTTP/1.1" 404 -
+10.15.8.10 - - [19/Sep/2016 22:04:40] "GET /initial8 HTTP/1.1" 200 -
+10.15.8.10 - - [19/Sep/2016 22:40:24] "POST /initial8/exportukeycertfile HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:03:40] "POST /initial8/exportukeycertfile HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:03:40] "GET /static/css/bootstrap-datetimepicker.min.css HTTP/1.1" 304 -
+10.15.8.10 - - [20/Sep/2016 14:03:40] "GET /static/js/jquery.min-1.11.2.js HTTP/1.1" 304 -
+10.15.8.10 - - [20/Sep/2016 14:03:40] "GET /static/css/bootstrap.min.css HTTP/1.1" 304 -
+10.15.8.10 - - [20/Sep/2016 14:03:40] "GET /static/css/app.css HTTP/1.1" 304 -
+10.15.8.10 - - [20/Sep/2016 14:03:40] "GET /static/js/bootstrap.min.js HTTP/1.1" 304 -
+10.15.8.10 - - [20/Sep/2016 14:03:40] "GET /static/css/acc-wizard.min.css HTTP/1.1" 304 -
+10.15.8.10 - - [20/Sep/2016 14:03:40] "GET /static/img/back3.jpg HTTP/1.1" 304 -
+10.15.8.10 - - [20/Sep/2016 14:03:40] "GET /static/img/BFS_logo.gif HTTP/1.1" 304 -
+10.15.8.10 - - [20/Sep/2016 14:03:40] "GET /static/fonts/glyphicons-halflings-regular.woff2 HTTP/1.1" 304 -
+10.15.8.10 - - [20/Sep/2016 14:04:26] "POST /initial8/exportukeycertfile HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1836, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1820, in wsgi_app
+    response = self.make_response(self.handle_exception(e))
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1403, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1817, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1477, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1381, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1475, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1461, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/yjy/xingtangvpn-project/CTFd/views.py", line 546, in exportkeycert
+    name = session['username']
+  File "/usr/local/lib/python2.7/dist-packages/werkzeug/local.py", line 373, in <lambda>
+    __getitem__ = lambda x, i: x._get_current_object()[i]
+KeyError: 'username'
+10.15.8.10 - - [20/Sep/2016 14:04:26] "GET /initial8/exportukeycertfile?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:04:26] "GET /initial8/exportukeycertfile?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:04:26] "GET /initial8/exportukeycertfile?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:04:26] "GET /initial8/exportukeycertfile?__debugger__=yes&cmd=resource&f=ubuntu.ttf HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:04:26] "GET /initial8/exportukeycertfile?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:04:26] "GET /initial8/exportukeycertfile?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:04:37] "POST /initial8/exportukeycertfile HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1836, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1820, in wsgi_app
+    response = self.make_response(self.handle_exception(e))
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1403, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1817, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1477, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1381, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1475, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1461, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/yjy/xingtangvpn-project/CTFd/views.py", line 546, in exportkeycert
+    name = session['username']
+  File "/usr/local/lib/python2.7/dist-packages/werkzeug/local.py", line 373, in <lambda>
+    __getitem__ = lambda x, i: x._get_current_object()[i]
+KeyError: 'username'
+10.15.8.10 - - [20/Sep/2016 14:04:37] "GET /initial8/exportukeycertfile?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:04:37] "GET /initial8/exportukeycertfile?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:04:37] "GET /initial8/exportukeycertfile?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:04:37] "GET /initial8/exportukeycertfile?__debugger__=yes&cmd=resource&f=ubuntu.ttf HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:04:37] "GET /initial8/exportukeycertfile?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:04:37] "GET /initial8/exportukeycertfile?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:04:52] "GET / HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:04:52] "GET /static/img/home.jpg HTTP/1.1" 304 -
+10.15.8.10 - - [20/Sep/2016 14:04:54] "GET /restart HTTP/1.1" 302 -
+10.15.8.10 - - [20/Sep/2016 14:04:54] "GET /home HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:04:54] "GET /static/img/back.jpg HTTP/1.1" 304 -
+10.15.8.10 - - [20/Sep/2016 14:06:01] "GET /setup HTTP/1.1" 200 -
+ * Detected change in '/home/yjy/xingtangvpn-project/CTFd/views.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger pin code: 287-516-347
+10.15.8.10 - - [20/Sep/2016 14:19:03] "POST /setup HTTP/1.1" 302 -
+10.15.8.10 - - [20/Sep/2016 14:19:03] "GET /initial1 HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:19:03] "GET /static/js/enc.js HTTP/1.1" 304 -
+ * Detected change in '/home/yjy/xingtangvpn-project/CTFd/views.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger pin code: 287-516-347
+10.15.8.10 - - [20/Sep/2016 14:32:22] "GET / HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:32:24] "GET /restart HTTP/1.1" 302 -
+10.15.8.10 - - [20/Sep/2016 14:32:24] "GET /home HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:32:25] "GET /setup HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:32:25] "GET /static/js/enc.js/ HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:32:30] "POST /setup HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1836, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1820, in wsgi_app
+    response = self.make_response(self.handle_exception(e))
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1403, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1817, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1477, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1381, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1475, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1461, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/yjy/xingtangvpn-project/CTFd/views.py", line 70, in setup
+    password = base64.decodestring(epassword)
+NameError: global name 'base64' is not defined
+10.15.8.10 - - [20/Sep/2016 14:32:30] "GET /setup?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:32:30] "GET /setup?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:32:30] "GET /setup?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:32:30] "GET /setup?__debugger__=yes&cmd=resource&f=ubuntu.ttf HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:32:30] "GET /setup?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+10.15.8.10 - - [20/Sep/2016 14:32:30] "GET /setup?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+ * Detected change in '/home/yjy/xingtangvpn-project/CTFd/views.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger pin code: 287-516-347
+ * Running on http://0.0.0.0:84/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger pin code: 287-516-347
+10.15.9.42 - - [09/Oct/2016 13:06:18] "GET /initial1 HTTP/1.1" 200 -
+10.15.9.42 - - [09/Oct/2016 13:06:18] "GET /static/css/bootstrap-datetimepicker.min.css HTTP/1.1" 304 -
+10.15.9.42 - - [09/Oct/2016 13:06:18] "GET /static/css/bootstrap.min.css HTTP/1.1" 304 -
+10.15.9.42 - - [09/Oct/2016 13:06:18] "GET /static/css/app.css HTTP/1.1" 304 -
+10.15.9.42 - - [09/Oct/2016 13:06:18] "GET /static/css/acc-wizard.min.css HTTP/1.1" 304 -
+10.15.9.42 - - [09/Oct/2016 13:06:18] "GET /static/js/jquery.min-1.11.2.js HTTP/1.1" 304 -
+10.15.9.42 - - [09/Oct/2016 13:06:18] "GET /static/js/bootstrap.min.js HTTP/1.1" 304 -
+10.15.9.42 - - [09/Oct/2016 13:06:18] "GET /static/js/enc.js HTTP/1.1" 304 -
+10.15.9.42 - - [09/Oct/2016 13:06:18] "GET /static/img/back3.jpg HTTP/1.1" 304 -
+10.15.9.42 - - [09/Oct/2016 13:06:18] "GET /static/fonts/glyphicons-halflings-regular.woff2 HTTP/1.1" 304 -
+10.15.9.42 - - [09/Oct/2016 13:06:18] "GET /static/img/BFS_logo.gif HTTP/1.1" 304 -
+10.15.9.42 - - [09/Oct/2016 13:06:18] "GET /static/img/favicon.ico HTTP/1.1" 200 -
+10.15.9.42 - - [09/Oct/2016 13:06:20] "GET /initial5 HTTP/1.1" 200 -
+10.15.9.42 - - [09/Oct/2016 13:06:22] "GET /initial4 HTTP/1.1" 200 -
+Error on request:
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/werkzeug/serving.py", line 193, in run_wsgi
+    execute(self.server.app)
+  File "/usr/local/lib/python2.7/dist-packages/werkzeug/serving.py", line 184, in execute
+    write(data)
+  File "/usr/local/lib/python2.7/dist-packages/werkzeug/serving.py", line 152, in write
+    self.send_header(key, value)
+  File "/usr/lib/python2.7/BaseHTTPServer.py", line 401, in send_header
+    self.wfile.write("%s: %s\r\n" % (keyword, value))
+IOError: [Errno 32] Broken pipe
+10.15.9.42 - - [09/Oct/2016 13:06:28] "POST /initial6/uploadcert/ca HTTP/1.1" 200 -
+10.15.9.42 - - [09/Oct/2016 13:06:32] "GET /initial6 HTTP/1.1" 200 -
+/usr/local/lib/python2.7/dist-packages/sqlalchemy/engine/default.py:436: Warning: Data truncated for column 'certpath' at row 1
+  cursor.execute(statement, parameters)
+10.15.9.42 - - [09/Oct/2016 13:08:55] "POST /initial7/uploadcert/management HTTP/1.1" 200 -
+ * Running on http://0.0.0.0:84/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger pin code: 330-160-840
+20.0.0.102 - - [28/Oct/2016 12:18:21] "GET /home HTTP/1.1" 200 -
+20.0.0.102 - - [28/Oct/2016 12:18:21] "GET /static/css/bootstrap.min.css HTTP/1.1" 304 -
+20.0.0.102 - - [28/Oct/2016 12:18:21] "GET /static/js/bootstrap.min.js HTTP/1.1" 304 -
+20.0.0.102 - - [28/Oct/2016 12:18:21] "GET /static/js/jquery.min-1.11.2.js HTTP/1.1" 304 -
+20.0.0.102 - - [28/Oct/2016 12:18:21] "GET /static/css/app.css HTTP/1.1" 304 -
+20.0.0.102 - - [28/Oct/2016 12:18:21] "GET /static/css/bootstrap-datetimepicker.min.css HTTP/1.1" 304 -
+20.0.0.102 - - [28/Oct/2016 12:18:21] "GET /static/img/back.jpg HTTP/1.1" 304 -
+20.0.0.102 - - [28/Oct/2016 12:18:21] "GET /static/img/BFS_logo.gif HTTP/1.1" 304 -
+20.0.0.102 - - [28/Oct/2016 12:18:22] "GET /home HTTP/1.1" 200 -
+20.0.0.102 - - [28/Oct/2016 12:18:22] "GET /static/css/bootstrap-datetimepicker.min.css HTTP/1.1" 304 -
+20.0.0.102 - - [28/Oct/2016 12:18:22] "GET /static/css/app.css HTTP/1.1" 304 -
+20.0.0.102 - - [28/Oct/2016 12:18:22] "GET /static/css/bootstrap.min.css HTTP/1.1" 304 -
+20.0.0.102 - - [28/Oct/2016 12:18:22] "GET /static/js/bootstrap.min.js HTTP/1.1" 304 -
+20.0.0.102 - - [28/Oct/2016 12:18:22] "GET /static/js/jquery.min-1.11.2.js HTTP/1.1" 304 -
+20.0.0.102 - - [28/Oct/2016 12:18:22] "GET /static/img/back.jpg HTTP/1.1" 304 -
+20.0.0.102 - - [28/Oct/2016 12:18:22] "GET /static/img/BFS_logo.gif HTTP/1.1" 304 -
+20.0.0.102 - - [28/Oct/2016 12:18:27] "GET /equipment HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1836, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1820, in wsgi_app
+    response = self.make_response(self.handle_exception(e))
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1403, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1817, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1477, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1381, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1475, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1461, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/yjy/xingtangvpn-project/CTFd/auth.py", line 218, in user2
+    if session . get ( 'admin' ) == IiI1i . admin :
+AttributeError: 'NoneType' object has no attribute 'admin'
+20.0.0.102 - - [28/Oct/2016 12:18:27] "GET /equipment?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+20.0.0.102 - - [28/Oct/2016 12:18:27] "GET /equipment?__debugger__=yes&cmd=resource&f=jquery.js HTTP/1.1" 200 -
+20.0.0.102 - - [28/Oct/2016 12:18:27] "GET /equipment?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+20.0.0.102 - - [28/Oct/2016 12:18:27] "GET /equipment?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+20.0.0.102 - - [28/Oct/2016 12:18:27] "GET /equipment?__debugger__=yes&cmd=resource&f=ubuntu.ttf HTTP/1.1" 200 -
+20.0.0.102 - - [28/Oct/2016 12:18:27] "GET /equipment?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+ * Running on http://0.0.0.0:84/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger pin code: 273-450-562
+10.0.0.105 - - [03/Nov/2016 10:11:41] "GET / HTTP/1.1" 200 -
+10.0.0.105 - - [03/Nov/2016 10:11:41] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 -
+10.0.0.105 - - [03/Nov/2016 10:11:42] "GET /static/css/app.css HTTP/1.1" 200 -
+10.0.0.105 - - [03/Nov/2016 10:11:42] "GET /static/js/bootstrap.min.js HTTP/1.1" 200 -
+10.0.0.105 - - [03/Nov/2016 10:11:42] "GET /static/img/home.jpg HTTP/1.1" 200 -
+10.0.0.105 - - [03/Nov/2016 10:11:42] "GET /static/js/jquery.min-1.11.2.js HTTP/1.1" 200 -
+10.0.0.105 - - [03/Nov/2016 10:11:42] "GET /static/css/bootstrap-datetimepicker.min.css HTTP/1.1" 200 -
+10.0.0.105 - - [03/Nov/2016 10:11:42] "GET /static/img/BFS_logo.gif HTTP/1.1" 200 -
+10.0.0.105 - - [03/Nov/2016 10:11:43] "GET /static/img/favicon.ico HTTP/1.1" 200 -
+10.0.0.105 - - [03/Nov/2016 10:11:44] "GET /login HTTP/1.1" 200 -
+10.0.0.105 - - [03/Nov/2016 10:11:44] "GET /static/js/enc.js HTTP/1.1" 200 -
+ * Running on http://0.0.0.0:84/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger pin code: 273-450-562
+10.0.0.105 - - [04/Nov/2016 17:27:40] "GET /base HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:27:41] "GET /login HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:27:49] "POST /login HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:29:20] "POST /login HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:29:33] "POST /login HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:29:46] "POST /login HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:04] "POST /login HTTP/1.1" 302 -
+10.0.0.105 - - [04/Nov/2016 17:30:04] "GET /base HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:12] "GET /equipment HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:15] "GET /login HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:25] "POST /login HTTP/1.1" 302 -
+10.0.0.105 - - [04/Nov/2016 17:30:25] "GET /base HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:26] "GET /equipment HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:27] "POST /tree HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:30] "GET /base HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:30] "GET /equipment HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:30] "POST /tree HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:31] "GET /base HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:32] "GET /equipment HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:32] "POST /tree HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:32] "GET /base HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:35] "GET /login HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:44] "POST /login HTTP/1.1" 302 -
+10.0.0.105 - - [04/Nov/2016 17:30:44] "GET /base HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:45] "GET /equipment HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:46] "POST /tree HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:50] "GET /base HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:51] "GET /equipment HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:51] "POST /tree HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:52] "GET /base HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:52] "GET /equipment HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:30:54] "GET /login HTTP/1.1" 200 -
+10.0.0.105 - - [04/Nov/2016 17:31:07] "POST /login HTTP/1.1" 200 -
+>>>>>>>>>> get_ukey_id
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+Receive thread is starting!
+Clear thread is stating!
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+id(9888888) is not equal to ukey_id(96488885).
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+id(9888888) is not equal to ukey_id(96488885).
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+id(9888888) is not equal to ukey_id(96488885).
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+id(9888888) is not equal to ukey_id(96488885).
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+id(9888888) is not equal to ukey_id(96488885).
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+id(9888888) is not equal to ukey_id(96488885).
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+id(9888888) is not equal to ukey_id(96488885).
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+id(9888888) is not equal to ukey_id(96488885).
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+id(9888888) is not equal to ukey_id(96488885).
+>>>>>>>>>> get_ukey_id
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+id(9888888) is not equal to ukey_id(96488885).
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+id(9888888) is not equal to ukey_id(96488885).
+>>>>>>>>>> get_ukey_id
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+id(9888888) is not equal to ukey_id(96488885).
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+id(9888888) is not equal to ukey_id(96488885).
+>>>>>>>>>> get_ukey_id
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+pk =  ÄFÕ{òþê,¨Îz-ö'¬Ù "?œz¤–˜ÞŽƒL‘Ñ6Xº×0\ó#éAX¸f³S¯½¹} *&&*&*&*&*&*&*&*&*&*&*&&
+>>>>>>>>>> ukey_authenticate
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> ukey_cycle_check
+dev is not exist
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> get_ukey_id
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+pk =  ÄFÕ{òþê,¨Îz-ö'¬Ù "?œz¤–˜ÞŽƒL‘Ñ6Xº×0\ó#éAX¸f³S¯½¹} *&&*&*&*&*&*&*&*&*&*&*&&
+>>>>>>>>>> ukey_authenticate
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> ukey_cycle_check
+dev is not exist
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> get_ukey_id
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+pk =  ÄFÕ{òþê,¨Îz-ö'¬Ù "?œz¤–˜ÞŽƒL‘Ñ6Xº×0\ó#éAX¸f³S¯½¹} *&&*&*&*&*&*&*&*&*&*&*&&
+>>>>>>>>>> ukey_authenticate
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> ukey_cycle_check
+dev is not exist
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> get_ukey_id
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :0x7f9a0a99fc00)
+SKF_GetDevInfo ok
+>>>>>>>>>> ukey_cycle_check
+connect_default_dev ok(hd :10.0.0.105 - - [04/Nov/2016 17:32:54] "POST /login HTTP/1.1" 200 -
+Traceback (most recent call last):
+  File "serve.py", line 2, in <module>
+    from CTFd import create_app
+  File "/Users/shanghai/workspace/xingtangvpn-project/CTFd/__init__.py", line 2, in <module>
+    from flask.ext.sqlalchemy import SQLAlchemy
+ImportError: No module named ext.sqlalchemy

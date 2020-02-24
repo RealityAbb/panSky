@@ -1,0 +1,11 @@
+<uwsgi>
+        <plugins>python</plugins>
+        <pythonpath>/home/iscc2015/ctfd</pythonpath>
+        <module>serve</module>
+        <callable>app</callable>
+        <socket>0.0.0.0:8000</socket>
+        <master/>
+        <processes>4</processes>
+        <memory-report/>
+</uwsgi>
+

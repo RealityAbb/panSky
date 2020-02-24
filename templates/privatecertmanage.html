@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% block title %}
+密码机证书操作
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+    #main-nav {
+    margin-left: 1px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #347ab6;
+        background: #fff;
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #fff;
+        background: #347ab6;
+        background: -webkit-linear-gradient(top, #347ab6 0%);
+    }
+
+    
+    #main-nav.nav-tabs.nav-stacked > li {
+        margin-bottom: 4px;
+    }
+
+    .scrollspy {
+        height:200px;
+        overflow: auto;
+        position: relative;
+    }
+
+    .logo {
+    width: 40px;
+    height: 40px;
+    float: left;
+    margin-right: 20px;
+    margin:10px;
+    background-image: url(/static/img/BFS_logo.gif);
+    } 
+</style>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <ul id="main-nav" class="nav nav-tabs nav-stacked" style="">
+                    <li class="active">
+                        <a href="/privateequipment/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-th-large"></i>
+                            密码机配置管理   
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatecertmanage/import/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-lock"></i>
+                            证书管理        
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatechannel/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-inbox"></i>
+                            隧道管理         
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatesystem/net/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-cog"></i>
+                            系统配置
+                        </a>
+                    </li>
+ 
+                    <li>
+                        <a href="/privateequipment/privatelog/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-file"></i>
+                            日志管理
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/equipment">
+                            <i class="glyphicon glyphicon-log-out"></i>
+                            返回
+                        </a>
+                    </li>
+                </ul>
+            </div>
+	
+	    <body onload="ShowAlertInfo()"> <input id="AlertInfo" value="{{AlertInfo}}" type="hidden" ></body>
+
+            <div class="col-md-10">
+                 <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                        证书管理
+                        <p style="float:right;">装置名称：{{ machine.machinenumber }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;装置IP地址：{{ machine.ip }}</p>
+                        </h4>
+                    </div> 
+                    <div class="panel-body">
+                        <ul class="nav nav-tabs nav-justified nav-pills"> 
+                            <li class="active"><a href="/privateequipment/privatecertmanage/import/{{ machine.id }}">导入证书</a></li>
+                            <li><a href="/privateequipment/privatecertmanage/manage/{{ machine.id }}">证书管理</a></li>
+                        </ul>                                    
+                        <div class="panel panel-primary">
+                            <div class="panel-body">
+                                <form method="POST" action="/privateequipment/privatecertmanage/import/{{machine.id}}" enctype="multipart/form-data" onsubmit="return submitTest();">
+                                    <input type='hidden' name='nonce' value='{{ nonce }}'>
+                                    <div class="form-group">
+                                        <label class="control-label">证书文件</label><br/>
+                                        <input type="file" name="files[]" multiple="multiple" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">证书文件类型</label><br/>
+                                        <input type="radio" name="cerstyle" value="0" checked/>RSA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="cerstyle" value="1"  />ECC
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">证书类型</label>
+                                        <select class="form-control" name="cert_type" id="s1">
+                                            <option value="0">CA根证书</option>
+                                            <option value="1">管理中心证书</option>
+                                            <option value="2">设备自身证书</option>
+                                            <option value="5" selected="selected" >对端设备证书 </option>
+                                            <option value="7">管理中心管理员证书</option>
+                                        </select> 
+                                        <input type="checkbox" name="readonly" value="1" />只读 
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="host" class="control-label">IP地址</label><br/>
+                                        <input type="text" class="form-control" name="ip" id="ip" onkeyup="value=value.replace(/[^\d.]/g,'')">
+                                    </div>
+                                     <div class="form-group">
+                                        <label class="control-label">证书编码</label>
+                                        <select class="form-control" name="cert_format" id="s2">
+                                            <option value="0">BESE-64编码 </option>
+                                            <option value="1">DER二进制编码</option>
+                                        </select>  
+                                    </div>
+                                    <div align="center">
+                                        <button type="submit" class="btn btn-primary">导入密码机</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/bootstrap-scrollspy.js"></script>
+<script>
+
+function ShowAlertInfo()
+{
+    var alertinfo = document.getElementById("AlertInfo").value
+    if(alertinfo != "")
+        alert(alertinfo)
+}
+
+function submitTest()
+{
+    var obj = document.getElementById("s1")
+    var index = obj.selectedIndex;
+    var value = obj.options[index].value
+    if(value == "1" || value == "5")
+    {
+        var obj2=document.getElementById("ip").value
+        if(obj2 != ""){
+            var exp=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+            var reg = obj2.match(exp);
+            if(reg==null){
+                alert("IP地址不合法！");
+                ip.focus();
+                return false;
+            }
+        }else{
+            alert("请输入IP信息！")
+            return false;
+        }
+    }else{
+        ip = '0.0.0.0'
+        $('#ip').val(ip)
+    }
+}
+
+
+</script>
+{% endblock %}
+

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+{% block title%}
+{% endblock %}
+初始化| Wolf设备管理系统</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon" />
+<!-- Bootstrap core CSS -->
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+<link href="/static/css/app.css" rel="stylesheet">
+<link href="/static/css/acc-wizard.min.css" rel="stylesheet">
+<style type="text/css">
+    ol.acc-wizard-sidebar li.active > a{
+        font-size: 16px;
+        color:#50a2a6
+    }
+
+    ol.acc-wizard-sidebar li.active:before{
+        background:#50a2a6
+    }
+
+    ol.acc-wizard-sidebar li.success > a{
+        font-size: 16px;
+        color:#08c
+    }
+
+    ol.acc-wizard-sidebar li.success:before{
+        background:#08c
+    }
+
+    .logo {
+    width: 40px;
+    height: 40px;
+    float: left;
+    margin-right: 20px;
+    margin:10px;
+    background-image: url(/static/img/BFS_logo.gif);
+    }
+</style>
+</head>
+
+<body style='background-image: url(/static/img/back3.jpg); background-size:cover;' onload="AlertFunc()">
+    <input id="AlertInfo" value="{{AlertInfo}}" type="hidden">
+    <nav class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="logo" href="/base"></a>
+                <a class="navbar-brand" href="/">DMS设备管理系统</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="javascript:void(0)" class="init">重新初始化系统</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">帮助<span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="/help2">关于DMS设备管理系统</a></li>
+                            </ul>
+                     </li>
+                     <li><a href="/logout" name="submit" onclick="document.getElementById('subform').submit();return false">退出</a></li>
+                </ul>   
+            </div>
+        </div>        
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3" style="padding-left: 2em;">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            初始化向导
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <p style="margin-bottom: 2em;">
+                          请按照以下向导完成DMS设备管理系统初始化.
+                        </p>
+                        <ol class="acc-wizard-sidebar">
+                            {% if count == 0 %}
+                            <li class="active"><a href="/initial1"><strong>添加前置机</strong></a></li>
+                            {% elif count >=1 %}
+                            <li class="success"><a href="/initial1">添加前置机<i class="glyphicon glyphicon-ok" style="float:right;"></i></a></li>
+                            {% endif %}
+
+                            {% if count >=1 %}
+                                {% if count <4 %}
+                                <li class="active"><a href="/initial2"><strong>初始化前置机</strong></a></li> 
+                                {% elif count >=4 %}
+                                <li class="success"><a href="/initial2">初始化前置机<i class="glyphicon glyphicon-ok" style="float:right;"></i></a></li>
+                                {% endif %}
+                            {% else %}
+                                <li><a>初始化前置机</a></li>
+                            {% endif %} 
+
+                            {% if count >=4 %}
+                                {% if count <5 %}
+                                <li class="active"><a href="/initial3"><strong>配置前置机网口IP</strong></a></li>
+                                {% else %} 
+                                <li class="success"><a href="/initial3">配置前置机网口IP<i class="glyphicon glyphicon-ok" style="float:right;"></i></a></li>
+                                {% endif %}
+                            {% else %}
+                                <li><a>配置前置机网口IP</a></li>
+                            {% endif %}
+
+                            {% if count >=5 %}
+                                {% if count <6 %}
+                                <li class="active"><a href="/initial4"><strong>配置前置机路由</strong></a></li>
+                                {% else %}
+                                <li class="success"><a href="/initial4">配置前置机路由<i class="glyphicon glyphicon-ok" style="float:right;"></i></a></li>
+                                {% endif %}
+                            {% else %}
+                                <li><a>配置前置机路由</a></li>
+                            {% endif %}
+
+                            {% if count >=6 %}
+                                {% if count <7 %}
+                                <li class="active"><a href="/initial5"><strong>导入CA根证书</strong></a></li>
+                                {% else %}
+                                <li class="success"><a href="/initial5">导入CA根证书<i class="glyphicon glyphicon-ok" style="float:right;"></i></a></li>
+                                {% endif %}
+                            {% else %}
+                                <li><a>导入CA根证书</a></li>
+                            {% endif %}
+
+                            {% if count >=7 %}
+                                {% if count <8 %}
+                                <li class="active"><a href="/initial6"><strong>导入管理系统公钥证书</strong></a></li>
+                                {% else %}
+                                <li class="success"><a href="/initial6">导入管理系统公钥证书<i class="glyphicon glyphicon-ok" style="float:right;"></i></a></li>
+                                {% endif %}
+                            {% else %}
+                                <li><a>导入管理系统公钥证书</a></li>
+                            {% endif %}
+
+                            {% if count >=8 %}
+                                {% if count <10 %}
+                                <li class="active"><a href="/initial8"><strong>注册初始用户</strong></a></li>
+                                {% else %}
+                                <li class="success"><a href="/initial8">注册初始用户<i class="glyphicon glyphicon-ok" style="float:right;"></i></a></li>
+                                {% endif %}
+                            {% else %}
+                                <li><a>注册初始用户</a></li>
+                            {% endif %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="div-confirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="exampleModalLabel">确认重新初始化系统</h4>
+                        </div>
+                        <form method="POST" action="/reinitialize" enctype="multipart/form-data">
+                            <div class="panel-body">
+                                <input name='nonce' type='hidden' value="{{ nonce }}">
+                                <div class="form-group">
+                                    <label class="control-label">输入超级用户密码：</label>
+                                    <input type="hidden" name="epassword" id="epassword">
+                                    <input type="password" name="adminpassword" id="adminpassword" class="form-control host-input" required>
+                                </div>
+                            </div>
+                            <div class="panel-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button id="div-btn-confirm" type="submit" class="btn btn-primary">确认</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">5、导入CA根证书</h3>
+                    </div>
+                    <form method="POST" action="/initial6/uploadcert/ca" enctype="multipart/form-data">
+                        <div class="panel-body">
+                            <input name='nonce' type='hidden' value="{{ nonce }}">
+                            <label class="control-label">请选择要导入的CA证书，并选择证书相关参数信息</label>
+                            <br/><br/>
+                            <div class="form-group">
+                                <input type="file" name="files[]" multiple="multiple" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="checkbox" name="readonly" value="1"/><strong>只读</strong>
+                            </div>                            
+                            <div class="form-group">
+                                <label class="control-label">证书文件类型：</label><br/>
+                                <input type="radio" name="cerstyle" value="0" checked=/>RSA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <input type="radio" name="cerstyle" value="1" />ECC
+                            </div>
+                             <div class="form-group">
+                                <label class="control-label">证书编码: </label>
+                                <select  name="cert_format" id="s2">
+                                    <option value="0">BESE-64编码 </option>
+                                    <option value="1">DER二进制编码</option>
+                                </select>  
+                            </div>                                                        
+                            <div align="center">
+                                <button class="btn btn-primary" type='submit' id="div-btn-import-center">导入CA根证书</button>
+                            </div>
+                        </div>
+                    </form>
+                     <br/>
+                </div>
+                <nav>
+                    <ul class="pager">
+                        <li><a href="/initial4">上一步</a></li>
+                    {% if count >=7 %}
+                        <li><a href="/initial6">下一步</a></li>
+                    {% else %}
+                        <li><a style="color:#000;">下一步</a></li>    
+                    {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>
+
+{% block content %}
+{% endblock %}
+<script src="/static/js/jquery.min-1.11.2.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/enc.js"></script>
+
+{% block scripts %}
+<script>
+//--------------delete
+function AlertFunc()
+{
+    var info=document.getElementById("AlertInfo").value;
+    if(info != "")
+        alert(info);
+    //alert("ajdflkjasdlj")
+}
+
+$('.init').click(function(){
+    if(confirm("重新初始化系统会删除系统现在所有信息，你确定要重新初始化吗？")){
+       $('#div-confirm').modal("toggle");
+       } 
+});
+
+$('#div-btn-confirm').click(function(e){
+    var b = document.getElementById('adminpassword').value
+    var a = new Encrypt();  
+    var str = a.encode(b);  
+    $('#epassword').val(str)
+    e.preventDefault();
+    $.post($('#div-confirm form').attr('action'), $('#div-confirm form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "1"){
+            window.location.href="/home"
+        }else{
+            alert("输入密码不正确，无法重新初始化系统！");
+        }
+    })
+});
+
+</script>
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% import "macros.html" as macros %}
+
+{% block title %}
+证书管理
+{% endblock %}
+
+{% block content %}
+
+<style type="text/css">    
+.scrollspy {
+height:470px;
+overflow: auto;
+position: relative;
+}
+
+.tScroll {
+/*     min-height:101%;*/
+min-width: 100%;
+}
+</style>
+
+<div class="modal fade" id="div-query" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    查询条件
+                </h4>
+            </div>
+            <div class="panel-body">
+                <form action ="/serachcert" method ="POST" enctype="multipart/form-data">
+                <input name="nonce" type="hidden" value="{{ nonce }}">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>证书</td>
+                            <td><input type="text" name="sip" size="20" maxlength="20"></td>
+                        </tr>
+                    </table>
+                    <div align="center">
+                        <button type="submit" class="btn btn-primary div-btn-query">查找</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="botton-bar" align="center">
+        <button type="button" class="btn btn-primary" id="searchcert">查找证书</button>
+    </div>
+    </br>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+            证书列表
+            </h4>
+        </div>
+        <div class="panel-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>证书名</th>
+                        <th>下载</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cert in certs %}
+                    <tr>
+                        <td>{{ loop.index }}
+                        <input type="hidden" name="id" value="{{ cert.id }}"></td>
+                        <td class="certname">{{cert.certname}}</td>
+                        <td class="attachment">{% if cert.certname %}<a href="/static/certificate/{{ cert.certname }}" target="__blank" >下载</a>{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if pagination %}
+                {% if viewfunc==".certificate" %}
+                <div calss="pagination" align="center">
+                    {{ macros.pagination_widget(pagination, viewfunc) }}
+                </div>
+                {% endif %}  
+            {% endif %}
+        </div>
+    </div>
+</div> 
+
+
+
+
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+$('#searchcert').click(function(e){
+    $('#div-query').modal("toggle");
+})
+
+</script>
+{% endblock %}

@@ -1,0 +1,543 @@
+{% extends "base.html" %}
+{% block title %}
+密码机配置VLAN
+{% endblock %}
+
+{% block content %}
+
+<style type="text/css">
+    #main-nav {
+    margin-left: 1px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #347ab6;
+        background: #fff;
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #fff;
+        background: #347ab6;
+        background: -webkit-linear-gradient(top, #347ab6 0%);
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li {
+        margin-bottom: 4px;
+    }
+    
+    .scrollspy {
+        height:300px;
+        overflow: auto;
+        position: relative;
+    }
+</style>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <ul id="main-nav" class="nav nav-tabs nav-stacked" style="">
+                   <li class="active">
+                        <a href="/privateequipment/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-th-large"></i>
+                            密码机配置管理   
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatecertmanage/import/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-lock"></i>
+                            证书管理        
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatechannel/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-inbox"></i>
+                            隧道管理
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatesystem/net/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-cog"></i>
+                            系统配置
+                        </a>
+                    </li>
+ 
+                    <li>
+                        <a href="/privateequipment/privatelog/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-file"></i>
+                            日志管理
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/equipment">
+                            <i class="glyphicon glyphicon-log-out"></i>
+                            返回
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-10">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                        系统配置
+                        <p style="float:right;">装置名称：{{ machine.machinenumber }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;装置IP地址：{{ machine.ip }}</p>
+                        </h4>
+                    </div> 
+                    <div class="panel-body">
+                        <ul class="nav nav-tabs nav-justified nav-pills" id="myTab" > 
+                           <li><a href="/privateequipment/privatesystem/net/{{ machine.id }}">网络配置</a></li>
+                           <li class="active"><a href="/privateequipment/privatesystem/vlan/{{ machine.id }}">配置VLAN</a></li>
+                           <li><a href="/privateequipment/privatesystem/mac/{{machine.id}}">配置MAC地址</a></li>
+                           <li><a href="/privateequipment/privatesystem/interation/{{machine.id}}">互备装置</a></li>
+                           <li><a href="/privateequipment/privatesystem/sundry/{{machine.id}}">杂项配置</a></li> 
+                           <li><a href="/privateequipment/privatesystem/log/{{ machine.id }}">日志服务器设置</a></li> 
+                           <li><a href="/privateequipment/privatesystem/safe/{{ machine.id }}">安全管理</a></li>    
+                        </ul>
+
+                        <div class="modal fade" id="div-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="exampleModalLabel">删除VLAN</h4>
+                                    </div>
+                                    <div class="panel-body">
+                                        <form method="POST" enctype="multipart/form-data">
+                                            <input type="hidden" name="vlanid">
+                                            <input type="hidden" name="linenumber" value="0">
+                                            <input name='nonce' type='hidden' value="{{ nonce }}">
+                                            <div class="small-6 small-centered text-center columns">
+                                                <p>你确定要删除：VLAN<strong id="delete-vlanid"></strong> 吗？</p>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="panel-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                        <button id="div-btn-delete" type="button" class="btn btn-primary">删除</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+					    <form method="POST" action='/setroute'>
+					        <input type='hidden' name='nonce' value='{{ nonce }}'>
+					        <div class="panel-body" align="center">
+					            <div class="form-group" >
+					                <input type="radio" name="road" value="1" checked/> <strong>第1路</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    {% if line == True %}
+					                <input type="radio" name="road" value="2" onclick="to_change()"/> <strong>第2路</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    {% else %}
+                                     <input type="radio" name="road" value="2" disabled/> <strong>第2路</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                     {% endif %}
+                                    {% if vlan == "True" %}
+					                <input type="checkbox" name="usevlan" checked disabled/>启用VLAN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    {% else %}
+                                    <input type="checkbox" name="usevlan" disabled/>启用VLAN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    {% endif %}
+                                    {% if addr == "True" %}
+					                <input type="checkbox" name="useaddr" onclick="enableaddr()" checked/>启用多地址
+                                    {% else %}
+                                    <input type="checkbox" name="useaddr" onclick="enableaddr()"/>启用多地址
+                                    {% endif %}
+					            </div>
+                                <hr/>
+					            <p>
+					                VLAN ID:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					                <input type="text" name="vlanid" id="vid" onkeyup="this.value=this.value.replace(/\D/g,'')"  onafterpaste="this.value=this.value.replace(/\D/g,'')" >
+					               
+					            </p>
+					            <p>
+					                子网地址:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					                <input type="text" name="subnet" id="subnet" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+					            </p> 
+					            <p>
+					                子网掩码:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					                <input type="text" name="submask" id="submask" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+					            </p>
+					            <p>
+					                外出（路由器）:
+					                <input type="text" name="outroute" id="outroute" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+					            </p>
+					            <p>
+					                进入（交换机）:
+					                <input type="text" name="enter" required id="enter" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+					            </p>
+                                <p>
+                                    <input type="checkbox" name="belog" />装置属于该VLAN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input type="checkbox" name="ARP" />装置启用ARP 
+                                </p><br/>
+					            <div class="button-bar">
+                                    <button type="button" class="btn btn-primary " id="div-btn-add">添加</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					            </div>      
+					        </div>
+					    </form>
+					    <div class="panel-footer scrollspy">
+                            <button type="button" class="btn btn-sm btn-primary" id="div-btn-refresh" style="float:right;">重新获取</button>
+                            </br></br>
+					        <table class="table table-bordered" id="table1">
+					            <thead>
+					                <tr>
+					                    <th>序号</th>
+                                        <th>VID</th>
+                                        <th>子网</th>
+                                        <th>子网掩码</th>
+                                        <th>外出IP</th>
+                                        <th>进入IP</th>
+                                        <th>装置属性</th>
+                                        <th>启用ARP</th>
+                                        <th>设置</th>
+					                </tr>
+					            </thead>
+					            <tbody>
+					            {% for vlan in vlans %}
+					                <tr style="overflow-x: auto;" onMouseOver="over()" onClick="change({{ loop.index }})" onMouseOut="out()">
+					                    <td>{{ loop.index }}
+					                    <input type="hidden" name="id" value="{{ vlan.vid }}"></td>
+					                    <td class="vlanid">{{ vlan.vid }}</td>
+					                    <td class="subnet">{{ vlan.subnet }}</td>
+					                    <td class="submask">{{ vlan.netmask }}</td>
+					                    <td class="enterip">{{ vlan.forward_next_hop }}</td>
+					                    <td class="outip">{{ vlan.backward_next_hop }}</td>
+                                        {% if vlan.dev_in_this_vlan  %}
+					                    <td class="attribution">是</td>
+                                        {% else %}
+                                        <td class="attribution">否</td>
+                                        {% endif %}
+                                        {% if vlan.is_apply_arp  %}
+                                        <td class="ARP">是</td>
+                                        {% else %}
+                                        <td class="ARP">否</td>
+                                        {% endif %}
+					                    <td>
+					                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+					                    </td>
+					                </tr>
+					            {% endfor %}
+					            </tbody>
+					        </table>
+					    </div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+<script src="/static/js/bootstrap-scrollspy.js"></script>
+
+{% block scripts %}
+<script>
+//----------to_change()
+function to_change(){
+    window.location.href='/privateequipment/privatesystem/vlan2/{{ machine.id }}';
+}
+
+//----------judgeoperationresult
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '1': alert('操作失败'); break;
+        case '2': alert('该隧道已存在'); break;
+        case '3': alert('签名验证失败'); break;
+        case "6": alert('解密出的明文数据不合法'); break;
+        case '7': alert('该项操作当前被禁止'); break;
+        case '8': alert('获取加密统计数据失败'); break;
+        case '10': alert('添加隧道安全策略时失败'); break;
+        case '11': alert('删除隧道安全策略时失败'); break;
+        case '12': alert('重置装置失败'); break;
+        case '13': alert('重置隧道失败'); break;
+        case '14': alert('获取日志文件长度失败'); break;
+        case '15': alert('读取日志文件失败'); break;
+        case '17': alert('操作冲突'); break; 
+        case '-2': alert('请求超时'); break;
+        case '-1': alert('返回数据包错误'); break;
+        case '-3': alert('输入信息有误'); break;
+        case '0': alert('操作成功'); break;                
+        default: alert('操作异常');
+    }
+}
+
+//------------------enable_addr
+function enableaddr(){
+    var checked=false; 
+    var ids= document.getElementsByName("useaddr"); 
+    for(var i=0;i<ids.length;i++){ 
+        if(ids[i].checked){ 
+            checked=true; 
+        } 
+    } 
+    if(!checked){
+        if(confirm("确定要关闭多地址吗？")){
+            $.post('/privateequipment/privatesystem/enableaddr/{{machine.id}}', {
+                linenumber:"0",
+                whether:"0",
+                'nonce':'{{ nonce }}', 
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    location.reload()
+                }else{
+                    SwitchStatusCode(data)
+                    $("input[name='useaddr']").prop('checked',true);
+                }
+            })
+        }else{
+            $("input[name='useaddr']").prop('checked',true);
+        }
+    } 
+    if (checked){
+        if(confirm("确定要启用多地址吗？")){        
+            $.post('/privateequipment/privatesystem/enableaddr/{{machine.id}}', {
+                linenumber:"0",
+                whether:"1",
+                'nonce':'{{ nonce }}', 
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    location.reload()
+                }else{
+                    SwitchStatusCode(data)
+                    $("input[name='useaddr']").removeAttr("checked");
+                }
+            })
+        }else{
+            $("input[name='useaddr']").removeAttr("checked");
+        }
+    } 
+}   
+
+//-----------------add
+$('#div-btn-add').click(function(e){
+    var checked1=false; 
+    var ids= document.getElementsByName("belog"); 
+    var checked2=false;
+    var apr = document.getElementsByName("ARP");
+    for(var i=0;i<ids.length;i++){ 
+        if(ids[i].checked){ 
+            checked1=true; 
+        } 
+    }
+    for(var j=0;j<apr.length;j++){
+         if(apr[j].checked){ 
+            checked2=true; 
+        } 
+    }
+    var elem = $(this).parent().parent();
+    vlanid = elem.find('input[name=vlanid]').val()
+    if(vlanid != "" && vlanid <=1094 && vlanid >=1){
+        subnet = elem.find('input[name=subnet]').val()
+        submask = elem.find('input[name=submask]').val()
+        submask = elem.find('input[name=submask]').val()
+        enter = elem.find('input[name=enter]').val()
+        if(vlanid !="" && subnet !="" && submask != "" && outroute !="" && enter != ""){
+            if(!checked1 && !checked2){ 
+                var elem = $(this).parent().parent();
+               $.post("/privateequipment/privatesystem/addvlan/{{machine.id}}",{
+                belog:"0",
+                APR:"0",
+                linenumber:"0",
+                vlanid:elem.find('input[name=vlanid]').val(),
+                subnet:elem.find('input[name=subnet]').val(),
+                submask:elem.find('input[name=submask]').val(),
+                outroute:elem.find('input[name=outroute]').val(),
+                enter:elem.find('input[name=enter]').val(),
+                'nonce':'{{ nonce }}', 
+              },function(data){
+               var data = $.parseJSON(JSON.stringify(data))
+                    if (data == "0"){
+                        location.reload()
+                    }else{
+                        SwitchStatusCode(data)
+                    }
+                })
+            }
+            if(!checked1 && checked2){
+                var elem = $(this).parent().parent();
+               $.post("/privateequipment/privatesystem/addvlan/{{machine.id}}",{
+                belog:"0",
+                APR:"1",
+                linenumber:"0",
+                vlanid:elem.find('input[name=vlanid]').val(),
+                subnet:elem.find('input[name=subnet]').val(),
+                submask:elem.find('input[name=submask]').val(),
+                outroute:elem.find('input[name=outroute]').val(),
+                enter:elem.find('input[name=enter]').val(),
+                'nonce':'{{ nonce }}', 
+              },function(data){
+               var data = $.parseJSON(JSON.stringify(data))
+                    if (data == "0"){
+                        location.reload()
+                    }else{
+                        SwitchStatusCode(data)
+                    }
+                })
+            }
+            if(checked1 && !checked2){
+                var elem = $(this).parent().parent();
+               $.post("/privateequipment/privatesystem/addvlan/{{machine.id}}",{
+                belog:"1",
+                APR:"0",
+                linenumber:"0",
+                vlanid:elem.find('input[name=vlanid]').val(),
+                subnet:elem.find('input[name=subnet]').val(),
+                submask:elem.find('input[name=submask]').val(),
+                outroute:elem.find('input[name=outroute]').val(),
+                enter:elem.find('input[name=enter]').val(),
+                'nonce':'{{ nonce }}', 
+              },function(data){
+               var data = $.parseJSON(JSON.stringify(data))
+                    if (data == "0"){
+                        location.reload()
+                    }else{
+                        SwitchStatusCode(data)
+                    }
+                })
+            }
+            if(checked1 && checked2){
+                var elem = $(this).parent().parent();
+               $.post("/privateequipment/privatesystem/addvlan/{{machine.id}}",{
+                belog:"1",
+                APR:"1",
+                linenumber:"0",
+                vlanid:elem.find('input[name=vlanid]').val(),
+                subnet:elem.find('input[name=subnet]').val(),
+                submask:elem.find('input[name=submask]').val(),
+                outroute:elem.find('input[name=outroute]').val(),
+                enter:elem.find('input[name=enter]').val(),
+                'nonce':'{{ nonce }}', 
+              },function(data){
+               var data = $.parseJSON(JSON.stringify(data))
+                    if (data == "0"){
+                        location.reload()
+                    }else{
+                        SwitchStatusCode(data)
+                    }
+                })
+            }
+        }else{
+            alert("请填入完整信息！");
+        }
+    }else{
+        alert("VLANID的范围为1-1094，请重新输入！");
+    }
+    
+})
+
+//---------------refresh
+$('#div-btn-refresh').click(function(){
+    $.post('/privateequipment/privatesystem/refreshvlan/{{machine.id}}', {
+        linenumber:"0",
+        'nonce':'{{ nonce }}', 
+    }, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        }else{
+            SwitchStatusCode(data)
+        }
+    })
+})
+
+
+//-----------------delete_vlan
+$('#div-btn-delete').click(function(e){
+    e.preventDefault();
+    $.post($('#div-delete form').attr('action'), $('#div-delete form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        }else{
+            SwitchStatusCode(data)
+            $('#div-delete').modal("hide")
+        }
+    })
+});
+
+function load_confirm_modal(id){
+    var modal = $('#div-delete')
+    modal.find('input[name=vlanid]').val(id)
+    modal.find('#delete-vlanid').text(id)
+    $('#div-delete form').attr('action', '/privateequipment/privatesystem/deletevlan/{{machine.id}}');
+    $('#div-delete').modal("toggle");
+}
+
+$('.glyphicon-remove').click(function(){
+    var elem = $(this).parent().parent();
+    var id = elem.find('input[name=id]').val();
+    load_confirm_modal(id)
+})
+
+function findstrategynumber(id){
+    var tab=document.getElementById("table1");
+    vlanid = tab.rows[id].cells[1].innerHTML;
+    subnet = tab.rows[id].cells[2].innerHTML;
+    submask = tab.rows[id].cells[3].innerHTML;
+    outip = tab.rows[id].cells[4].innerHTML;
+    enterip = tab.rows[id].cells[5].innerHTML;
+    attribution = tab.rows[id].cells[6].innerHTML;
+    ARP = tab.rows[id].cells[7].innerHTML;
+    document.getElementById("vid").value=vlanid;
+    document.getElementById("subnet").value=subnet;
+    document.getElementById("submask").value=submask;
+    document.getElementById("outroute").value=outip;
+    document.getElementById("enter").value=enterip;
+    
+
+    if (attribution == "是"){
+        $("input[name='belog']").prop('checked',true);
+    }else{
+        $("input[name='belog']").removeAttr("checked");   
+    }
+
+    if (ARP == "是"){
+        $("input[name='ARP']").prop('checked',true);
+    }else{
+        $("input[name='ARP']").removeAttr("checked");   
+    }
+
+
+}
+
+
+ //鼠标点击选择行时候变色
+function change(change) {
+    var oObj = window.event.srcElement;
+    //alert(change.tagName.toLowerCase());
+    if(oObj.tagName.toLowerCase() == "td"){   
+        var oTr = oObj.parentNode;   
+        for(var i=1; i<document.all.table1.rows.length; i++)   {   
+            document.all.table1.rows[i].style.backgroundColor   =   "";   
+            document.all.table1.rows[i].tag = false;   
+        }
+        oTr.style.backgroundColor = "#bce7e9";   
+        oTr.tag = true;
+        findstrategynumber(change);   
+    }
+}
+
+//鼠标点击另外一行时关闭已选行变色
+function out() {
+    var oObj = event.srcElement;
+    if(oObj.tagName.toLowerCase() == "td"){
+        var oTr = oObj.parentNode;
+        if(!oTr.tag) oTr.style.backgroundColor = "";
+    }
+}
+
+//鼠标移动到选择行上时的行变色
+function over(){   
+    var oObj = event.srcElement;
+    if(oObj.tagName.toLowerCase() == "td"){   
+    var oTr = oObj.parentNode;
+    if(!oTr.tag) oTr.style.backgroundColor = "#E1E9FD";
+    }
+}
+
+</script>
+{% endblock %}

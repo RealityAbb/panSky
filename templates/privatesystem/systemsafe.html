@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+{% block title %}
+密码机安全管理
+{% endblock %}
+
+{% block content %}
+
+<style type="text/css">
+    #main-nav {
+    margin-left: 1px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #347ab6;
+        background: #fff;
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #fff;
+        background: #347ab6;
+        background: -webkit-linear-gradient(top, #347ab6 0%);
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li {
+        margin-bottom: 4px;
+    }
+
+    .scrollspy {
+        height:200px;
+        overflow: auto;
+        position: relative;
+    }
+</style>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <ul id="main-nav" class="nav nav-tabs nav-stacked" style="">
+                   <li class="active">
+                        <a href="/privateequipment/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-th-large"></i>
+                            密码机配置管理   
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatecertmanage/import/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-lock"></i>
+                            证书管理        
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatechannel/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-inbox"></i>
+                            隧道管理          
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatesystem/net/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-cog"></i>
+                            系统配置
+                        </a>
+                    </li>
+ 
+                    <li>
+                        <a href="/privateequipment/privatelog/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-file"></i>
+                            日志管理
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/equipment">
+                            <i class="glyphicon glyphicon-log-out"></i>
+                            返回
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-10">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                        系统配置
+                        <p style="float:right;">装置名称：{{ machine.machinenumber }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;装置IP地址：{{ machine.ip }}</p>
+                        </h4>
+                    </div> 
+                    <div class="panel-body">
+                        <ul class="nav nav-tabs nav-justified nav-pills" id="myTab" > 
+                           <li><a href="/privateequipment/privatesystem/net/{{ machine.id }}">网络配置</a></li>
+                           <li><a href="/privateequipment/privatesystem/vlan/{{ machine.id }}">配置VLAN</a></li>
+                           <li><a href="/privateequipment/privatesystem/mac/{{machine.id}}">配置MAC地址</a></li>
+                           <li><a href="/privateequipment/privatesystem/interation/{{machine.id}}">互备装置</a></li>
+                           <li><a href="/privateequipment/privatesystem/sundry/{{machine.id}}">杂项配置</a></li> 
+                           <li><a href="/privateequipment/privatesystem/log/{{ machine.id }}">日志服务器设置</a></li> 
+                           <li class="active"><a href="/privateequipment/privatesystem/safe/{{ machine.id }}">安全管理</a></li>    
+                        </ul>
+
+                        <div class="modal fade" id="div-configure-backup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="exampleModalLabel">请选择备份配置文件的种类</h4>
+                                    </div>
+                                    <form method="POST" action="" enctype="multipart/form-data">
+                                        <input name='nonce' type='hidden' value="{{ nonce }}">
+                                        <div class="panel-body">
+                                            <div class="form-group">
+                                               <input type="checkbox" name="choose" value="1" />&nbsp;<laber class="control-label" style="font-size:18px;">设备配置文件[device]</laber><br/>
+                                               <input type="checkbox" name="choose" value="5" />&nbsp;<laber class="control-label" style="font-size:18px;">设备配置文件[device2]</laber><br/>
+                                               <input type="checkbox" name="choose" value="2" />&nbsp;<laber class="control-label" style="font-size:18px;">隧道配置文件[channel]</laber><br/>
+                                               <input type="checkbox" name="choose" value="3" />&nbsp;<laber class="control-label" style="font-size:18px;">策略配置文件[policy]</laber><br/>
+                                               <input type="checkbox" name="choose" value="4" />&nbsp;<laber class="control-label" style="font-size:18px;">VLAN配置文件[vlan]</laber>
+                                            </div>
+                                        </div>
+                                        <div class="panel-footer">
+                                            <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                            <button id="div-btn-confirm" type="button" class="btn btn-primary">确定</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                  <!--      <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">更改口令</h4>
+                            </div>
+                            <form method="POST" action='/changeword'>
+                                <input type='hidden' name='nonce' value='{{ nonce }}'>
+                                <div class="panel-body" align="center">
+                                    <p>
+                                        旧口令：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="text" class="input" name="oldword" required>
+                                    </p>
+                                    <p>
+                                        新口令：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="text" class="input" name="newword" required>
+                                    </p>
+                                    <p>
+                                        新口令确认：
+                                        <input type="text" class="input" name="confirmword" required>
+                                    </p>
+                                </div>
+                                <div class="panel-footer" align="center">
+                                    <button type="submit" class="btn btn-primary">确认</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button onClick="" type="reset" class="btn btn-primary">清除</button>
+                                </div>
+                            </form>
+                        </div> -->
+                        <br/>
+                        <div class="panel panel-default">
+                            <div class="panel-heading" align="center">
+                                <div class="button-bar">
+                                    <button type="button" class="btn btn-primary div-btn-confbackup" >备份配置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    
+				    <button type="button" class="btn btn-primary" id="div-btn-restart">重启装置</button>
+                                </div>
+                            </div>
+                        </div>
+                   <!--     <div class="panel panel-default">
+                            <div class="panel-heading" align="center">
+                                <div class="button-bar">
+                                    <button type="button" class="btn btn-primary">恢复配置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-primary">系统自检</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-primary " >软件更新</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-primary">返回初始态</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-primary " >镜像配置还原</button>
+                                </div>
+                            </div>              
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+<script src="/static/js/bootstrap-scrollspy.js"></script>
+
+{% block scripts %}
+<script>
+//----------judgeoperationresult
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '1': alert('操作失败'); break;
+        case '2': alert('该隧道已存在'); break;
+        case '3': alert('签名验证失败'); break;
+        case "6": alert('解密出的明文数据不合法'); break;
+        case '7': alert('该项操作当前被禁止'); break;
+        case '8': alert('获取加密统计数据失败'); break;
+        case '10': alert('添加隧道安全策略时失败'); break;
+        case '11': alert('删除隧道安全策略时失败'); break;
+        case '12': alert('重置装置失败'); break;
+        case '13': alert('重置隧道失败'); break;
+        case '14': alert('获取日志文件长度失败'); break;
+        case '15': alert('读取日志文件失败'); break;
+        case '17': alert('操作冲突'); break; 
+        case '-2': alert('请求超时'); break;
+        case '-1': alert('返回数据包错误'); break;
+        case '-3': alert('输入信息有误'); break;
+        case '0': alert('操作成功'); break;                
+        default: alert('操作异常');
+    }
+}
+
+//----------------------clean
+$(document).ready(function(){  
+ $(function(){  
+   $('input:reset').click(function(){  
+     $('.input').val("");  
+    });  
+});  
+});
+
+//-----------------restart_machine
+$('#div-btn-restart').click(function(){
+    if(confirm("确定要重启密码机吗？")){
+        $.post('/commonequipment/restartmachine/{{machine.id}}', {'nonce':'{{ nonce }}' }, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                alert("操作成功！请等候一分钟后再进行下一步操作！");
+            }else{
+                SwitchStatusCode(data)
+            }
+        })
+    }
+})
+
+//---------------backup
+$('.div-btn-confbackup').click(function (e) {
+    $('#div-configure-backup').modal("toggle")
+});
+
+$('#div-btn-confirm').click(function(e){
+    var obj=document.getElementsByName('choose');  
+    var choose='';
+    var j=0;
+    for(var i=0; i<obj.length; i++){
+        if(obj[i].checked) {
+            choose+=obj[i].value+','; 
+            j++;
+            }
+        }
+        if (j == ""){
+         alert("请先选择要备份配置文件的种类!");
+        }else{
+            $.post('/privateequipment/privatesystem/confbackup/{{machine.id}}', {
+                'nonce':'{{ nonce }}' ,
+                'choose': choose,
+            },function(data){
+                $('#div-configure-backup').modal("hide")
+                if (data.status == "-2")
+                {
+                    alert("请求超时！");
+                  
+                }
+                else
+                {
+                  if (data.status.length != 0)
+                    alert(data.status);
+
+                  window.location=data.filepath
+                  $('#div-configure-backup').modal("hide")
+                 
+            }
+        })
+    }
+});
+
+
+</script>
+{% endblock %}

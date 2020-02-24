@@ -1,0 +1,654 @@
+{% extends "base.html" %}
+{% block title %}
+密码机策略管理
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+    #main-nav {
+    margin-left: 1px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #347ab6;
+        background: #fff;
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #fff;
+        background: #347ab6;
+        background: -webkit-linear-gradient(top, #347ab6 0%);
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li {
+        margin-bottom: 4px;
+    }
+
+    .scrollspy{
+        height:520px;
+        overflow: auto;
+        position: relative;
+    }
+
+    .scrollspy2{
+        height:90px;
+        overflow: auto;
+        position: relative;
+    }
+
+
+    .tScroll {
+       /*  min-height:100%;  */
+        min-width: 135%;
+    }
+
+    .tScroll2 {
+        min-height:100%
+        min-height:101%;
+    }
+
+    #page{width: 200px; margin: 0 auto; text-align: right;}
+    #test{width: 212px; padding: 2px; height: 22px; border: 1px solid #ddd; margin: 0 5px 0 0;}
+    #test option{padding: 2px 5px;}
+    #test option:first-child{display: none;} 
+    #pre{position:relative;}
+    #itest{width: 212px;padding: 2px 15px 2px 5px; margin-bottom: -1px; background: url(http://bbs.blueidea.com/data/attachment/album/201410/28/114755leueqeys1ps8dtzy.jpg.thumb.jpg) no-repeat scroll right center; border: 1px solid #ccc; box-shadow: 0 1px 0 0 #eee inset; cursor: default;}
+    #itest:focus{cursor: text;}
+    #dtest{width: 210px;border: 1px solid #ddd; border-radius: 0 0 3px 3px; display: none; background-color: #ffffff;text-align: left;}
+    .soption{display: block; padding: 2px 5px;}
+    .soption:hover{background: #f9f9f9; border-top: 1px dotted #ddd; border-bottom: 1px dotted #ddd; padding: 1px 5px;}
+</style>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <ul id="main-nav" class="nav nav-tabs nav-stacked" style="">
+                      <li class="active">
+                        <a href="/commonequipment/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-th-large"></i>
+                            密码机配置管理   
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/commonequipment/stancertmanage/{{ machine.id }}" >
+                            <i class="glyphicon glyphicon-lock"></i>
+                            证书管理        
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/commonequipment/stanchannel/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-inbox"></i>
+                            隧道管理       
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/commonequipment/stanlog/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-file"></i>
+                            日志管理
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/equipment">
+                            <i class="glyphicon glyphicon-log-out"></i>
+                            返回
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-10">
+                <div class="modal fade" id="div-add-strategy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">策略定义</h4>
+                            </div>
+                            <form method="POST" action="/commonequipment/addchannelstrategy/{{ machine.id }}/{{channel_number}}" enctype="multipart/form-data">
+                                <input name='nonce' type='hidden' value="{{ nonce }}">
+                                <input name="channelnumber" type="hidden" value="{{ channel_number }}">
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label for="host" class="control-label">源IP地址范围：</label>&nbsp;&nbsp;&nbsp;
+                                        从<input type="text" name="sip1" id="sip1" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                                        到<input type="text" name="sip2" id="sip2" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                                    </div>
+                                   <div class="form-group">
+                                        <label for="host" class="control-label">目标IP地址范围：</label>
+                                        从<input type="text" name="dip1" id="dip1" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                                        到<input type="text" name="dip2" id="dip2" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                                    </div>
+                                    <div class="form-gruop">
+                                        <label class="control-label">方&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;向:</label>&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="destination" value="0" checked/>双向&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="destination" value="1">正向&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="destination" value="2" />反向   
+                                    </div>
+                                    <div class="form-gruop">
+                                        <label class="control-label">协&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;议:</label>&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="protocol" value="0" checked/>所有&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="protocol" value="1">ICMP &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="protocol" value="2" />TCP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="protocol" value="3" />UDP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </div>
+                                    <div class="form-gruop">
+                                        <label class="control-label">工&nbsp;作&nbsp;模&nbsp;式:</label>&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="workmodel" value="0" checked/>加密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="workmodel" value="1">明文&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="workmodel" value="2" />可选   
+                                    </div>
+                                    <div class="form-gruop">
+                                         <label class="control-label">源&nbsp;端&nbsp;口&nbsp;范&nbsp;围:&nbsp;</label>
+                                          从<input type="number" maxlength="5" size="5" name="sport1" value="0" id="sp1" placeholder="0" min="0" max="65535" required onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                                          到<input type="number" maxlength="5" size="5" name="sport2"  value="65535" id="sp2" min="0" max="65535" placeholder="65535" required onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                                    </div><br/>
+                                    <div class="form-gruop">
+                                         <label class="control-label">目的端口范围:&nbsp;</label>
+                                         从<input type="number" maxlength="5" size="5" name="dport1" value="0" id="dp1" placeholder="0" min="0" max="65535"  required onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                                         到<input type="number" maxlength="5" size="5" name="dport2"  value="65535" id="dp2" placeholder="65535" min="0" max="65535" required onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button type="submit" id="div-btn-add-strategy" class="btn btn-primary">添加</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="modal fade" id="div-edit-strategy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary" style="width:550px;">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">修改策略</h4>
+                            </div>
+                            <form method="POST" action="" enctype="multipart/form-data">
+                                <input type="hidden" name="choosestragetynumber" id="delever">
+                                <input name="channelnumber" type="hidden" id="choosechannelnum">
+                                <input name='nonce' type='hidden' value="{{ nonce }}">
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label for="host" class="control-label">源IP地址范围:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                        
+                                        从<input type="text" name="sip1_edit" placeholder="IP" id="ip1" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                                        到<input type="text" name="sip2_edit" placeholder="IP" id="ip2" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                                       
+                                    </div>
+                                   <div class="form-group">
+                                        <label for="host" class="control-label">目标IP地址范围：</label>
+                                        从<input type="text" name="dip1_edit" placeholder="IP" id="ip3" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                                        到<input type="text" name="dip2_edit" placeholder="IP" id="ip4"onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                                    </div>
+                                    <div class="form-gruop">
+                                        <label class="control-label">方向:</label><br />
+                                        <select class="form-control" name="destination_edit">
+                                            <option value="0">双向</option>
+                                            <option value="1">正向</option>
+                                            <option value="2">反向</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-gruop">
+                                        <label class="control-label">协议:</label><br />
+                                        <select class="form-control" name="protocol_edit">
+                                            <option value="0">所有</option>
+                                            <option value="1">ICMP</option>
+                                            <option value="2">TCP</option>
+                                            <option value="3">UDP</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-gruop">
+                                        <label class="control-label">工作模式:</label><br />
+                                        <select class="form-control" name="workmodel_edit">
+                                            <option value="0">加密</option>
+                                            <option value="1">明文</option>
+                                            <option value="2">可选</option>
+                                        </select>
+                                    </div><br/>
+                                    <div class="form-gruop">
+                                         <label class="control-label">源端口范围:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                         从<input type="number" maxlength="5" size="5" name="sport1_edit" id="esp1" placeholder="0" min="0" max="65535" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                                         到<input type="number" maxlength="5" size="5" name="sport2_edit" id="esp2" placeholder="65535" min="0" max="65535" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                                    </div><br/>
+                                    <div class="form-gruop">
+                                         <label class="control-label">目的端口范围:&nbsp;</label>
+                                         从<input type="number" maxlength="5" size="5" name="dport1_edit" id="edp1" placeholder="0" min="0" max="65535" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                                         到<input type="number" maxlength="5" size="5" name="dport2_edit" id="edp2" placeholder="65535" min="0" max="65535" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button id="div-btn-edit-strategy" type="button" class="btn btn-primary">修改</button>
+                                    <button id="div-btn-copy-strategy" type="button" class="btn btn-success" style="float:right">添加至其他隧道</button> 
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="div-copy-strategy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" >
+                        <div class="panel panel-success" >
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">添加策略至其他隧道</h4>
+                            </div>
+                            <form method="POST" action="" enctype="multipart/form-data">
+                                <input type="hidden" name="choosechannelnumber">
+                                <input name='nonce' type='hidden' value="{{ nonce }}">
+                                <div class="panel-body " style="height:100px;">
+                                    <div class="form-group" align="center">
+                                        <label class="control-label">请选择目标隧道(隧道号——对端IP）</label>
+                                        <select id="test" name="test" style="display:none;" >
+                                            {% for selectnumber in selectnumbers %}             
+                                                <option value="{{ selectnumber.channelnumber}}" text="{{ selectnumber.channelnumber }} —— {{selectnumber.uip}}" onclick>{{ selectnumber.channelnumber }} —— {{selectnumber.uip}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button id="div-btn-copy-stragety" type="button" class="btn btn-primary">确定</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <input id="AlertInfo" value="{{AlertInfo}}" type="hidden" >
+                        <h4 class="panel-title">
+                        策略管理
+                        </h4>
+                    </div> 
+                    <div class="panel-body">
+                        <p align="center"> 
+                            装置名称：<strong>{{ machine.machinenumber }}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            装置IP地址：<strong>{{ machine.ip }}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            当前操作隧道号为：<strong style="color:#ff0000;" >{{ channel_number }}</strong>
+                        </p>
+                        <hr/>
+                        <div class="panel panel-primary"> 
+                            <div class="panel-heading">
+                                <h3 class="panel-title">策略信息</h3>
+                            </div>
+                            <div class="panel-body">
+                                <form id="deliverparameter" method="POST">
+                                    <div class="button-bar">
+                                        <div class="button-bar" style="float:left">
+                                            <button type="button" class="btn btn-sm btn-primary" id="btn-query-strategy" >查询策略</button>
+                                            <button type="button" class="btn btn-sm btn-primary btn-create-stragety" >添加策略</button>
+                                            <button type="button" class="btn btn-sm btn-warning btn-edit-stragety" >修改策略</button>
+                                            <input type='hidden' name="ide" id='machineid' value='{{ machine.id }}'>
+                                            <input name="channelnumber" type="hidden" id="channum" value="{{ channel_number }}">
+                                            <input type="hidden" name="cstragetynum" id="number">
+                                            <button type="button" class="btn btn-sm btn-warning" id="btn-delete-stragety" >删除策略</button>
+                                        </div>                                 
+                                        <a href="{{ url_for('.standard_pagination_channel', page=page, machineid=machine.id)}}"><button type="button" class="btn btn-success" style="float:right">返回隧道管理</button></a>                                        
+                                    </div> 
+                                </form> <br/><br/>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="scrollspy" >
+                                            <table class="table table-bordered table-responsive tScroll" id="table1">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="display:none;">#</th>
+                                                        <th style="display:none;">隧道号</th>
+                                                        <th>序号</th>
+                                                        <th>源地址起始IP</th>
+                                                        <th>源地址终止IP</th>
+                                                        <th>目的地址起始IP</th>
+                                                        <th>目的地址终止IP</th>
+                                                        <th>方向</th>
+                                                        <th>协议</th>
+                                                        <th>处理方式</th>
+                                                        <th>源端口起始值</th>
+                                                        <th>源端口最大值</th>
+                                                        <th>目的端口起始值</th>
+                                                        <th>目的端口最大值</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for strategy in strategies %}
+                                                    <tr style="overflow-x: auto;" onMouseOver="over()" onClick="change({{ loop.index }})" onMouseOut="out()">
+                                                        <td style="display:none;">{{ loop.index }}
+                                                        <input type="hidden" name="machineid" value="{{ strategy.id }}"></td>
+                                                        <td style="display:none;">
+                                                        <input type="hidden" name="schannelnumber" value="{{ channel_number }}"></td>
+                                                        <td class="strategynumber">{{ strategy.strategynumber }}</td>
+                                                        <td class="SrcIP">{{ strategy.SrcIP }}</td>
+                                                        <td class="SrcIPMask">{{ strategy.SrcIPMask }}</td>
+                                                        <td class="DstIP">{{ strategy.DstIP }}</td>
+                                                        <td class="DstIPMask">{{ strategy.DstIPMask }}</td>
+                                                        <td class="Direction">{{ strategy.Direction }}</td>
+                                                        <td class="Protocol">{{ strategy.Protocol }}</td>
+                                                        <td class="Mode">{{ strategy.Mode }}</td>
+                                                        <td class="SrcPortMin">{{ strategy.SrcPortMin }}</td>
+                                                        <td class="SrcPortMax">{{ strategy.SrcPortMax }}</td>
+                                                        <td class="DstPortMin">{{ strategy.DstPortMin }}</td>
+                                                        <td class="DstPortMax">{{ strategy.DstPortMax}}</td>
+                                                    {% endfor %}
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+<script src="/static/js/bootstrap-scrollspy.js"></script>
+
+{% block scripts %}
+<script>
+
+//--------------select
+(function($){
+    var input = '<div id="pre"><input id="itest" type="text">';
+    var strDiv = '<div id="dtest" style="height:100px;overflow-y:auto;">';
+    var strSpan = '';
+    var L = $('#test option').size();
+    for(var i = 0; i < L; i ++){
+        strSpan += '<span class="soption " data-val="'+ $('#test option').eq(i).attr('value') +'">' + $('#test option').eq(i).html() + '</span>';
+    }
+    strDiv += strSpan + '</div></div>';
+    $('#test').after(input + strDiv);
+    //初始化结束
+    $(document).on('focus','#itest',function(){
+        var st = $(this).val().trim();
+        if(st == ''){
+            $('#dtest').html(strSpan);
+        }
+        else{
+            var strDiv2 = '';
+            for(var i = 0; i < L; i ++){
+                var html = $('#test option').eq(i).html();
+                if(html.match(st)){
+                    strDiv2 += '<span class="soption" data-val="'+ $('#test option').eq(i).attr('value') +'">' + $('#test option').eq(i).html() + '</span>';
+                }
+            }
+            $('#dtest').html(strDiv2);
+        }
+        $('#dtest').slideDown(250);
+    });
+
+
+    $(document).on('keyup','#itest',function(){
+        var st = $(this).val().trim();
+        if(st == ''){
+            $('#dtest').html(strSpan);
+            return false;
+        }
+        var strDiv2 = '';
+        for(var i = 0; i < L; i ++){
+            var html = $('#test option').eq(i).html();
+            if(html.match(st)){
+                strDiv2 += '<span class="soption" data-val="'+ $('#test option').eq(i).attr('value') +'">' + $('#test option').eq(i).html() + '</span>';
+            }
+        }
+        $('#dtest').html(strDiv2);
+        $(document).on('blur','#itest',function(){//失去焦点，隐藏模拟下拉框
+        $('#dtest').slideUp(50);
+        });
+    });
+
+    $(document).on('mousedown','.soption',function(){
+        var html = $(this).html();
+        var val = $(this).data('val');
+        $('#dtest').slideUp(50);
+        $('#itest').val(html).data('val',val).blur();
+        $('#test').val(val);
+    });
+
+})(jQuery);
+
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '1': alert('不存在该隧道'); break;
+        case '2': alert('该隧道已存在'); break;
+        case '3': alert('签名验证失败'); break;
+        case "6": alert('解密出的明文数据不合法'); break;
+        case '7': alert('该项操作当前被禁止'); break;
+        case '8': alert('获取加密统计数据失败'); break;
+        case '10': alert('添加隧道安全策略时失败'); break;
+        case '11': alert('删除隧道安全策略时失败'); break;
+        case '12': alert('重置装置失败'); break;
+        case '13': alert('重置隧道失败'); break;
+        case '14': alert('获取日志文件长度失败'); break;
+        case '15': alert('读取日志文件失败'); break;
+        case '17': alert('操作冲突'); break; 
+        case '-2': alert('请求超时'); break;
+        case '-1': alert('返回数据包错误'); break;
+        case '-3': alert('输入信息有误，请检查输入'); break;
+        case '-4': alert('输入IP信息有误，请检查输入');break;
+        case '-5': alert('没有这条隧道，请重新选择');break;
+        case '0': alert('操作成功'); break;                
+        default: alert('操作异常');
+    }
+}
+
+
+function findstrategynumber(id){
+    var tab=document.getElementById("table1");
+    strategynumber = tab.rows[id].cells[2].innerHTML;
+    SrcIP = tab.rows[id].cells[3].innerHTML;
+    SrcIPMask = tab.rows[id].cells[4].innerHTML;
+    DstIP = tab.rows[id].cells[5].innerHTML;
+    DstIPMask = tab.rows[id].cells[6].innerHTML;
+    Direction = tab.rows[id].cells[7].innerHTML;
+    Protocol = tab.rows[id].cells[8].innerHTML;
+    Mode = tab.rows[id].cells[9].innerHTML;
+    SrcPortMin = tab.rows[id].cells[10].innerHTML;
+    SrcPortMax = tab.rows[id].cells[11].innerHTML;
+    DstPortMin = tab.rows[id].cells[12].innerHTML;
+    DstPortMax = tab.rows[id].cells[13].innerHTML;
+    $('#number').val(strategynumber);
+    load_edit_strategy_modal(strategynumber,SrcIP,SrcIPMask,DstIP,DstIPMask,Direction,Protocol,Mode,SrcPortMin,SrcPortMax,DstPortMin,DstPortMax)
+}
+
+ //鼠标点击选择行时候变色
+function change(change) {
+    var oObj = window.event.srcElement;
+    //alert(change.tagName.toLowerCase());
+    if(oObj.tagName.toLowerCase() == "td"){   
+        var oTr = oObj.parentNode;   
+        for(var i=1; i<document.all.table1.rows.length; i++)   {   
+            document.all.table1.rows[i].style.backgroundColor   =   "";   
+            document.all.table1.rows[i].tag = false;   
+        }
+        oTr.style.backgroundColor = "#CCCCFF";   
+        oTr.tag = true;
+        findstrategynumber(change);   
+    }
+}
+
+//鼠标点击另外一行时关闭已选行变色
+function out() {
+    var oObj = event.srcElement;
+    if(oObj.tagName.toLowerCase() == "td"){
+        var oTr = oObj.parentNode;
+        if(!oTr.tag) oTr.style.backgroundColor = "";
+    }
+}
+
+//鼠标移动到选择行上时的行变色
+function over(){   
+    var oObj = event.srcElement;
+    if(oObj.tagName.toLowerCase() == "td"){   
+    var oTr = oObj.parentNode;
+    if(!oTr.tag) oTr.style.backgroundColor = "#E1E9FD";
+    }
+}
+
+//--------------query_strategy
+$('#btn-query-strategy').click(function (e){
+    $.post('/commonequipment/querychannelstrategy/'+$('#machineid').val()+'/'+$('#channum').val(), {
+            'nonce':'{{ nonce }}' ,
+        }, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+             alert("操作成功！");
+                location.reload()
+            }else{
+                SwitchStatusCode(data)
+            }
+        })
+    })
+
+//---------------add_strategy
+$('.btn-create-stragety').click(function (e) {
+    $('#div-add-strategy').modal("toggle")
+});
+
+$('#div-btn-add-strategy').click(function(e){
+    e.preventDefault();
+    $.post($('#div-add-strategy form').attr('action'), $('#div-add-strategy form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data != "0"){
+            SwitchStatusCode(data)
+        }else{
+            alert("添加成功! ")
+            location.reload()
+        }
+    })
+});
+
+//--------------------getTableContent
+
+//-------------------edit_strategy
+$('.btn-edit-stragety').click(function () {
+    var sign = document.getElementById('number').value
+    if(sign != ""){
+        $('#div-edit-strategy').modal("toggle")
+    }else{
+        alert("请先选择要修改的策略！");
+    }
+})
+
+
+function load_edit_strategy_modal(strategynumber,SrcIP,SrcIPMask,DstIP,DstIPMask,Direction,Protocol,Mode,SrcPortMin,SrcPortMax,DstPortMin,DstPortMax){
+    var modal_form = $('#div-edit-strategy form');
+    
+    modal_form.find('input[name=choosestragetynumber]').val(strategynumber)
+    modal_form.find('input[name=sip1_edit]').val(SrcIP)
+    modal_form.find('input[name=sip2_edit]').val(SrcIPMask)
+    modal_form.find('input[name=dip1_edit]').val(DstIP)
+    modal_form.find('input[name=dip2_edit]').val(DstIPMask)
+    
+    if (Direction == "双向"){
+        modal_form.find('select[name=destination_edit]').find("option[value='0']").attr("selected","selected")
+    }else if(Direction == "正向"){
+        modal_form.find('select[name=destination_edit]').find("option[value='1']").attr("selected","selected")
+    }else if(Direction == "反向"){
+        modal_form.find('select[name=destination_edit]').find("option[value='2']").attr("selected","selected")
+    }
+    
+    if (Protocol == "所有"){
+        modal_form.find('select[name=protocol_edit]').find("option[value='0']").attr("selected","selected")
+    }else if(Protocol == "ICMP"){
+        modal_form.find('select[name=protocol_edit]').find("option[value='1']").attr("selected","selected")
+    }else if(Protocol == "TCP"){
+        modal_form.find('select[name=protocol_edit]').find("option[value='2']").attr("selected","selected")
+    }else if(Protocol == "UDP"){
+        modal_form.find('select[name=protocol_edit]').find("option[value='3']").attr("selected","selected")
+    }
+    
+    
+    if (Mode == "加密" ){
+        modal_form.find('select[name=workmodel_edit]').find("option[value='0']").attr("selected","selected")
+    }else if(Mode == "明文"){
+        modal_form.find('select[name=workmodel_edit]').find("option[value='1']").attr("selected","selected")
+    }else if(Mode == "可选"){
+        modal_form.find('select[name=workmodel_edit]').find("option[value='2']").attr("selected","selected")
+    }
+
+    modal_form.find('input[name=sport1_edit]').val(SrcPortMin)
+    modal_form.find('input[name=sport2_edit]').val(SrcPortMax)
+    modal_form.find('input[name=dport1_edit]').val(DstPortMin)
+    modal_form.find('input[name=dport2_edit]').val(DstPortMax)
+
+    $('#div-edit-strategy form').attr('action','/commonequipment/editchannelstrategy/{{machine.id}}/{{channel_number}}')
+}
+
+
+$('#div-btn-edit-strategy').click(function(e){
+    e.preventDefault();
+    $.post($('#div-edit-strategy form').attr('action'), $('#div-edit-strategy form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data != "0"){
+            SwitchStatusCode(data)
+        }else{
+             $('#div-edit-strategy').modal("hide")
+             alert("修改成功！");
+             location.reload()
+        }
+    })
+});
+
+
+//-------------------delete_strategy
+$('#btn-delete-stragety').click(function(e){
+    strategynumber=document.getElementById('number').value
+    if (strategynumber != ""){
+        if(confirm("确定要删除这个策略吗？")){
+                $.post('/commonequipment/deletechannelstrategy/'+$('#machineid').val()+'/'+$('#channum').val(), {
+                'nonce':'{{ nonce }}' ,
+                'cstragetynum':strategynumber,
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                 alert("操作成功！");
+                    location.reload()
+                }else{
+                    SwitchStatusCode(data)
+                }
+            })
+        }
+    }else{
+        alert("请先选择要删除的策略！");
+    }
+});
+
+
+//--------------------copy_strategy
+$('#div-btn-copy-strategy').click(function(e){
+    $('#div-edit-strategy').modal("hide")
+    $('#div-copy-strategy').modal("show")
+})
+
+$('#div-btn-copy-stragety').click(function(e){
+    var choosechannelnumber = document.getElementById('test').value
+    document.getElementById("choosechannelnum").value=choosechannelnumber;
+    $('#div-edit-strategy form').attr('action','/commonequipment/copychannelstrategy/{{machine.id}}')
+    e.preventDefault();
+    $.post($('#div-edit-strategy form').attr('action'), $('#div-edit-strategy form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data != "0"){
+            //$('#div-edit-strategy form').attr('action','/commonequipment/copychannelstrategy/{{machine.id}}')
+            //e.preventDefault();
+            SwitchStatusCode(data)
+        }else{
+             $('#div-copy-strategy').modal("hide")
+             alert("添加成功！");
+             location.reload()
+        }
+    })
+})
+
+</script>
+{% endblock %}

@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+{% import "macros.html" as macros %}
+
+{% block title %}
+日志管理
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+    .scrollspy {
+        height:680px;
+        overflow: auto;
+        position: relative;
+    }
+</style>
+
+<div class="col-md-2">
+	<div class="panel panel-default"  align="center">
+	   	<div class="panel-heading">
+	     	<h3 class="panel-title" onclick="setTab(0,0)">日志分类</h3>
+	   	</div>
+		<div class="panel-body" >
+			<ul class="nav nav-pills nav-stacked" >
+				<!-- <li class="active"><a href="#terminallog" onclick="document.getElementById('cont0').style.display='block';document.getElementById('cont1').style.display='none'">管理终端日志</a></li> -->
+				<li class="active"><a href="#terminallog">管理终端日志</li>
+   				<!-- <li><a href="#leadmachinelog" onclick="document.getElementById('cont1').style.display='block';document.getElementById('cont0').style.display='none'">前置机日志</a></li> -->
+			</u1>
+		</div>
+	</div>
+</div>
+
+<div class="col-md-10" style="padding-right: 1em; display:none；" id="cont0">
+	<div class="panel panel-primary" >
+        <div class="panel-heading">
+            <h4 class="panel-title" data-toggle="collapse">
+              	<a href="#demo" data-toggle="collapse">查询条件&nbsp;<i class="glyphicon glyphicon-circle-arrow-down"></i></a>
+            </h4>
+		</div>
+		<div class="panel-body collapse"  id="demo">
+			<form action="/checklog" method="POST">
+	 		<input name='nonce' type='hidden' value="{{ nonce }}">
+			<table class="table table-bordered">
+				<tr>
+					<td>告警级别</td>
+					<td>
+						<select  name="level" type="text">
+							<option value="全部" >全部</option>
+							<option value="紧急" >紧急</option>
+                    		<option value="重要" >重要</option>
+                    		<option value="次要" >次要</option>
+                    		<option value="通告" >通告</option>
+                    		<option value="普通" >普通</option>
+                		</select>
+                	</td>
+				</tr>
+				<tr>
+					<td>开始时间</td>
+					<td><input size="13" type="text" name="starttime" readonly class="form_datetime"></td>
+				</tr>
+				<tr>
+					<td>结束时间</td>
+					<td><input size="13" type="text" name="endtime" readonly class="form_datetime"></td>
+				</tr>
+				<tr>
+					<td>用户名</td>
+					<td><input size="13" type="text" name="username"></td>
+				</tr>
+				<tr>
+					<td>告警类型</td>
+					<td>
+					<select name="logtype" type="text">
+						<option value="全部" >全部</option>
+						<option value="LOG_EMERG" >LOG_EMERG</option>
+                    	<option value="LOG_ALERT" >LOG_ALERT</option>
+                    	<option value="LOG_CRIT" >LOG_CRIT</option>
+                    	<option value="LOG_ERR" >LOG_ERR</option>
+                    	<option value="LOG_WARNING" >LOG_WARNING</option>
+                    	<option value="LOG_DEBUG" >LOG_DEBUG</option>
+                    	<option value="LOG_INFO" >LOG_INFO</option>
+                    	<option value="LOG_NOTICE" >LOG_NOTICE</option>
+                	</select>
+                	</td>
+				</tr>
+				<tr>
+					<td>关键字</td>
+					<td><input size="13" type="text" name="keyword"></td>
+				</tr>
+			</table>
+			<div align="center">
+        		<button type="submit" class="btn btn-primary" >查询</button>
+			</div>
+		</div>
+	</div>
+		<div class="panel panel-primary">
+			 <div class="panel-heading">
+	              <h4 class="panel-title">
+	                <a href="#ter-log" data-parent="#accordion-demo" data-toggle="collapse">
+	                  管理终端日志
+	                </a>
+	                <a href="javascript:void(0)" class="export1" style="float:right;">导出excel</a>
+	              </h4>
+	            </div>
+			<div class="panel-body" align="center">
+				<button id="cleanlog" type="button" class="btn btn-primary" >清除日志</button>
+				<br/><br/>
+				<div class="scrollspy">
+				    <table class="table table-bordered">
+		        		<thead>
+		          		  	<tr>
+		                		<th>编号</th>
+		                		<th>告警级别</th>
+		               			<th>时间</th>
+		                		<th>用户名</th>
+								<th>告警类型</th>
+								<th>内容表述</th>
+		            		</tr>
+		       			</thead>
+		       			<tbody>
+		            	{% for terlog in terlogs %}
+		           		<tr>
+		            	    <td>{{ loop.index }}
+							<input type="hidden" name="terlogid" value="{{ terlog.id }}"></td>
+		           	    	<td>{{ terlog.rank }}</td>
+		            	    <td>{{ terlog.time }}</td>
+		             	    <td>{{ terlog.name }}</td>
+							<td>{{ terlog.style }}</td>
+							<td>{{ terlog.content }}</td>
+		            	</tr>
+		            	{% endfor %}
+		        		</tbody>
+		    		</table>
+
+			    	{% if pagination %}
+	                    {% if viewfunc==".getlog" %}
+	                    <div calss="pagination" align="center">
+	                        {{ macros.pagination_widget(pagination, viewfunc) }}
+	                    </div>
+	                    {% endif %}  
+	                {% endif %}
+		    	</div>
+			</div>
+		</div>
+	</div>
+
+<div id="cont1" style="display:none">
+	<div class="col-md-10" style="padding-right: 2em;">
+		<div class="panel panel-primary" id="lm-log">
+			 <div class="panel-heading">
+	              <h4 class="panel-title">
+	                <a href="#lm-log" data-parent="#accordion-demo" data-toggle="collapse">
+	                  前置机日志
+	                </a>
+	                <a href="javascript:void(0)" class="export2" style="float:right;">导出excel</a>
+	              </h4>
+	            </div>
+			<div class="panel-body">
+			    <table class="table table-bordered">
+	        		<thead>
+	          		  	<tr>
+	                		<th>#</th>
+	                		<th>告警级别</th>
+	               			<th>时间</th>
+	                		<th>用户名</th>
+							<th>告警类型</th>
+							<th>内容表述</th>
+	            		</tr>
+	       			</thead>
+	       		<tbody>
+	            {% for lmlog in lmlogs %}
+	            <tr>
+	                <td>{{ loop.index }}
+					<input type="hidden" name="lmlogid" value="{{ lmlog.id }}"></td>
+	                <td>{{ lmlog.rank }}</td>
+	                <td>{{ lmlog.time }}</td>
+	                <td>{{ lmlog.name }}</td>
+					<td>{{ lmlog.style }}</td>
+					<td>{{ lmlog.content }}</td>
+	            </tr>
+	            {% endfor %}
+	        </tbody>
+	    </table>   
+	</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/bootstrap-datetimepicker.min.js"></script>
+
+<script>
+function MyFunction()
+{
+    var info=document.getElementById("AlertInfo").value;
+    if(info != "")
+        alert(info);
+    //alert("ajdflkjasdlj")
+}
+$(function() {
+	$('.nav li').click(function(e) {
+		$('.nav li').removeClass('active');
+		$(this).addClass('active');
+	});
+});
+
+$(".form_datetime").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
+
+ //-------------------export
+$('.export1').click(function(){
+    $.post('/backuplog/systemlog',{
+        'nonce' : '{{nonce}}',
+    }, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+            window.location="/static/uploads/terminallogs.csv"
+        }
+    })
+});
+
+
+ //-------------------export
+$('.export2').click(function(){
+    $.post('/backuplog/leadmachinelog',{
+        'nonce' : '{{nonce}}',
+    }, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+            window.location="/static/uploads/terminallogs.csv"
+        }
+    })
+});
+
+//----------------------clean
+$('#cleanlog').click(function(){
+	$.post('/clean/systemlog',{
+		'nonce' : '{{nonce}}',
+	}, function(data){
+		var data = $.parseJSON(JSON.stringify(data))
+		if (data == "0"){
+			location.reload();
+		}
+	})
+})
+
+
+</script>
+{% endblock %}

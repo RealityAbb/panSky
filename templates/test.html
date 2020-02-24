@@ -1,0 +1,128 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>newpage</title>
+</head>
+<style type="text/css">
+	#demo {
+		width:100px;
+		height: 100px;
+		background-color: #fff;
+		position: relative;
+		border:2px solid #333;
+	}
+
+	#demo:after,#demo:before{
+		border:solid transparent;
+		content:' ';
+		height: 0;
+		left:100%;
+		position: absolute;
+		width:0;
+	}
+
+	#demo:after{
+		border-width: 10px;
+		border-left-color: #fff;
+		top:20px; 
+	}
+
+	#demo:before{
+		border-width: 12px;
+		border-left-color: #000;
+		top:18px;
+	}
+</style>
+<body>
+<ul>
+ <li>click me</li>
+ <li>click me</li>
+ <li>click me</li>
+ <li>click me</li>
+</ul>
+<div id="demo"></div>
+<table style="TABLE-LAYOUT: fixed" border="1" cellspacing="0" cellpadding="0" width="200">
+<tbody>
+<tr>
+<td style="WORD-WRAP: break-word" width="80">sssssssssssssssssssssssssssssssssssssssssssssss </td>
+<td>aaaaa</td>
+</tr>
+<tr>
+<td style="WORD-WRAP: break-word" width="20">sssssssssssssssssssssssssssssssssssssssssssssss </td>
+<td>aaaaa</td>
+</tr>
+</tbody>
+</table>
+<script src="/static/js/jquery.min-1.11.2.js"></script>
+<script type="text/javascript">
+function Foo() {
+    var i = 0;
+    return function() {
+        console.log(i++);
+    }
+}
+ 
+var f1 = Foo(),
+    f2 = Foo();
+f1();
+f1();
+f2();
+
+var elements=document.getElementsByTagName('li');
+    var length=elements.length;
+    for(var i=0;i<length;i++){
+        elements[i].onclick=function(){
+        alert(i);
+    }
+ }
+
+$(function(){
+    var aTdCont = [];
+    var thi = 0; 
+    var setTrIndex = function(tdIndex){
+        for(i=0;i < aTdCont.length; i++){
+            var trCont = aTdCont[i];
+            $("tbody tr").each(function() {
+                var thisText = $(this).children("td:eq("+tdIndex+")").text();
+                if(thisText == trCont){
+                    $("tbody").append($(this));
+                }
+             });        
+        }
+    }
+    var compare_down = function(a,b){
+            return a-b;
+    }
+    
+    var compare_up = function(a,b){
+            return b-a;
+    }
+    var fSort = function(compare){
+        aTdCont.sort(compare);
+    }
+    
+    var fSetTdCont = function(thIndex){
+            $("tbody tr").each(function() {
+                var tdCont = $(this).children("td:eq("+thIndex+")").text();
+                aTdCont.push(tdCont);
+            });
+    }
+    var clickFun = function(thindex){
+        aTdCont = [];
+        var nThCount = thindex;
+        fSetTdCont(nThCount);
+    }
+    
+    $("th").toggle(function(){
+        thi= $(this).index();
+        clickFun(thi);
+        fSort(compare_up);
+        setTrIndex(thi);
+    },function(){
+        clickFun(thi);    
+        fSort(compare_down);
+        setTrIndex(thi);
+    })        
+})
+</script>
+</html> 

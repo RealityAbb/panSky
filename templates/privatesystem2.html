@@ -1,0 +1,849 @@
+{% extends "base.html" %}
+{% block title %}
+密码机系统配置
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+    #main-nav {
+    margin-left: 1px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #347ab6;
+        background: #fff;
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #fff;
+        background: #347ab6;
+        background: -webkit-linear-gradient(top, #347ab6 0%);
+    }
+
+    
+    #main-nav.nav-tabs.nav-stacked > li {
+        margin-bottom: 4px;
+    }
+
+    .scrollspy {
+        height:300px;
+        overflow: auto;
+        position: relative;
+    }
+</style>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <ul id="main-nav" class="nav nav-tabs nav-stacked" style="">
+                   <li class="active">
+                        <a href="/privateequipment/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-th-large"></i>
+                            密码机配置管理   
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatecertmanage/import/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-lock"></i>
+                            证书管理        
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatechannel/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-inbox"></i>
+                            隧道管理          
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatesystem/net/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-cog"></i>
+                            系统配置
+                        </a>
+                    </li>
+ 
+                    <li>
+                        <a href="/privateequipment/privatelog/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-file"></i>
+                            日志管理
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/equipment">
+                            <i class="glyphicon glyphicon-log-out"></i>
+                            返回
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-10">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                        系统配置
+                        <p style="float:right;">装置名称：{{ machine.machinenumber }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;装置IP地址：{{ machine.ip }}</p>
+                        </h4>
+                    </div> 
+                    <div class="panel-body">
+                        <ul class="nav nav-tabs nav-justified nav-pills" id="myTab" > 
+                           <ul class="nav nav-tabs nav-justified nav-pills" id="myTab" > 
+                           <li class="active"><a href="/privateequipment/privatesystem/net/{{ machine.id }}">网络配置</a></li>
+                           <li><a href="/privateequipment/privatesystem/vlan/{{ machine.id }}">配置VLAN</a></li>
+                           <li><a href="/privateequipment/privatesystem/mac/{{machine.id}}">配置MAC地址</a></li>
+                           <li><a href="/privateequipment/privatesystem/interation/{{machine.id}}">互备装置</a></li>
+                           <li><a href="/privateequipment/privatesystem/sundry/{{machine.id}}">杂项配置</a></li> 
+                           <li><a href="/privateequipment/privatesystem/log/{{ machine.id }}">日志服务器设置</a></li> 
+                           <li><a href="/privateequipment/privatesystem/safe/{{ machine.id }}">安全管理</a></li>    
+                           </ul>
+                        </ul>
+
+                        <div class="modal fade" id="div-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="exampleModalLabel">删除路由表</h4>
+                                    </div>
+                                    <div class="panel-body">
+                                        <form method="POST" enctype="multipart/form-data">
+                                            <input type="hidden" name="id">
+                                            <input type="hidden" name="style">
+                                            <input type="hidden" name="linenumber" value="1">
+                                            <input name='nonce' type='hidden' value="{{ nonce }}">
+                                            <div class="small-6 small-centered text-center columns">
+                                                <p>你确定要删除这个路由吗？</p>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="panel-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                        <button id="div-btn-delete" type="button" class="btn btn-primary">删除</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title" data-toggle="collapse">
+                                    <a href="#demo" data-toggle="collapse">基本设置&nbsp;<i class="glyphicon glyphicon-circle-arrow-down"></i></a>
+                                </h3>
+                            </div>
+                            <div class="panel-body collapse"  id="demo">
+                                <div class="form-group" align="center">
+                                    <input type="radio" name="road" value="1" onclick="to_change()" /> <strong>第1路</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input type="radio" name="road" value="2" checked/> <strong>第2路</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    {% if line  %}
+                                    <input type="checkbox" name="useline" onclick="enableline()" checked/>启用标志&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    {% else %}
+                                    <input type="checkbox" name="useline" onclick="enableline()"/>启用标志&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    {% endif %}
+                                    {% if vip %}
+                                    <input type="checkbox" name="usevip" disabled checked/ />启用虚拟IP地址&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    {% else %}
+                                    <input type="checkbox" name="usevip" disabled />启用虚拟IP地址&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    {% endif %}                                  
+                                    {% if line %}
+                                        {% if natip  %}
+                                        <input type="checkbox" name="usenatip" onclick="enablenatip()" checked/>启用NATIP地址
+                                        {% else %}
+                                        <input type="checkbox" name="usenatip" onclick="enablenatip()"/>启用NATIP地址
+                                        {% endif %}
+                                    {% else %}
+                                        {% if natip  %}
+                                        <input type="checkbox" name="usenatip" onclick="enablenatip()" checked disabled />启用NATIP地址
+                                        {% else %}
+                                        <input type="checkbox" name="usenatip" onclick="enablenatip()" disabled/>启用NATIP地址
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group" align="center">
+                                    &nbsp;全&nbsp;局&nbsp;转&nbsp;发&nbsp;策&nbsp;略&nbsp;：
+                                    {% if line %}
+                                        {% if tranmission  %}
+                                        <input type="radio" name="transmit" value="1"  onclick="transition()"/> <strong>转发</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="transmit" value="2" checked/> <strong>丢弃</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                               
+                                        {% else %}
+                                        <input type="radio" name="transmit" value="1" checked /> <strong>转发</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="transmit" value="2" onclick="untransition()"/> <strong>丢弃</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {% endif %}
+                                    {% else %}
+                                        {% if tranmission  %}
+                                        <input type="radio" name="transmit" value="1"  onclick="transition()" disabled/> <strong>转发</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="transmit" value="2" checked disabled/> <strong>丢弃</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                               
+                                        {% else %}
+                                        <input type="radio" name="transmit" value="1" checked disabled/> <strong>转发</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="transmit" value="2" onclick="untransition()" disabled/> <strong>丢弃</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group" align="center">
+                                    通过网络访问装备：
+                                    {% if line %}
+                                        {% if admission  %}
+                                        <input type="radio" name="byinter" value="false" onclick="unvisit()"/> <strong>禁止</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="byinter" value="true" checked /> <strong>允许</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {% else %}
+                                        <input type="radio" name="byinter" value="false" checked/> <strong>禁止</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="byinter" value="true" onclick="visit()" /> <strong>允许</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {% endif %}
+                                    {% else %}
+                                        {% if admission  %}
+                                        <input type="radio" name="byinter" value="false" onclick="unvisit()" disabled /> <strong>禁止</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="byinter" value="true" checked disabled/> <strong>允许</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {% else %}
+                                        <input type="radio" name="byinter" value="false" checked disabled/> <strong>禁止</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="byinter" value="true" onclick="visit()" disabled/> <strong>允许</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group" align="center">
+                                    &nbsp;启&nbsp;用&nbsp;/&nbsp;禁&nbsp;用：
+                                    {% if line %}
+                                        {% if fragment %}
+                                        <input type="checkbox" name="afterdevice" checked disabled/>后分片设置&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {% else %}
+                                        <input type="checkbox" name="afterdevice" disabled/>后分片设置&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {% endif %}
+                                        {% if tree  %}
+                                        <input type="checkbox" name="usetree" onclick="enabletree()" checked/>生成树协议
+                                        {% else %}
+                                        <input type="checkbox" name="usetree" onclick="enabletree()"/>生成树协议
+                                        {% endif %}
+                                    {% else %}
+                                        {% if fragment %}
+                                        <input type="checkbox" name="afterdevice" checked disabled/>后分片设置&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {% else %}
+                                        <input type="checkbox" name="afterdevice" disabled/>后分片设置&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {% endif %}
+                                        {% if tree  %}
+                                        <input type="checkbox" name="usetree" onclick="enabletree()" checked disabled/>生成树协议
+                                        {% else %}
+                                        <input type="checkbox" name="usetree" onclick="enabletree()" disabled/>生成树协议
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                                <div class="col-md-4">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">IP设置</h3>
+                                        </div>
+                                        <form method="POST" action=''>
+                                            <input type='hidden' name='nonce' value='{{ nonce }}'>
+                                            <div class="panel-body" align="center">
+                                                <p>
+                                                    IP&nbsp;地址:
+                                                    <input type="text" name="ip" value='{{ipaddr}}' onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')" maxlength="15">
+                                                </p>
+                                                <p>
+                                                    IP&nbsp;掩码:
+                                                    <input type="text" name="mask" value='{{ipmask}}' onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')" maxlength="15">
+                                                </p><br/>
+                                                    <button type="submit" class="btn btn-primary" disabled>设置IP地址</button>
+                                            </div>
+                                        </form>
+                                        <hr/>
+                                        <form method="POST">
+                                            <input type='hidden' name='nonce' value='{{ nonce }}'>
+                                            <div class="panel-body" align="center">
+                                                {% if natip %}
+                                                <p>
+                                                    NATIP地址:
+                                                    <input type="text" name="natip" value='{{natipaddr}}' required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')" maxlength="15">
+                                                </p>
+                                                <p>
+                                                    NATIP掩码:
+                                                    <input type="text" name="natipmask" value='{{natipmask}}' required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')" maxlength="15">
+                                                </p>
+                                                {% else %}
+                                                <p>
+                                                    NATIP地址:
+                                                    <input type="text" name="natip" value='0.0.0.0' required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')" maxlength="15">
+                                                </p>
+                                                <p>
+                                                    NATIP掩码:
+                                                    <input type="text" name="natipmask" value='0.0.0.0' required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')" maxlength="15">
+                                                </p>
+                                                {% endif %}
+                                                {% if natip %}
+                                                <button type="button" class="btn btn-primary" id="div-add-natip">设置NATIP地址</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <button type="button" class="btn btn-primary" id="div-btn-getnetconfigure">获取NAT配置</button>
+                                                {% else %}
+                                                <button type="button" class="btn btn-primary" disabled>设置NATIP地址</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <button type="button" class="btn btn-primary" disabled>获取NAT配置</button>
+                                                {% endif %}                                        
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">路由设置</h3>
+                                        </div>
+                                        <form method="POST">
+                                            <input type='hidden' name='nonce' value='{{ nonce }}'>
+                                            <div class="panel-body" align="center">
+                                                <p>
+                                                    IP&nbsp;地址:
+                                                    <input type="text" name="ip" id="rip" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')" maxlength="15">  
+                                                </p>
+                                                <p>
+                                                    掩&nbsp;&nbsp;&nbsp;&nbsp;码:
+                                                    <input type="text" name="mask" id="routemask" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')" maxlength="15">
+                                                </p> 
+                                                <p>
+                                                    网&nbsp;&nbsp;&nbsp;&nbsp;关:
+                                                    <input type="text" name="gateway" id="routegateway" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')" maxlength="15"> 
+                                                </p> 
+                                                <p>
+                                                    <input type="radio" name="style" value="0" checked/> 网络路由&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <input type="radio" name="style" value="1" onclick="changemask()" /> 主机路由
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="style" value="2" /> 默认路由
+                                                </p>
+                                                {% if line %}
+                                                <button type="button" id="div-btn-addroute" class="btn btn-primary" align="center">添加路由</button>
+                                                {% else %}
+                                                <button type="button" class="btn btn-primary" align="center" disabled>添加路由</button>
+                                                {% endif %}
+                                            </div>
+                                        </form>
+                                        <div class="panel-footer scrollspy">
+                                            <button type="button" class="btn btn-sm btn-primary" id="div-btn-refresh" style="float:right;">重新获取</button><br/><br/>
+                                            <table class="table table-bordered" id="table1">
+                                                <thead>
+                                                    <tr>
+                                                        <th>序号</th>
+                                                        <th>IP地址</th>
+                                                        <th>掩码</th>
+                                                        <th>网关</th>
+                                                        <th>类型</th>
+                                                        <th>设置</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for route in routes %}
+                                                    <tr style="overflow-x: auto;" onMouseOver="over()" onClick="change({{ loop.index }})">
+                                                        <td>{{ loop.index }}
+                                                        <input type="hidden" name="routeid" value="{{ loop.index }}"></td>
+                                                        <td>{{route.ipaddr}}</td>
+                                                        <td>{{route.netmask}}</td>
+                                                        <td>{{route.gateway}}</td>
+                                                        <td class="style">{{route.type}}</td>
+                                                        <td>
+                                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/bootstrap-scrollspy.js"></script>
+<script>
+//----------to_change()
+function to_change(){
+    window.location.href='/privateequipment/privatesystem/net/{{ machine.id }}';
+}
+
+//----------judgeoperationresult
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '1': alert('操作失败'); break;
+        case '2': alert('该隧道已存在'); break;
+        case '3': alert('签名验证失败'); break;
+        case "6": alert('解密出的明文数据不合法'); break;
+        case '7': alert('该项操作当前被禁止'); break;
+        case '8': alert('获取加密统计数据失败'); break;
+        case '10': alert('添加隧道安全策略时失败'); break;
+        case '11': alert('删除隧道安全策略时失败'); break;
+        case '12': alert('重置装置失败'); break;
+        case '13': alert('重置隧道失败'); break;
+        case '14': alert('获取日志文件长度失败'); break;
+        case '15': alert('读取日志文件失败'); break;
+        case '17': alert('操作冲突'); break; 
+        case '-2': alert('请求超时'); break;
+        case '-1': alert('返回数据包错误'); break;
+        case '-3': alert('输入信息有误'); break;
+        case '-4': alert('路由类型有误'); break;
+        case '0': alert('操作成功'); break;                
+        default: alert('操作异常');
+    }
+}
+
+//-----------enableline()
+function enableline(){
+    var checked=false; 
+    var ids= document.getElementsByName("useline"); 
+    for(var i=0;i<ids.length;i++){ 
+        if(ids[i].checked){ 
+            checked=true; 
+        } 
+    } 
+    if(!checked){ 
+        if(confirm("确定要关闭这条链路吗？")){
+                $.post('/privateequipment/privatesystem/enableline/{{machine.id}}', {
+                linenumber:"1",
+                whether:"0",
+                'nonce':'{{ nonce }}', 
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    alert("关闭成功！")
+                    location.reload()
+                }else{
+                    SwitchStatusCode(data);
+                    $("input[name='useline']").prop('checked',true);
+                }
+            })
+        }else{
+            $("input[name='useline']").prop('checked',true);
+        }
+    } 
+    if (checked){
+        if(confirm("确定要启用这条链路吗？")){
+                $.post('/privateequipment/privatesystem/enableline/{{machine.id}}', {
+                linenumber:"1",
+                whether:"1",
+                'nonce':'{{ nonce }}', 
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    alert("启用成功！")
+                    location.reload()
+                }else{
+                    SwitchStatusCode(data);
+                    $("input[name='useline']").removeAttr("checked");
+                }
+            })
+        }else{
+             $("input[name='useline']").removeAttr("checked");
+        }        
+    } 
+}  
+
+//-----------enablenatip()
+function enablenatip(){
+    var checked=false; 
+    var ids= document.getElementsByName("usenatip"); 
+    for(var i=0;i<ids.length;i++){ 
+        if(ids[i].checked){ 
+            checked=true; 
+        } 
+    } 
+    if(!checked){
+        if(confirm("确定要关闭NATIP地址吗？")){
+                $.post('/privateequipment/privatesystem/enablenatip/{{machine.id}}', {
+                linenumber:"1",
+                whether:"0",
+                'nonce':'{{ nonce }}', 
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    location.reload()
+                }else{
+                    SwitchStatusCode(data);
+                    $("input[name='usenatip']").prop('checked',true);
+                }
+            })
+        }else{
+            $("input[name='usenatip']").prop('checked',true);
+        } 
+    } 
+    if (checked){
+           if(confirm("确定要启用NATIP地址吗？")){
+                $.post('/privateequipment/privatesystem/enablenatip/{{machine.id}}', {
+                linenumber:"1",
+                whether:"1",
+                'nonce':'{{ nonce }}', 
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    location.reload()
+                }else{
+                    SwitchStatusCode(data);
+                    $("input[name='usenatip']").removeAttr("checked");
+                }
+            })
+        }else{
+            $("input[name='usenatip']").removeAttr("checked");
+        } 
+    } 
+}  
+
+//--------------transition()
+function transition(){
+    if(confirm("确定要执行这个操作吗？")){
+        $.post('/privateequipment/privatesystem/transition/{{machine.id}}', {
+            linenumber:"1",
+            whether:"0",
+            'nonce':'{{ nonce }}', 
+        }, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                location.reload()
+            }else{
+               SwitchStatusCode(data);
+               $("input[name='transmit']").eq(1).attr("checked","checked");
+               $("input[name='transmit']").eq(0).removeAttr("checked");
+               $("input[name='transmit']").eq(1).click();
+            }
+        })
+    }else{
+            $("input[name='transmit']").eq(1).attr("checked","checked");
+            $("input[name='transmit']").eq(0).removeAttr("checked");
+            $("input[name='transmit']").eq(1).click();
+    }
+}
+
+//----------------untransition()
+function untransition(){
+    if(confirm("确定要执行这个操作吗？")){
+            $.post('/privateequipment/privatesystem/transition/{{machine.id}}', {
+            linenumber:"1",
+            whether:"1",
+            'nonce':'{{ nonce }}', 
+        }, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                location.reload()
+            }else{
+               SwitchStatusCode(data);
+               $("input[name='transmit']").eq(0).attr("checked","checked");
+               $("input[name='transmit']").eq(1).removeAttr("checked");
+               $("input[name='transmit']").eq(0).click();
+            }
+        })
+    }else{
+             $("input[name='transmit']").eq(0).attr("checked","checked");
+             $("input[name='transmit']").eq(1).removeAttr("checked");
+             $("input[name='transmit']").eq(0).click();
+    }
+}
+
+//---------------visit()
+function visit(){
+    if(confirm("确定要执行这个操作吗？")){
+            $.post('/privateequipment/privatesystem/visit/{{machine.id}}', {
+            linenumber:"1",
+            whether:"1",
+            'nonce':'{{ nonce }}', 
+        }, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                location.reload()
+            }else{
+               SwitchStatusCode(data);
+               $("input[name='byinter']").eq(0).attr("checked","checked");
+               $("input[name='byinter']").eq(1).removeAttr("checked");
+               $("input[name='byinter']").eq(0).click();
+            }
+        })
+    }else{
+               $("input[name='byinter']").eq(0).attr("checked","checked");
+               $("input[name='byinter']").eq(1).removeAttr("checked");
+               $("input[name='byinter']").eq(0).click();
+    }  
+}
+
+//---------------unvisit()
+function unvisit(){
+    if(confirm("确定要执行这个操作吗？")){
+            $.post('/privateequipment/privatesystem/visit/{{machine.id}}', {
+            linenumber:"1",
+            whether:"0",
+            'nonce':'{{ nonce }}', 
+        }, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                location.reload()
+            }else{
+               SwitchStatusCode(data);
+               $("input[name='byinter']").eq(1).attr("checked","checked");
+               $("input[name='byinter']").eq(0).removeAttr("checked");
+               $("input[name='byinter']").eq(1).click();
+            }
+        })
+    }else{
+             $("input[name='byinter']").eq(1).attr("checked","checked");
+             $("input[name='byinter']").eq(0).removeAttr("checked");
+             $("input[name='byinter']").eq(1).click();
+    }  
+}
+
+
+//-----------enabletree()
+function enabletree(){
+    var checked=false; 
+    var ids= document.getElementsByName("usetree"); 
+    for(var i=0;i<ids.length;i++){ 
+        if(ids[i].checked){ 
+            checked=true; 
+        } 
+    } 
+    if(!checked){
+        if(confirm("确定要禁用生成树协议吗？")){
+             $.post('/privateequipment/privatesystem/enabletree/{{machine.id}}', {
+                linenumber:"1",
+                whether:"0",
+                'nonce':'{{ nonce }}', 
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    alert("设置成功！");
+                    //location.reload()
+                }else{
+                   SwitchStatusCode(data);
+                   $("input[name='usetree']").prop('checked',true);
+                }
+            })
+        }else{
+            $("input[name='usetree']").prop('checked',true);
+        } 
+    } 
+    if (checked){
+         if(confirm("确定要启用生成树协议吗？")){
+             $.post('/privateequipment/privatesystem/enabletree/{{machine.id}}', {
+                linenumber:"1",
+                whether:"1",
+                'nonce':'{{ nonce }}', 
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    alert("设置成功！");
+                    //location.reload()
+                }else{
+                    SwitchStatusCode(data);
+                    $("input[name='usetree']").removeAttr("checked");
+                }
+            })
+         }else{
+              $("input[name='usetree']").removeAttr("checked");
+         }   
+    } 
+}  
+
+//--------------add_natip
+$('#div-add-natip').click(function(e){
+  var elem = $(this).parent().parent();
+  ip = elem.find('input[name=natip]').val()
+  mask = elem.find('input[name=natipmask]').val()
+  if(ip != "" && mask !=""){
+      $.post("/privateequipment/privatesystem/addnatip/{{machine.id}}",{
+        linenumber:"1",
+        ip:ip,
+        mask:mask,
+        'nonce':'{{ nonce }}', 
+      },function(data){
+       var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                //location.reload()
+                alert('操作成功');
+            }else{
+                SwitchStatusCode(data)
+                //location.reload()
+            }
+        })
+    }else{
+        alert("请输入完整信息！");
+    }
+})
+
+
+//---------------get_nat_configure
+$('#div-btn-getnetconfigure').click(function(){
+    $.post('/privateequipment/privatesystem/getnatconfigure/{{machine.id}}', {
+        linenumber:"1",
+        'nonce':'{{ nonce }}', 
+    }, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        }else{
+           SwitchStatusCode(data)
+        }
+    })
+})
+
+//----------------changemask
+function changemask(){
+    mask="255.255.255.255"
+    $('#routemask').val(mask)
+}
+
+
+//----------------add_route
+$('#div-btn-addroute').click(function(e){
+    var elem = $(this).parent().parent();
+    ip = elem.find('input[name=ip]').val()
+    mask = elem.find('input[name=mask]').val()
+    gateway = elem.find('input[name=gateway]').val()
+    if (ip != "" && mask !="" && gateway != ""){
+        var obj = document.getElementsByName("style");
+        for(var i=0; i<obj.length; i ++){
+                 if(obj[i].checked){
+                        choosestyle = obj[i].value;
+                        var elem = $(this).parent().parent();
+                        $.post("/privateequipment/privatesystem/addroute/{{machine.id}}",{
+                        linenumber:"1",
+                        ip:elem.find('input[name=ip]').val(),
+                        mask:elem.find('input[name=mask]').val(),
+                        gateway:elem.find('input[name=gateway]').val(),
+                        style:choosestyle,
+                        'nonce':'{{ nonce }}', 
+                      },function(data){
+                         var data = $.parseJSON(JSON.stringify(data))
+                         if (data == "0"){
+                        location.reload();
+                        alert('操作成功'); 
+                    }else{
+                        SwitchStatusCode(data)
+                    }
+                })
+            }
+        }
+    }else{
+       alert("请输入完整信息！"); 
+    }
+})
+
+//---------------refresh
+$('#div-btn-refresh').click(function(){
+    $.post('/privateequipment/privatesystem/refreshroute/{{machine.id}}', {
+        linenumber:"1",
+        'nonce':'{{ nonce }}', 
+    }, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        }else{
+            SwitchStatusCode(data)
+        }
+    })
+})
+
+//-----------------delete_route
+$('#div-btn-delete').click(function(e){
+    e.preventDefault();
+    $.post($('#div-delete form').attr('action'), $('#div-delete form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            //alert('操作成功');             
+            location.reload()
+            alert('操作成功')
+
+            $('#div-delete').modal("hide")            
+        }else{
+            SwitchStatusCode(data)
+            $('#div-delete').modal("hide")
+        }
+    })
+});
+
+function load_confirm_modal(id, style){
+    var modal = $('#div-delete')
+    modal.find('input[name=id]').val(id)
+    modal.find('input[name=style]').val(style)
+    $('#div-delete form').attr('action', '/privateequipment/privatesystem/deleteroute/{{machine.id}}');
+    $('#div-delete').modal("toggle");
+}
+
+$('.glyphicon-remove').click(function(){
+    var elem = $(this).parent().parent();
+    var id = elem.find('input[name=routeid]').val();
+    var style = elem.find('.style').text().trim();
+    load_confirm_modal(id, style)
+})
+
+function findstrategynumber(id){
+    var tab=document.getElementById("table1");
+    ip = tab.rows[id].cells[1].innerHTML;
+    mask = tab.rows[id].cells[2].innerHTML;
+    gateway = tab.rows[id].cells[3].innerHTML;
+    style = tab.rows[id].cells[4].innerHTML;
+    document.getElementById("rip").value=ip;
+    document.getElementById("routemask").value=mask;
+    document.getElementById("routegateway").value=gateway;
+
+    if (style == "主机路由"){
+        var stylevalue = document.getElementsByName("style");
+        for(i=0; i<stylevalue.length; i++){
+            if(stylevalue[i].value==1){
+                stylevalue[i].checked = "checked";
+            }
+        }
+    }else if(style == "网络路由"){
+        var stylevalue = document.getElementsByName("style");
+        for(i=0; i<stylevalue.length; i++){
+            if(stylevalue[i].value==0){
+                stylevalue[i].checked = "checked";
+            }
+        }
+    }else if(style == "默认路由"){
+        var stylevalue = document.getElementsByName("style");
+        for(i=0; i<stylevalue.length; i++){
+            if(stylevalue[i].value==2){
+                stylevalue[i].checked = "checked";
+            }
+        }
+    }
+}
+
+
+ //鼠标点击选择行时候变色
+function change(change) {
+    var oObj = window.event.srcElement;
+    //alert(change.tagName.toLowerCase());
+    if(oObj.tagName.toLowerCase() == "td"){   
+        var oTr = oObj.parentNode;   
+        for(var i=1; i<document.all.table1.rows.length; i++)   {   
+            document.all.table1.rows[i].style.backgroundColor   =   "";   
+            document.all.table1.rows[i].tag = false;   
+        }
+        oTr.style.backgroundColor = "#bce7e9";   
+        oTr.tag = true;
+        findstrategynumber(change);   
+    }
+}
+
+//鼠标点击另外一行时关闭已选行变色
+function out() {
+    var oObj = event.srcElement;
+    if(oObj.tagName.toLowerCase() == "td"){
+        var oTr = oObj.parentNode;
+        if(!oTr.tag) oTr.style.backgroundColor = "";
+    }
+}
+
+//鼠标移动到选择行上时的行变色
+function over(){   
+    var oObj = event.srcElement;
+    if(oObj.tagName.toLowerCase() == "td"){   
+    var oTr = oObj.parentNode;
+    if(!oTr.tag) oTr.style.backgroundColor = "#E1E9FD";
+    }
+}
+
+</script>
+{% endblock %}

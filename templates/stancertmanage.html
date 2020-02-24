@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}
+密码机证书管理
+{% endblock %}
+
+{% block content %}
+
+<style type="text/css">
+    #main-nav {
+    margin-left: 1px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #347ab6;
+        background: #fff;
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #fff;
+        background: #347ab6;
+        background: -webkit-linear-gradient(top, #347ab6 0%);
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover > span {
+        color: #FFF;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li {
+        margin-bottom: 4px;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <ul id="main-nav" class="nav nav-tabs nav-stacked" style="">
+                <li class="active">
+                    <a href="/commonequipment/{{ machine.id }}">
+                        <i class="glyphicon glyphicon-th-large"></i>
+                        密码机配置管理   
+                    </a>
+                </li>
+                <li>
+                    <a href="/commonequipment/stancertmanage/{{ machine.id }}" >
+                        <i class="glyphicon glyphicon-lock"></i>
+                        证书管理        
+                    </a>
+                </li>
+                <li>
+                    <a href="/commonequipment/stanchannel/{{ machine.id }}">
+                        <i class="glyphicon glyphicon-inbox"></i>
+                        隧道管理   
+                    </a>
+                </li>
+                <li>
+                    <a href="/commonequipment/stanlog/{{ machine.id }}">
+                        <i class="glyphicon glyphicon-file"></i>
+                        日志管理
+                    </a>
+                </li>
+                <li>
+                    <a href="/equipment">
+                        <i class="glyphicon glyphicon-log-out"></i>
+                        返回
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <body onload="ShowAlertInfo()"> <input id="AlertInfo" value="{{AlertInfo}}" type="hidden" ></body>
+
+        <div class="col-md-10">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                    证书管理
+                    </h4>
+                </div> 
+                <div class="panel-body">
+                    <input type='hidden' id='id' value='{{ machine.id }}'>
+                    <p align="center"> 
+                        装置名称：<strong>{{ machine.machinenumber }}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        装置IP地址：<strong>{{ machine.ip }}</strong>
+                    </p>
+                    <hr/>
+                    <form method="POST" action="/commonequipment/stancertmanage/replace/{{machine.id}}" enctype="multipart/form-data" onsubmit="return submitTest();">
+                        <input type='hidden' name='nonce' value='{{ nonce }}'>
+                        <div class="form-group">
+                            <label class="control-label">证书文件</label><br/>
+                            <input type="file" name="files[]" multiple="multiple" required >
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">IP地址:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            <input type="text"  name="ip" id="ip" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                        </div><br/>
+                        <div align="center">
+                            <button class="btn btn-primary" type='submit'>证书替换</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+//----------judgeoperationresult
+function ShowAlertInfo()
+{
+    var alertinfo = document.getElementById("AlertInfo").value
+    if(alertinfo != "")
+        alert(alertinfo)
+}
+
+function submitTest()
+{
+    var obj=document.getElementById("ip").value
+    var exp=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+    var reg = obj.match(exp);
+    if(reg==null){
+        alert("IP地址不合法！");
+        ip.focus();
+        return false;
+    }
+}
+
+</script>
+{% endblock %}

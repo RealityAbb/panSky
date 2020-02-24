@@ -1,0 +1,439 @@
+{% extends "base.html" %}
+{% block title %}
+密码机互备装置
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+    #main-nav {
+    margin-left: 1px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #347ab6;
+        background: #fff;
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #fff;
+        background: #347ab6;
+        background: -webkit-linear-gradient(top, #347ab6 0%);
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li {
+        margin-bottom: 4px;
+    }
+
+    .scrollspy {
+        height:200px;
+        overflow: auto;
+        position: relative;
+    }
+</style>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <ul id="main-nav" class="nav nav-tabs nav-stacked" style="">
+                   <li class="active">
+                        <a href="/privateequipment/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-th-large"></i>
+                            密码机配置管理   
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatecertmanage/import/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-lock"></i>
+                            证书管理        
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatechannel/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-inbox"></i>
+                            隧道管理             
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatesystem/net/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-cog"></i>
+                            系统配置
+                        </a>
+                    </li>
+ 
+                    <li>
+                        <a href="/privateequipment/privatelog/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-file"></i>
+                            日志管理
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/equipment">
+                            <i class="glyphicon glyphicon-log-out"></i>
+                            返回
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-10">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                        系统配置
+                        <p style="float:right;">装置名称：{{ machine.machinenumber }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;装置IP地址：{{ machine.ip }}</p>
+                        </h4>
+                    </div> 
+                    <div class="panel-body">
+                        <ul class="nav nav-tabs nav-justified nav-pills" id="myTab" > 
+                           <li><a href="/privateequipment/privatesystem/net/{{ machine.id }}">网络配置</a></li>
+                           <li><a href="/privateequipment/privatesystem/vlan/{{ machine.id }}">配置VLAN</a></li>
+                           <li><a href="/privateequipment/privatesystem/mac/{{machine.id}}">配置MAC地址</a></li>
+                           <li><a href="/privateequipment/privatesystem/interation/{{machine.id}}">互备装置</a></li>
+                           <li class="active"><a href="/privateequipment/privatesystem/sundry/{{machine.id}}">杂项配置</a></li> 
+                           <li><a href="/privateequipment/privatesystem/log/{{ machine.id }}">日志服务器设置</a></li> 
+                           <li><a href="/privateequipment/privatesystem/safe/{{ machine.id }}">安全管理</a></li>    
+                        </ul>
+
+                        <div class="form-group" align="center">
+                            <div class="panel-body">
+                                <form id="setsundry" method="POST">
+                                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                                    <table class="table table-bordered">
+                                    <tr>
+                                        <td>日期和时间</td>
+                                        <td><input type="date" style="text-align:center" name="date" placeholder="例如：2016/01/01" value="{{ local_date }}">
+                                        <input type="time"  style="text-align:center" name="time" placeholder="例如：00:00:00" value="{{ local_time }}"></td>
+                                        <td><button type="button" align="right" class="btn btn-primary" id="settime">设置</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>装置工作模式</td>
+                                        {% if work_model == 0%}
+                                        <td><input type="radio" name="workmode" value="0"   checked/>安全模式&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="workmode" value="2" />旁路模式</td>
+                                        {% else %}
+                                        <td><input type="radio" name="workmode" value="0"   checked/>安全模式&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="workmode" value="2"  checked/>旁路模式</td>
+                                        {% endif %}
+                                        <td><button type="button" align="right" class="btn btn-primary" id="setworkmode">设置</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>密钥最大加密次数</td>
+                                        <td><input type="number" class="data-input" name="max" value="{{ dk_encrypt_times_max }}" onkeyup="value=value.replace(/[^\d]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))" min="1">&nbsp;万次</td>
+                                        <td><button type="button" align="right" class="btn btn-primary" id="setmaxencrypt">设置</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>密钥最长生存周期</td>
+                                        <td><input type="number" class="data-input" name="period" value="{{ dk_lifetime }}" onkeyup="value=value.replace(/[^\d]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))" min="1">&nbsp;小时</td>
+                                        <td><button type="button" align="right" class="btn btn-primary" id="setmaxcycle">设置</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>连接超时时间</td>
+                                        <td><input type="number" class="data-input" name="outtime" value="{{dk_retry_interval}}" onkeyup="value=value.replace(/[^\d]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))" min="3" >&nbsp;&nbsp;&nbsp;&nbsp;秒</td>
+                                        <td><button type="button" align="right" class="btn btn-primary" id="settimeout">设置</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>启用/禁用</td>
+                                        {% if no_alarm == False %}
+                                        <td><input type="checkbox" name="soundwarn" checked/>声音报警&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {% else %}
+                                        <td><input type="checkbox" name="soundwarn"/>声音报警&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        {% endif %}
+                                        {% if secplateformflag %}
+                                        <input type="checkbox" name="dihedral" onclick="enablesecplate()" checked/>二平面处理</td>
+                                        {% else %}
+                                        <input type="checkbox" name="dihedral" onclick="enablesecplate()"/>二平面处理</td>
+                                        {% endif %}
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>SPING发送间隔</td>
+                                        <td><input type="number" class="data-input" name="spingtime" value="{{ sping_send_interval }}" onkeyup="value=value.replace(/[^\d]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))" min="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td><button type="button" align="right" class="btn btn-primary" id="setinterval">设置</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>SPING超时时间</td>
+                                        <td><input type="number" class="data-input" name="spingouttime" value="{{ sping_response_timeout }}" onkeyup="value=value.replace(/[^\d]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))" min="6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td><button type="button" align="right" class="btn btn-primary" id="setstimeout">设置</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>输入参数</td>
+                                        <td><input type="text" name="parameter" placeholder="例如：1,1500" value="{{ IPSEC }} " maxlength="25">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td><button type="button" align="right" class="btn btn-primary" id="inputparam">设置</button></td>
+                                    </tr>
+                                    </table>
+                                </form>
+                                <div style="float:right;">
+                                    <p>当前设备时间为：{{ equipment_time }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+<script src="/static/js/bootstrap-scrollspy.js"></script>
+
+{% block scripts %}
+<script>
+//----------judgeoperationresult
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '1': alert('操作失败'); break;
+        case '2': alert('该隧道已存在'); break;
+        case '3': alert('签名验证失败'); break;
+        case "6": alert('解密出的明文数据不合法'); break;
+        case '7': alert('该项操作当前被禁止'); break;
+        case '8': alert('获取加密统计数据失败'); break;
+        case '10': alert('添加隧道安全策略时失败'); break;
+        case '11': alert('删除隧道安全策略时失败'); break;
+        case '12': alert('重置装置失败'); break;
+        case '13': alert('重置隧道失败'); break;
+        case '14': alert('获取日志文件长度失败'); break;
+        case '15': alert('读取日志文件失败'); break;
+        case '17': alert('操作冲突'); break; 
+        case '-2': alert('请求超时'); break;
+        case '-1': alert('返回数据包错误'); break;
+        case '-3': alert('输入信息有误'); break;
+        case '0': alert('操作成功'); break;                
+        default: alert('操作异常');
+    }
+}
+
+//----------------settime
+$('#settime').click(function(e){
+  var elem = $(this).parent().parent();
+  judge1 = elem.find('input[name=date]').val()
+  judge2 = elem.find('input[name=time]').val()
+  if (judge1 != "" && judge2 != ""){
+        $.post("/privateequipment/privatesystem/setdatetime/{{machine.id}}",{
+        date:elem.find('input[name=date]').val(),
+        time:elem.find('input[name=time]').val(),
+        'nonce':'{{ nonce }}',
+      },function(data){
+         if (data == "0")
+         {
+            alert('设置成功')
+            location.reload()
+            
+        }else{
+            SwitchStatusCode(data)
+        }
+      })
+    }else{
+        alert("请先完整的日期及时间信息！");
+    }
+})
+
+
+
+//--------------------set_workmode
+$('#setworkmode').click(function(e){
+    var obj = document.getElementsByName("workmode");
+    for(var i=0; i<obj.length; i ++){
+        if(obj[i].checked){
+            var workmode = obj[i].value
+        }
+    }
+    $.post("/privateequipment/privatesystem/setworkmode/{{machine.id}}",{
+        workmode:workmode,
+        'nonce':'{{ nonce }}',
+    },function(data){
+        if (data == "0"){
+            alert('设置成功')
+        }else{
+            SwitchStatusCode(data)
+        }
+    })    
+})
+
+//-----------------------set_max_encrypt
+$('#setmaxencrypt').click(function(e){
+  var elem = $(this).parent().parent();
+  judge = elem.find('input[name=max]').val()
+  if (judge != "" && judge <20001 && judge>0){
+        $.post("/privateequipment/privatesystem/setmaxencrypt/{{machine.id}}",{
+        maxencrypt:elem.find('input[name=max]').val(),
+        'nonce':'{{ nonce }}',
+      },function(data){
+         if (data == "0")
+         {
+            //location.reload()
+            alert('设置成功')
+        }else{
+            SwitchStatusCode(data)
+        }
+      })
+    }else{
+        alert("请先输入正确的最大加密次数！范围为：1~20000。");
+    }
+})
+
+//-----------------------set_max_cycle
+$('#setmaxcycle').click(function(e){
+  var elem = $(this).parent().parent();
+  judge = elem.find('input[name=period]').val()
+  if (judge != "" && judge <121 && judge>0){
+        $.post("/privateequipment/privatesystem/setmaxcycle/{{machine.id}}",{
+        period:elem.find('input[name=period]').val(),
+        'nonce':'{{ nonce }}',
+      },function(data){
+         if (data == "0")
+         {
+            //location.reload()
+            alert('设置成功')
+        }else{
+            SwitchStatusCode(data)
+        }
+      })
+    }else{
+        alert("请先输入正确的密钥最长生存周期！范围为：1~120");
+    }
+})
+
+
+//-----------------------set_timeout
+$('#settimeout').click(function(e){
+  var elem = $(this).parent().parent();
+  judge = elem.find('input[name=outtime]').val()
+  if (judge != "" && judge >2 && judge<21){
+        $.post("/privateequipment/privatesystem/settimeout/{{machine.id}}",{
+        outtime:elem.find('input[name=outtime]').val(),
+        'nonce':'{{ nonce }}',
+      },function(data){
+         if (data == "0")
+         {
+            //location.reload()
+            alert('设置成功')
+        }else{
+            SwitchStatusCode(data)
+        }
+      })
+    }else{
+        alert("请先输入正确的连接超时时间！范围为：3~20");
+    }
+})
+
+//------------------------enablesecplate()
+function enablesecplate(){
+    var checked=false; 
+    var ids= document.getElementsByName("dihedral"); 
+    for(var i=0;i<ids.length;i++){ 
+        if(ids[i].checked){ 
+            checked=true; 
+        } 
+    } 
+    if(!checked){
+        if(confirm("确定要关闭二平面吗？")){
+            $.post('/privateequipment/privatesystem/enablesecplate/{{machine.id}}', {
+                whether:"0",
+                'nonce':'{{ nonce }}', 
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    alert("设置成功！");
+                }else{
+                    SwitchStatusCode(data)
+                    $("input[name='dihedral']").prop('checked',true);
+                }
+            })
+        }else{
+             $("input[name='dihedral']").prop('checked',true);
+        }
+    } 
+    if (checked){
+        if(confirm("确定要开启二平面吗?")){
+             $.post('/privateequipment/privatesystem/enablesecplate/{{machine.id}}', {
+            whether:"1",
+            'nonce':'{{ nonce }}', 
+        }, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                alert("设置成功！");
+            }else{
+                SwitchStatusCode(data)
+                $("input[name='dihedral']").removeAttr("checked");
+            }
+        })
+    }else{
+        $("input[name='dihedral']").removeAttr("checked");
+        }
+    } 
+} 
+
+//-----------------------set_sping_send_interval
+$('#setinterval').click(function(e){
+  var elem = $(this).parent().parent();
+  judge = elem.find('input[name=spingtime]').val()
+  if (judge != "" && judge<101 && judge>1){
+        $.post("/privateequipment/privatesystem/setinterval/{{machine.id}}",{
+        spingtime:elem.find('input[name=spingtime]').val(),
+        'nonce':'{{ nonce }}',
+      },function(data){
+         if (data == "0")
+         {
+            //location.reload()
+            alert('设置成功')
+        }else{
+            SwitchStatusCode(data)
+        }
+      })
+    }else{
+        alert("请先输入正确的SPING发送间隔！范围为：2~100");
+    }
+})
+
+//-----------------------set_sping_response_timeout
+$('#setstimeout').click(function(e){
+  var elem = $(this).parent().parent();
+  judge = elem.find('input[name=spingouttime]').val()
+  if (judge != "" && judge >5 && judge <121){
+        $.post("/privateequipment/privatesystem/setspingouttime/{{machine.id}}",{
+        spingouttime:elem.find('input[name=spingouttime]').val(),
+        'nonce':'{{ nonce }}',
+      },function(data){
+         if (data == "0")
+         {
+            //location.reload()
+            alert('设置成功')
+        }else{
+            SwitchStatusCode(data)
+        }
+      })
+    }else{
+        alert("请先输入正确的SPING超时时间！范围为：6~120");
+    }
+})
+
+
+//--------------------set_ipsec
+$('#inputparam').click(function(e){
+  var elem = $(this).parent().parent();
+  judge = elem.find('input[name=parameter]').val()
+  if (judge != ""){
+        $.post("/privateequipment/privatesystem/setipsec/{{machine.id}}",{
+        parameter:elem.find('input[name=parameter]').val(),
+        'nonce':'{{ nonce }}',
+      },function(data){
+         if (data == "0")
+         {
+            //location.reload()
+            alert('设置成功')
+        }else{
+            SwitchStatusCode(data)
+        }
+      })
+    }else{
+        alert("请先输入参数！");
+    }
+})
+</script>
+{% endblock %}

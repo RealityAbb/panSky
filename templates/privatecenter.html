@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% block title %}
+个人中心
+{% endblock %}
+
+{% block content %}
+<div class="modal fade" id="div-edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">修改口令</h4>
+            </div>
+            <div class="panel-body">
+                <form method="POST" action="" enctype="multipart/form-data">
+                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                    <div class="form-group">
+                        <label class="control-label">用户名</label>
+                        <input type="text" class="form-control host-input" name="name" id="name" placeholder="name" readonly>
+                    </div>
+                     <div class="form-group">
+                        <label class="control-label">旧口令</label>
+                        <input type="hidden" name="eold" id="eold">
+                        <input type="password" class="form-control host-input" name="old_password" id="oldpass" placeholder="Password" required >    
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">新口令</label>
+                        <input type="hidden" name="enew" id="enew">
+                        <input type="password" class="form-control host-input" name="edit_password1" id="new1" placeholder="Password" required >    
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">确定口令</label>
+                        <input type="password" class="form-control host-input" name="edit_password2" id="new2" placeholder="Password" required>    
+                    </div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button id="div-btn-edit" type="button" class="btn btn-primary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="col-md-10" style="padding-left: 16em;">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title">个人信息</h3>
+   		</div>
+		<div class="panel-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>用户名</th>
+                        <td class="name">{{ user.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>用户类型</th>
+                        {% if user.style == 0 %}
+                        <td class="style">系统管理员</td>
+                        {% elif user.style == 1 %}
+                        <td class="style">安全管理员</td>
+                        {% elif user.style == 2 %}
+                        <td class="style">审计管理员</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <th>证书请求文件</th>
+                        {% if user.ukeycert == None %}
+                        <td>无</td>
+                        {% else %}
+                        <td>{{ user.ukeycert }}</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <th>公钥证书</th>
+                        {% if user.pk == None %}
+                        <td>无</td>
+                        {% else %}
+                        <td>{{ user.pk }}</td>
+                        {% endif %}
+					</tr>
+					<tr>
+                        <th>状态</th>
+                        {% if user.losesign == 0 %}
+                        <td>挂失</td>
+                        {% else %}
+                        <td>正常使用</td>
+                        {% endif %}
+                    </tr>
+                </thead>
+            </table>
+			<br/><br/>
+            <div class="button-bar" align="center">
+	        	<button type="button" class="btn btn-primary btn-edit">修改口令</button>
+    		</div>
+	   </div>
+	</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/enc.js"></script>
+<script>
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '-1': alert('ukey认证失败，请检查USB Key是否正确插入！'); break;
+        case '16': alert('ukey未插入！'); break;
+        case '32': alert('ukey未初始化，pin码！'); break;
+        case '48': alert('ukey口令错误已达到8次！'); break;
+        case '64': alert('ukey口令错误！'); break;
+        case '80': alert('ukey的pin码未知,初始化失败！'); break;
+        case '96': alert('获取ukey信息失败！'); break;
+        case '112': alert('输入参数不合法！'); break;
+        case '128': alert('输入ukey id与ukey自身的id不一致！'); break;
+        case '144': alert('输入username与ukey中的username不一致！'); break;
+        case '5': alert('旧口令输入错误，请重新输入！');break;
+        case '4': alert('输入数据不能为空！');break;
+        case '3': alert('两次输入的密码不一致，请重新输入！');break;
+        case '2': alert('密码必须包含数字和字母两种类型，请重新输入！');break;
+        case '1': alert('该用户名已注册，请重新输入用户名！');break;
+        case '0': alert('操作成功'); break;                
+        default: alert('操作异常');
+    }
+}
+
+
+$('#div-btn-edit').click(function(e){
+    var pas1,pas2,pas3;
+    pas1=document.getElementById("new1").value;
+    pas2=document.getElementById("new2").value;
+    pas3=document.getElementById("oldpass").value;
+    if(pas1.length<8){
+                alert("密码必须大于8位，请重新输入！");
+                return false;
+            }
+        if(!(pas1==pas2 && pas2!='')){
+                alert("两次输入的密码不一致，请重新输入！");
+                return false;
+            }
+	var i = 0;
+	if(pas1.match(/.*[0-9]/) != null){
+		i=i+1;
+	}
+	if(pas1.match(/.*[a-z]/) != null){
+		i=i+1;
+	}
+	if(pas1.match(/.*[A-Z]/) != null){
+		i=i+1;
+	}
+	if(pas1.match(/.*[~!@#$%^&*?]/) != null){
+		i=i+1;
+	}
+	if( i <2 ){
+        alert("口令必须由数字、大小写字母、特殊字符两种或两种以上组成，请重新输入！");
+        return false;
+    	}
+    var a = new Encrypt();  
+    var str1 = a.encode(pas1);
+    var str2 = a.encode(pas3);
+    $('#eold').val(str2)
+    $('#enew').val(str1)
+    if(pas1 !="" && pas2 != "" && pas3 != ""){
+        e.preventDefault();
+        $.post($('#div-edit form').attr('action'), $('#div-edit form').serialize(), function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                alert("修改成功，请重新登录！");
+                window.location.href="/logout"  
+            }else{
+                SwitchStatusCode(data)
+            }
+        })
+    }else{
+        alert("请输入完整信息！");
+    }
+}); 
+
+function load_update_modal(name){
+    var modal_form = $('#div-edit form');
+   
+    modal_form.find('input[name=name]').val(name)
+
+    $('#div-edit form').attr('action', '/user/privateedit')
+	$('#div-edit').modal("toggle"); 
+}
+
+$('.btn-edit').click(function(){
+    var elem = $(this).parent().parent();
+    var name = elem.find('.name').text().trim();
+
+    load_update_modal(name)
+})
+</script>
+{% endblock %}

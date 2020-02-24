@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}
+系统初始化
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+	<form class="form-signin" method="POST" action="/login" id="formpost" onsubmit="return submitTest();">
+		<strong>口令</strong>
+        <input type="hidden" name="epassword" id="epassword" onkeydown="KeyDown">
+		<input type="password" name="password" class="form-control" placeholder="Password" id="password" required onkeydown="KeyDown">
+		<button class="btn btn-lg btn-primary btn-block" id="btn-login" type="button">登录</button>
+	</form>
+</div> 
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/enc.js"></script>
+<script type="text/javascript">
+$('#btn-login').click(function(e){
+    var b = document.getElementById('password').value
+    var a = new Encrypt();  
+    var str = a.encode(b);  
+    $('#epassword').val(str)
+    $('#formpost').submit();
+})
+
+var SubmitOrHidden = function(evt){
+    evt = window.event || evt;
+    if(evt.keyCode == 13){
+        document.getElementById("btn-login").click();
+    }
+}
+
+window.document.onkeydown=SubmitOrHidden;
+
+
+function submitTest()
+{
+    var b = document.getElementById('password').value
+    if(b == ""){
+        alert("请输入登录口令！");
+        return false;
+    }else{
+        $("#btn-login").attr("disabled", "true");
+    }
+}
+</script>
+{% endblock %}

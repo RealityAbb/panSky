@@ -1,0 +1,571 @@
+{% extends "base.html" %}
+{% block title %}
+用户管理
+{% endblock %}
+
+{% block content %}
+<div class="modal fade" id="div-create" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">制作证书请求文件</h4>
+            </div>
+			<div class="panel-body">
+            	<form method="POST" action="" enctype="multipart/form-data" >
+					<input name='nonce' type='hidden' value="{{ nonce }}">
+					 
+					<div class="form-group">
+                        <label class="control-label">用&nbsp;&nbsp;户&nbsp;&nbsp;名</label>
+                        <input type="text" class="form-control host-input"  name="name" id="name" placeholder="name" required maxlength="30" >
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">口&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;令</label>
+                        <input type="password" class="form-control host-input"  name="password1" placeholder="Password" maxlength="16" id="pas1">
+                        <p style="float:right;font-size:10px;color:#828382;">口令不少于8位，不长于16位；口令必须由数字、大小写字母、字符至少两种组成。</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">确定口令</label>
+                        <input type="password" class="form-control host-input"  name="password2" placeholder="Password" style="ime-mode:Disabled;"  required="required" id="pas2">    
+                    </div>
+                    <div class="form-group" >
+						<label class="control-label">选择权限</label></br>
+                        {% if syscount == 5 %}  
+                        <input type="radio" name="style" value="0" disabled/> <strong>系统管理员</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        {% else %}
+                        <input type="radio" name="style" value="0" checked/> <strong>系统管理员</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        {% endif %}
+                        {% if safecount == 5 %}
+                        <input type="radio" name="style" value="1" disabled/> <strong>安全管理员</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        {% else %}
+                        <input type="radio" name="style" value="1"/> <strong>安全管理员</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        {% endif %}
+                        {% if auditcount == 5 %}
+                        <input type="radio" name="style" value="2" disabled/> <strong>审计管理员</strong>
+                        {% else %}
+                        <input type="radio" name="style" value="2"/> <strong>审计管理员</strong>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <strong>国家：</strong>
+                        <input type="text" class="form-control host-input" name="country" value="中国" readonly required>
+                    </div>
+                    <div class="form-group">
+                        <strong>省：</strong>
+                        <input type="text" class="form-control host-input" name="province" id="province" placeholder="Province" required>
+                    </div>
+                    <div class="form-group">
+                        <strong>直辖市:</strong>
+                        <input type="text" class="form-control host-input" name="city" id="city" placeholder="City" required>
+                    </div>
+                    <div class="form-group">
+                        <strong>组织：</strong>
+                        <input type="text" class="form-control host-input" name="organ" id="organ" placeholder="Organization" value="GDD" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <strong>部门：</strong>
+                        <input type="text" class="form-control host-input" name="depart" id="depart" placeholder="Department" value="GDD" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <strong>E-mail：</strong>
+                        <input type="email" class="form-control host-input" name='email' id="email" placeholder='Email' required>
+                    </div>
+                	<div class="panel-footer">
+                        {% if count == 15 %}                       
+                    	<button id="div-btn-create" type="button" class="btn btn-primary" disabled>创建</button>
+                        {% else %}
+                        <button id="div-btn-create" type="button" class="btn btn-primary">创建</button>
+                        {% endif %}
+                    	<button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                	</div>
+            	</form>
+        	</div>
+		</div>
+    </div>
+</div>
+
+<div class="modal fade " id="div-import" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="panel panel-primary" id="div-import">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="panel-title">导入公钥证书</h3>
+            </div>
+            <div class="panel-body">
+                <form action="/user/newcert" method="POST" enctype="multipart/form-data">
+					<input type='hidden' name='nonce' value='{{ nonce }}'>
+					<div class="form-group">
+						<label class="control-label">选择关联用户</label>
+						<select class="form-control" name="name">
+							{% for user in userselect %}
+							    <option value="{{ user.name}}" text="{{ user.name }}">{{ user.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+                    <div class="form-group">
+                        <label class="control-label">证书文件</label>
+                        <input type="file" name="files[]" multiple="multiple"><br />
+                    </div>
+                    <div class="panel-footer">
+                        <button type="submit" class="btn btn-primary">完成</button>
+                        <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    </div>
+				</form>
+            </div>
+		</div>       
+    </div>
+</div>
+
+<div class="modal fade" id="div-edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">修改用户</h4>
+            </div>
+            <div class="panel-body">
+                <form method="POST" action="" enctype="multipart/form-data">
+                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                    <div class="form-group">
+                        <label class="control-label">用户名</label>
+                        <input type="text" class="form-control host-input" name="name" placeholder="name" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">新口令</label>
+                        <input type="hidden" name="enew1" id="enew1">
+                        <input type="password" class="form-control host-input" name="edit_password1" placeholder="Password" id="p1" required >
+                        <p style="float:right;font-size:10px;color:#828382;">口令不少于8位，不长于16位；口令必须由数字、大小写字母、字符至少两种组成。</p>    
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">确定新口令</label>
+                        <input type="hidden" name="enew2" id="enew2">
+                        <input type="password" class="form-control host-input" name="edit_password2" placeholder="Password" id="p2" required>    
+                    </div>
+					<div class="form-group">
+						<label class="control-label">修改权限</label>
+						<select class="form-control" name="style_edit" id="aaa">
+                            {% if syscount == 5 %}
+							<option value="0" disabled>系统管理员</option>
+                            {% else %}
+                            <option value="0">系统管理员</option>
+                            {% endif %}
+                            {% if safecount == 5 %}
+                            <option value="1" disabled>安全管理员</option>
+                            {% else %}
+                            <option value="1">安全管理员</option>
+                            {% endif %}
+                            {% if auditcount == 5 %}
+                            <option value="2" disabled>审计管理员</option>
+                            {% else %}
+                            <option value="2">审计管理员</option>
+                            {% endif %}
+						</select>
+					</div>
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button id="div-btn-edit" type="button" class="btn btn-primary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="div-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">删除用户</h4>
+            </div>
+            <div class="modal-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="id">
+                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                    <div class="small-6 small-centered text-center columns">
+                        <p>你确定要删除用户： <strong id="delete-name"></strong> 吗 ?</p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button id="div-btn-delete" type="button" class="btn btn-primary">删除</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container">
+    <div class="button-bar" align="center">
+		{% if count == 15 %}
+		<button type="button" class="btn btn-primary btn-lg btn-create" disabled>注册新用户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		{% else %}
+		<button type="button" class="btn btn-primary btn-lg btn-create" >注册新用户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		{% endif %}
+		{% if length == 0 %}
+		<button type="button" class="btn btn-primary btn-lg btn-importcert" disabled>导入公钥证书</button>
+		{% else %}
+		<button type="button" class="btn btn-primary btn-lg btn-importcert">导入公钥证书</button>
+		{% endif %} 
+    </div>
+	</br>
+	<div class="panel panel-default">
+		<div class="panel-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>用户名</th>
+                        <th>用户类型</th>
+                        <th>证书请求文件</th>
+                        <th>公钥证书</th>
+                        <th>状态</th>
+        				<th>操作</th>
+                        <th>设置</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ loop.index }}
+                        <input type="hidden" name="id" value="{{ user.id }}"></td>
+                        <td class="name">{{ user.name }}</td>
+                        {% if user.style == 0 %}
+                        <td class="style">系统管理员</td>
+                        {% elif user.style == 1 %}
+                        <td class="style">安全管理员</td>
+                        {% elif user.style == 2 %}
+                        <td class="style">审计管理员</td>
+                        {% endif %}
+                        <td class="attachment">{% if user.ukeycert %}<a href="/static/certificate/{{ user.ukeycert }}" target="__blank" >{{ user.ukeycert }}</a>{% endif %}</td> 
+                        {% if user.pk == None %}
+                        <td>无</td>
+                        {% else %}
+                        <td>{{ user.pk }}</td>
+                        {% endif %}
+                        {% if user.losesign == 0 %}
+                        <td>挂失</td>
+                        {% else %}
+                        <td>正常使用</td>
+                        {% endif %}
+                        <td class="operation">
+                            <button type="button" class="btn btn-xs btn-warning btn-unbind" >解除绑定</button>
+                            <button type="button" class="btn btn-xs btn-danger btn-lose" >挂失</button>
+                            <button type="button" class="btn btn-xs btn-info btn-unlose" >撤销挂失</button>
+                        </td>       
+                        <td>
+                          	<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        </td>
+                        <td style="display:none;" class="uid">{{user.ukeyid}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+	   </div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/enc.js"></script>
+<script>
+
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '-1': alert('ukey认证失败，请检查USB Key是否正确插入！'); break;
+        case '16': alert('ukey未插入！'); break;
+        case '32': alert('ukey未初始化，pin码！'); break;
+        case '48': alert('ukey口令错误已达到8次！'); break;
+        case '64': alert('ukey口令错误！'); break;
+        case '80': alert('ukey的pin码未知,初始化失败！'); break;
+        case '96': alert('获取ukey信息失败！'); break;
+        case '112': alert('输入参数不合法！'); break;
+        case '128': alert('输入ukey id与ukey自身的id不一致！'); break;
+        case '144': alert('输入username与ukey中的username不一致！'); break;
+    	case '14': alert('用户自身不能挂失自身!');break;
+    	case '13': alert('修改成功,请现在立即更换USB Key,否则将会退出系统');break;
+    	case '12': alert('修改用户口令,请先更换USB Key！');break;
+    	case '11': alert('密码必须大于8位，请重新输入！');break;
+        case '10': alert('请先更换USB Key！');break;
+        case '9': alert('用户自身不能撤销自身挂失');break;
+        case '8': alert('用户自身不能解除自身绑定');break;
+        case '7': alert('用户自身不能在此处修改自己，请前往个人中心修改');break;
+        case '6': alert('用户自己不能修改自身权限');break;
+        case '5': alert('用户自己不能删除自身');break;
+        case '4': alert('输入数据不能为空！');break;
+        case '3': alert('两次输入的密码不一致，请重新输入！');break;
+        case '2': alert('密码必须包含数字和字母两种类型，请重新输入！');break;
+        case '1': alert('该用户名已注册,请重新输入！');break;
+        case '0': alert('操作成功'); break; 
+    	case '-2': alert('该用户没有申请挂失，无需撤销！');break;
+    	case '-3': alert('该用户没有公钥证书!');break;
+    	case '-4': alert('该Ukey已注册，请更换Ukey！');break;  
+        case '1234':alert("用户已存在");break;            
+        default: alert('操作异常');
+    }
+}
+
+
+//------------create
+$('.btn-create').click(function(e){
+    $('#div-create').modal("toggle")
+});
+
+$('#div-btn-create').click(function(e){
+    if(confirm("制作新用户前，请先更换USB Key！")){
+        var name,pas1,pas2,style;
+        name=document.getElementById("name").value;
+        pas1=document.getElementById("pas1").value;
+        pas2=document.getElementById("pas2").value;
+        province=document.getElementById("province").value;
+        city=document.getElementById("city").value;
+        organ=document.getElementById("organ").value;
+        depart=document.getElementById("depart").value;
+        email=document.getElementById("email").value;
+        var obj = document.getElementsByName("style");
+        for(var i=0; i<obj.length; i ++){
+            if(obj[i].checked){
+                style = obj[i].value
+            }
+        }
+        if (name != "" && pas1 != "" && pas2 !="" && style !=""){
+            if(pas1.length<8){
+                alert("密码必须大于8位，请重新输入！");
+                return false;
+            }
+            if(!(pas1==pas2 && pas2!='')){
+                alert("两次输入的密码不一致，请重新输入！");
+                return false;
+            }
+            var i = 0;
+    		if(pas1.match(/.*[0-9]/) != null){
+    			i=i+1;
+    		}
+    		if(pas1.match(/.*[a-z]/) != null){
+    			i=i+1;
+    		}
+    		if(pas1.match(/.*[A-Z]/) != null){
+    			i=i+1;
+    		}
+    		if(pas1.match(/.*[~!@#$%^&*?]/) != null){
+    			i=i+1;
+    		}
+    		if( i <2 ){
+        		alert("口令必须由数字、大小写字母、特殊字符两种或两种以上组成，请重新输入！");
+        		return false;
+    	    } 
+            var a = new Encrypt();  
+            var str1 = a.encode(pas1);
+            var str2 = a.encode(pas2);
+            $.post("/user/new",{
+                name:name,
+                p1:str1,
+                p2:str2,
+                style:style,
+                province:province,
+                city:city,
+                organ:organ,
+                depart:depart,
+                email:email,
+                'nonce':'{{ nonce }}', 
+              },function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    alert("证书请求文件生成成功！请立即插入系统管理员USBKey，并下载下载证书请求文件,否则将会退出系统");
+                    //location.reload()
+                    window.location="/login"
+                }else{
+                    SwitchStatusCode(data)
+                }
+            })
+        }else{
+            alert("信息不完整，请输入完整信息！");
+        }
+    }
+});
+
+//------------export
+$('.btn-exportcert').click(function(e){
+    $('#div-export').modal("toggle")
+});
+
+//--------------import
+$('.btn-importcert').click(function(e){
+    $('#div-import').modal("toggle")
+});
+
+
+//------------edit
+$('#div-btn-edit').click(function(e){
+    var pas1,pas2;
+    pas1=document.getElementById("p1").value;
+    pas2=document.getElementById("p2").value;
+    if (pas1 != "" && pas2 !=""){
+	    if(pas1.length<8){
+                alert("密码必须大于8位，请重新输入！");
+                return false;
+            }
+        if(!(pas1==pas2 && pas2!='')){
+                alert("两次输入的密码不一致，请重新输入！");
+                return false;
+            }
+    	var i = 0;
+    	if(pas1.match(/.*[0-9]/) != null){
+    		i=i+1;
+    	}
+    	if(pas1.match(/.*[a-z]/) != null){
+    		i=i+1;
+    	}
+    	if(pas1.match(/.*[A-Z]/) != null){
+    		i=i+1;
+    	}
+    	if(pas1.match(/.*[~!@#$%^&*?]/) != null){
+    		i=i+1;
+    	}
+    	if( i <2 ){
+            alert("口令必须由数字、大小写字母、特殊字符两种或两种以上组成，请重新输入！");
+            return false;
+        }
+        var a = new Encrypt();  
+        var str1 = a.encode(pas1);
+        var str2 = a.encode(pas2);
+        $('#enew1').val(str1)
+        $('#enew2').val(str2)
+        alert("修改用户密码需要更换所修改用户的USB Key,请检查是否已更换！")
+    }
+    e.preventDefault();
+    $.post($('#div-edit form').attr('action'), $('#div-edit form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            alert("修改成功！");
+            location.reload()
+        }else if(data == "13"){
+            SwitchStatusCode(data)
+	    location.reload()
+        }else{
+           SwitchStatusCode(data)
+	   }
+    })
+}); 
+
+function load_update_modal(id,name, style){
+    var modal_form = $('#div-edit form');
+    
+    modal_form.find('input[name=id]').val(id)
+    modal_form.find('input[name=name]').val(name)
+    
+    if (style == "系统管理员"){
+        modal_form.find('select[name=style_edit]').find("option[value='0']").attr("selected","selected")
+    }else if(style == "安全管理员"){
+        modal_form.find('select[name=style_edit]').find("option[value='1']").attr("selected","selected")
+    }else if(style == "审计管理员"){
+        modal_form.find('select[name=style_edit]').find("option[value='2']").attr("selected","selected")
+    }
+	
+    $('#div-edit form').attr('action', '/user/xiugai/'+id)
+    $('#div-edit').modal("toggle");
+}
+
+$('.glyphicon-pencil').click(function(){
+    var elem = $(this).parent().parent();
+
+    var id = elem.find('input[name=id]').val();
+    var name = elem.find('.name').text().trim();
+    var style = elem.find('.style').text().trim();
+
+    load_update_modal(id, name, style)
+})
+
+//--------------delete
+$('#div-btn-delete').click(function(e){
+    e.preventDefault();
+    $.post($('#div-delete form').attr('action'), $('#div-delete form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            alert("删除成功！");
+            location.reload()
+        }else{
+            SwitchStatusCode(data)
+        }
+    })
+});
+
+function load_confirm_modal(id, name){
+    var modal = $('#div-delete')
+    modal.find('input[name=id]').val(id)
+    modal.find('#delete-name').text(name)
+    $('#div-delete form').attr('action', '/user/'+id+'/delete');
+    $('#div-delete').modal("toggle");
+}
+
+$('.glyphicon-remove').click(function(){
+    var elem = $(this).parent().parent();
+    var id = elem.find('input[name=id]').val();
+    var name = elem.find('.name').text().trim();
+    load_confirm_modal(id, name)
+})
+
+//------------------btn-lose
+$('.btn-lose').click(function(e){
+   if(confirm("申请挂失后，此账号就不能登录系统，确定要挂失吗？")){
+        var elem = $(this).parent().parent();
+        var userid = elem.find('input[name=id]').val();
+        $.post('/user/lose',{
+            id:userid,
+            'nonce':'{{ nonce }}'}, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                alert("挂失成功！");
+                location.reload()
+            }else{
+                SwitchStatusCode(data)
+            }
+        })
+    }
+});
+
+//------------------btn-unlose
+$('.btn-unlose').click(function(e){
+   if(confirm("确定要撤销挂失吗？")){
+        var elem = $(this).parent().parent();
+        var userid = elem.find('input[name=id]').val();
+        $.post('/user/cancellose',{
+            id:userid,
+            'nonce':'{{ nonce }}'}, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                alert("撤销挂失成功！");
+                location.reload()
+            }else{
+                SwitchStatusCode(data)
+            }
+        })
+    }
+});
+
+
+//----------------btn-unbind
+$('.btn-unbind').click(function(e){
+   if(confirm("解除绑定后,用户将不会绑定现有公钥证书，确定要解除绑定吗？")){
+        var elem = $(this).parent().parent();
+        var userid = elem.find('input[name=id]').val();
+        $.post('/user/unband',{
+            id:userid,
+            'nonce':'{{ nonce }}'}, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                alert("解绑成功！");
+                location.reload()
+            }else{
+                SwitchStatusCode(data)
+            }
+        })
+    }
+});
+
+</script>
+{% endblock %}

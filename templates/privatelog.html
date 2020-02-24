@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+{% block title %}
+密码机日志管理
+{% endblock %}
+
+{% block content %}
+
+<style type="text/css">
+    #main-nav {
+    margin-left: 1px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #347ab6;
+        background: #fff;
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #fff;
+        background: #347ab6;
+        background: -webkit-linear-gradient(top, #347ab6 0%);
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li {
+        margin-bottom: 4px;
+    }
+
+    .scrollspy {
+        height:620px;
+        overflow: auto;
+        position: relative;
+    }
+
+    .tScroll {
+   /*     min-height:101%;*/
+        min-width: 100%;
+    }
+    * 
+    { 
+        margin:0px; 
+        padding:0px; 
+    } 
+    .zhezhao 
+    { 
+      width:100%; 
+      height:100%; 
+      background-color:#000; 
+      filter:alpha(opacity=80); 
+      -moz-opacity:0.5; 
+      opacity:0.5; 
+      position:fixed; 
+      left:0px; 
+      top:0px; 
+      display:none; 
+      z-index:1000; 
+     } 
+    .login 
+    { 
+      width:280px; 
+      height:180px; 
+      position:fixed; 
+      top:35%; 
+      left:45%; 
+      background-image: url(/static/img/zhuan.gif);
+      background-repeat: no-repeat;
+      display:none; 
+      z-index:1500;  
+     }
+</style>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <ul id="main-nav" class="nav nav-tabs nav-stacked" style="">
+                   <li class="active">
+                        <a href="/privateequipment/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-th-large"></i>
+                            密码机配置管理   
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatecertmanage/import/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-lock"></i>
+                            证书管理        
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatechannel/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-inbox"></i>
+                            隧道管理        
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatesystem/net/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-cog"></i>
+                            系统配置
+                        </a>
+                    </li>
+ 
+                    <li>
+                        <a href="/privateequipment/privatelog/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-file"></i>
+                            日志管理
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/equipment">
+                            <i class="glyphicon glyphicon-log-out"></i>
+                            返回
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-10" >
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            日志管理
+                            <p style="float:right;">装置名称：{{ machine.machinenumber }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;装置IP地址：{{ machine.ip }}</p>
+                        </h4>
+                    </div> 
+                    <div class="panel-body">
+                        <form id="deliverparameter" method="POST">
+                            <input name='nonce' type='hidden' value="{{ nonce }}">
+                            <input type='hidden' id='id' value='{{ machine.id }}'>
+                            <div class="button-bar">
+                                <input type="button" value="查看日志" class="btn btn-primary" onclick= "window.location.href ='/privateequipment/checklog/{{ machine.id }}' ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn-primary" id="btn-backuplog">备份日志</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn-primary" id="btn-cleanlog">清空日志</button>
+                            </div>
+                        </form>
+                        <br />
+                       <div class="scrollspy">
+                            <table class="table table-bordered table-responsive tScroll">
+                                <thead>
+                                    <tr>
+                                        <th>序号</th>
+                                        <th>时间</th>
+                                        <th>类型</th>
+                                        <th>信息</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for log in logs %}
+                                <tr>
+                                    <td>{{ loop.index }}
+                                    <input type="hidden" name="logid" value="{{ log.id }}"></td>
+                                    <td>{{ log.time }}</td>
+                                    <td>{{ log.style }}</td>
+                                    <td>{{ log.content }}</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>    
+                            </table>
+                        </div>
+                        {% if pagination %}
+                        <div name="PageInof" align="center">
+                            <div name="Page">
+                                <span>第&nbsp;{{pagination.page}}&nbsp;页&nbsp;/&nbsp;共&nbsp;{{pagination.pages}}&nbsp;页&nbsp;({{pagination.loglength}}条)&nbsp;</span>
+                                <a href= "{{url_for('.paginatelog',machineid=machine.id,page=1,pages=pagination.pages,loglength=pagination.loglength)}}">首页</a>
+                                <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+                                {% if pagination.has_prev %}
+                                    <a href="{{url_for('.paginatelog',machineid=machine.id,page=pagination.page-1,pages=pagination.pages,loglength=pagination.loglength)}}">上一页</a>
+                                {% else %}
+                                    <span>上一页</span>
+                                {% endif %}
+                                <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>                                
+                                {% if pagination.has_next %}
+                                    <a href="{{url_for('.paginatelog',machineid=machine.id,page=pagination.page+1,pages=pagination.pages,loglength=pagination.loglength)}}">下一页</a>
+                                {% else %}
+                                    <span>下一页</span>
+                                {% endif %}
+                                <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+                                <a href= "{{url_for('.paginatelog',machineid=machine.id,page=pagination.pages,pages=pagination.pages,loglength=pagination.loglength)}}">尾页</a>                                                              
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="zhezhao" id="zhezhao"></div> 
+<div class="login" id="login"></div>  
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="/static/js/bootstrap-scrollspy.js"></script>
+<script>
+//----------judgeoperationresult
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '1': alert('操作失败'); break;
+        case '2': alert('该隧道已存在'); break;
+        case '3': alert('签名验证失败'); break;
+        case "6": alert('解密出的明文数据不合法'); break;
+        case '7': alert('该项操作当前被禁止'); break;
+        case '8': alert('获取加密统计数据失败'); break;
+        case '10': alert('添加隧道安全策略时失败'); break;
+        case '11': alert('删除隧道安全策略时失败'); break;
+        case '12': alert('重置装置失败'); break;
+        case '13': alert('重置隧道失败'); break;
+        case '14': alert('获取日志文件长度失败'); break;
+        case '15': alert('读取日志文件失败'); break;
+        case '17': alert('操作冲突'); break; 
+        case '-2': alert('请求超时'); break;
+        case '-1': alert('返回数据包错误'); break;
+        case '-3': alert('输入信息有误'); break;
+        case '-4': alert('网络连接超时，备份仅成功部分，请检查网络连接');break;
+        case '0': alert('操作成功'); break;                
+        default: alert('操作异常');
+    }
+}
+function MyFunction()
+{
+    var info=document.getElementById("AlertInfo").value;
+    if(info != "")
+        alert(info);
+    //alert("ajdflkjasdlj")
+}
+
+//---------------------wait
+window.onload=function() 
+ { 
+  var zhezhao=document.getElementById("zhezhao"); 
+  var login=document.getElementById("login"); 
+ } 
+
+
+//------------------back_log
+$('#btn-backuplog').click(function(){
+    zhezhao.style.display="block"; 
+    login.style.display="block"; 
+    $.post('/privateequipment/downloadlog/'+$('#id').val(), {'nonce':'{{ nonce }}' }, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            zhezhao.style.display="none"; 
+            login.style.display="none"; 
+            window.location.href = '/privateequipment/backuplog/'+$('#id').val()
+        }else if (data == "-4"){
+           SwitchStatusCode(data)
+           zhezhao.style.display="none"; 
+           login.style.display="none";
+           window.location.href = '/privateequipment/backuplog/'+$('#id').val() 
+        }else{
+           SwitchStatusCode(data)
+           zhezhao.style.display="none"; 
+           login.style.display="none";
+        }
+    })
+})
+
+//-----------------clean_log
+$('#btn-cleanlog').click(function(){
+    if(confirm("确定要清空日志吗？")){
+        if(confirm("请再次确定要清空日志吗？")){
+            $.post('/privateequipment/cleanlog/'+$('#id').val(), {'nonce':'{{ nonce }}' }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    location.href = '/privateequipment/privatelog/' + $('#id').val()
+                }else{
+                   SwitchStatusCode(data)
+                }
+            })
+        }
+    }
+})
+
+var info=document.getElementById("AlertInfo").value;
+if(info != "")
+    alert(info);
+</script>
+{% endblock %}
+

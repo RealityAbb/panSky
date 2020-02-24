@@ -1,0 +1,447 @@
+{% extends "base.html" %}
+{% block title %}
+密码机日志服务器设置
+{% endblock %}
+
+{% block content %}
+
+<style type="text/css">
+    #main-nav {
+    margin-left: 1px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #347ab6;
+        background: #fff;
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #fff;
+        background: #347ab6;
+        background: -webkit-linear-gradient(top, #347ab6 0%);
+    }
+    
+    #main-nav.nav-tabs.nav-stacked > li {
+        margin-bottom: 4px;
+    }
+
+    .scrollspy {
+        height:400px;
+        overflow: auto;
+        position: relative;
+    }
+</style>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <ul id="main-nav" class="nav nav-tabs nav-stacked" style="">
+                   <li class="active">
+                        <a href="/privateequipment/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-th-large"></i>
+                            密码机配置管理   
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatecertmanage/import/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-lock"></i>
+                            证书管理        
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatechannel/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-inbox"></i>
+                            隧道管理   
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatesystem/net/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-cog"></i>
+                            系统配置
+                        </a>
+                    </li>
+ 
+                    <li>
+                        <a href="/privateequipment/privatelog/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-file"></i>
+                            日志管理
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/equipment">
+                            <i class="glyphicon glyphicon-log-out"></i>
+                            返回
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-10">
+                <div class="modal fade" id="div-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">删除日志服务器</h4>
+                            </div>
+                            <div class="panel-body">
+                                <form method="POST" enctype="multipart/form-data">
+                                    <input type="hidden" name="id">
+                                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                                    <div class="small-6 small-centered text-center columns">
+                                        <p>你确定要删除日志服务器：<strong id="delete-logservernumber"></strong> 吗？</p>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="panel-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button id="div-btn-delete" type="button" class="btn btn-primary">删除</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                        系统配置
+                        <p style="float:right;">装置名称：{{ machine.machinenumber }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;装置IP地址：{{ machine.ip }}</p>
+                        </h4>
+                    </div> 
+                    <div class="panel-body">
+                        <ul class="nav nav-tabs nav-justified nav-pills" id="myTab" > 
+                           <li><a href="/privateequipment/privatesystem/net/{{ machine.id }}">网络配置</a></li>
+                           <li><a href="/privateequipment/privatesystem/vlan/{{ machine.id }}">配置VLAN</a></li>
+                           <li><a href="/privateequipment/privatesystem/mac/{{machine.id}}">配置MAC地址</a></li>
+                           <li><a href="/privateequipment/privatesystem/interation/{{machine.id}}">互备装置</a></li>
+                           <li><a href="/privateequipment/privatesystem/sundry/{{machine.id}}">杂项配置</a></li> 
+                           <li class="active"><a href="/privateequipment/privatesystem/log/{{ machine.id }}">日志服务器设置</a></li> 
+                           <li><a href="/privateequipment/privatesystem/safe/{{ machine.id }}">安全管理</a></li>    
+                        </ul>
+
+                        <div id="div-add-logserver" align="center">
+                            <form method="POST" action=""  enctype="multipart/form-data">
+                                <input type='hidden' name='nonce' value='{{ nonce }}'>
+                                <div class="panel-body">
+                                    <table class="table table-bordered" style="width:400px;">
+                                        <tr>
+                                            <td>IP&nbsp;&nbsp;&nbsp;地&nbsp;&nbsp;址：</td>
+                                            <td><input type="text" name="ip" id="rip" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>端&nbsp;&nbsp;&nbsp;口&nbsp;&nbsp;号：</td>
+                                            <td><input type="number" name="port" id="port" onkeyup="value=value.replace(/[^\d]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))" required min="0"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>方&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;向：</td>
+                                            <td><input type="radio" name="direction" value="0" required checked/> 外网&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <input type="radio" name="direction" value="1" required /> 内网&nbsp;&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td>线&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;路：</td>
+                                            <td><input type="radio" name="line" value="0" required checked onclick="changev()" /> 第1路&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <input type="radio" name="line" value="1" required onclick="changev()"/> 第2路</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:100%;">所属VLAN：</td>
+                                            <td>
+                                                <select name="vlanid" id="choosevlanid" class="form-control host-input" style="height:30px;">
+                                                	<option value="0">0</option>
+                                                    {% for vlan in vlans %}
+                                                    <option value="{{ vlan.vid}}" text="{{ vlan.vid}}">{{ vlan.vid }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <select name="vlanid2" id="choosevlanid2" style="display:none;height:30px;" class="form-control host-input">
+                                                	<option value="0">0</option>
+                                                    {% for vlan in vlan2s %}
+                                                    <option value="{{ vlan.vid}}" text="{{ vlan.vid}}">{{ vlan.vid }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div align="center">
+                                    <button id="btn-add-address" type="button" class="btn btn-primary">添加地址</button>
+                                </div>
+                            </form>
+                        </div>
+                        <br/>
+                        <div class="panel-footer scrollspy">
+                            <button id="btn-reget-info" type="button" class="btn btn-sm btn-primary" style="float:right;">重新获取</button>
+                            <br/><br/>
+                            <table class="table table-bordered" id="table1">
+                                <thead>
+                                    <tr>
+                                        <th>序号</th>
+                                        <th>IP</th>
+                                        <th>端口</th>
+                                        <th>方向</th>
+                                        <th>链路</th>
+                                        <th>所属VLAN</th>
+                                        <th>设置</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for server in servers %}
+                                    <tr style="overflow-x: auto;" onMouseOver="over()" onClick="change({{ loop.index }})" onMouseOut="out()">
+                                        <td>{{ loop.index }}
+                                        <input type="hidden" name="serverid" value="{{ loop.index }}"></td>
+                                        <td class="ip">{{ server.ipaddr }}</td>
+                                        <td class="port">{{ server.ports }}</td>
+                                        <td class="direction">{{ server.direction }}</td>
+                                        {% if server.lino == 0 %}
+                                        <td class="line">第1路</td>
+                                        {% elif server.lino == 1 %}
+                                        <td class="line">第2路</td>
+                                        {% endif %}
+                                        <td class="vlan">{{ server.vlan_id }}</td>
+                                        <td>
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+<script src="/static/js/bootstrap-scrollspy.js"></script>
+
+{% block scripts %}
+<script>
+//----------judgeoperationresult
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '1': alert('操作失败'); break;
+        case '2': alert('该隧道已存在'); break;
+        case '3': alert('签名验证失败'); break;
+        case "6": alert('解密出的明文数据不合法'); break;
+        case '7': alert('该项操作当前被禁止'); break;
+        case '8': alert('获取加密统计数据失败'); break;
+        case '10': alert('添加隧道安全策略时失败'); break;
+        case '11': alert('删除隧道安全策略时失败'); break;
+        case '12': alert('重置装置失败'); break;
+        case '13': alert('重置隧道失败'); break;
+        case '14': alert('获取日志文件长度失败'); break;
+        case '15': alert('读取日志文件失败'); break;
+        case '17': alert('操作冲突'); break; 
+        case '-2': alert('请求超时'); break;
+        case '-1': alert('返回数据包错误'); break;
+        case '-3': alert('输入信息有误'); break;
+        case '0': alert('操作成功'); break;                
+        default: alert('操作异常');
+    }
+}
+
+
+$('#btn-add-address').click(function(e){
+    var elem = $(this).parent().parent();
+    ip = elem.find('input[name=ip]').val()
+    port = elem.find('input[name=port]').val()
+    var obj1 = document.getElementsByName("direction");
+    for(var i=0; i<obj1.length; i ++){
+        if(obj1[i].checked){
+            var direction = obj1[i].value;
+        }
+    }
+    var obj2 = document.getElementsByName("line");
+    for(var i=0; i<obj2.length; i ++){
+        if(obj2[i].checked){
+            var line = obj2[i].value;
+        }
+    }
+    if(line == 0){
+        vlanid = document.getElementById('choosevlanid').options[document.getElementById('choosevlanid').selectedIndex].value
+    }else{
+        vlanid = document.getElementById('choosevlanid2').options[document.getElementById('choosevlanid2').selectedIndex].value
+    }
+    if (ip !="" && port != "" && vlanid !=""){
+        if(port >0 && port <65535){
+            $.post("/privateequipment/privatesystem/addlogserver/{{ machine.id }}",{
+            ip:elem.find('input[name=ip]').val(),
+            port:elem.find('input[name=port]').val(),
+            direction:direction,
+            line:line,
+            vlanid:vlanid,
+            'nonce':'{{ nonce }}',
+          },function(data){
+             if (data == "0")
+                 {
+                    location.reload()
+                }else{
+                    SwitchStatusCode(data)
+                }
+            })
+        }else{
+            alert("请输入正确端口号！范围为：0-65535");
+        }
+    }else{
+        alert("请输入完整信息！");
+    }
+})
+
+
+//--------------------reget
+$('#btn-reget-info').click(function(e){
+    $.post('/privateequipment/privatesystem/reget/{{ machine.id }}', {'nonce':'{{ nonce }}'}, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        }else{
+           SwitchStatusCode(data)
+        }
+    })
+});
+
+
+//------------------delete_logserver
+$('#div-btn-delete').click(function(e){
+    e.preventDefault();
+    $.post($('#div-delete form').attr('action'), $('#div-delete form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        }else{
+            SwitchStatusCode(data)
+        }
+    })
+});
+
+function load_confirm_modal(id){
+    var modal = $('#div-delete')
+    modal.find('input[name=id]').val(id)
+    modal.find('#delete-logservernumber').text(id)
+    $('#div-delete form').attr('action', '/privateequipment/privatesystem/delete/{{ machine.id }}/'+id);
+    $('#div-delete').modal("toggle");
+}
+
+$('.glyphicon-remove').click(function(){
+    var elem = $(this).parent().parent();
+    var id = elem.find('input[name=serverid]').val();
+    load_confirm_modal(id)
+})
+
+
+//-----------------------------changevlan
+function changev(){
+    var obj = document.getElementsByName("line");
+    for(var i=0; i<obj.length; i ++){
+        if(obj[i].checked){
+            var flag = obj[i].value;
+        }
+    }
+    if(flag == 0){
+        document.getElementById("choosevlanid").style.display="block";
+        document.getElementById("choosevlanid2").style.display="none";
+    }else{
+        document.getElementById("choosevlanid2").style.display="block";
+        document.getElementById("choosevlanid").style.display="none";
+    }
+}
+
+//-----------------------clicktable
+function findstrategynumber(id){
+    var tab=document.getElementById("table1");
+    ip = tab.rows[id].cells[1].innerHTML;
+    port = tab.rows[id].cells[2].innerHTML;
+    direction = tab.rows[id].cells[3].innerHTML;
+    line = tab.rows[id].cells[4].innerHTML;
+    vid = tab.rows[id].cells[5].innerHTML;
+    document.getElementById("rip").value=ip;
+    document.getElementById("port").value=port;
+
+    if (direction == "外网"){
+        var directionvalue = document.getElementsByName("direction");
+        for(i=0; i<directionvalue.length; i++){
+            if(directionvalue[i].value==0){
+                directionvalue[i].checked = "checked";
+            }
+        }
+    }else{
+        var directionvalue = document.getElementsByName("direction");
+        for(i=0; i<directionvalue.length; i++){
+            if(directionvalue[i].value==1){
+                directionvalue[i].checked = "checked";
+            }
+        }
+    }
+
+    if (line == "第1路"){
+        var linevalue = document.getElementsByName("line");
+        for(i=0; i<linevalue.length; i++){
+            if(linevalue[i].value==0){
+                linevalue[i].checked = "checked";
+                document.getElementById("choosevlanid").style.display="block";
+                document.getElementById("choosevlanid2").style.display="none";
+                var modal_form = $('#div-add-logserver form');
+                modal_form.find('select[name=vlanid]').find("option[text='"+vid+"']").prop("selected",true)
+            }
+        }
+    }else{
+        var linevalue = document.getElementsByName("line");
+        for(i=0; i<linevalue.length; i++){
+            if(linevalue[i].value==1){
+                linevalue[i].checked = "checked";
+                document.getElementById("choosevlanid2").style.display="block";
+                document.getElementById("choosevlanid").style.display="none";
+                var modal_form = $('#div-add-logserver form');
+                modal_form.find('select[name=vlanid2]').find("option[text='"+vid+"']").prop("selected",true)
+            }
+        }
+    }
+
+}
+
+
+ //鼠标点击选择行时候变色
+function change(change) {
+    var oObj = window.event.srcElement;
+    //alert(change.tagName.toLowerCase());
+    if(oObj.tagName.toLowerCase() == "td"){   
+        var oTr = oObj.parentNode;   
+        for(var i=1; i<document.all.table1.rows.length; i++)   {   
+            document.all.table1.rows[i].style.backgroundColor   =   "";   
+            document.all.table1.rows[i].tag = false;   
+        }
+        oTr.style.backgroundColor = "#bce7e9";   
+        oTr.tag = true;
+        findstrategynumber(change);   
+    }
+}
+
+//鼠标点击另外一行时关闭已选行变色
+function out() {
+    var oObj = event.srcElement;
+    if(oObj.tagName.toLowerCase() == "td"){
+        var oTr = oObj.parentNode;
+        if(!oTr.tag) oTr.style.backgroundColor = "";
+    }
+}
+
+//鼠标移动到选择行上时的行变色
+function over(){   
+    var oObj = event.srcElement;
+    if(oObj.tagName.toLowerCase() == "td"){   
+    var oTr = oObj.parentNode;
+    if(!oTr.tag) oTr.style.backgroundColor = "#E1E9FD";
+    }
+}
+
+
+</script>
+{% endblock %}
+ 

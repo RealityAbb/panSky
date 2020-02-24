@@ -1,0 +1,778 @@
+{% extends "base.html" %}
+{% block title %}
+密码机隧道操作
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+    #main-nav {
+    margin-left: 1px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #347ab6;
+        background: #fff;
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #fff;
+        background: #347ab6;
+        background: -webkit-linear-gradient(top, #347ab6 0%);
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li {
+        margin-bottom: 4px;
+    }
+    
+    .scrollspy {
+        height:530px;
+        overflow: auto;
+        position: relative;
+    }
+
+   .tScroll {
+   /*     min-height:101%;*/
+        min-width: 100%;
+    }
+</style>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <ul id="main-nav" class="nav nav-tabs nav-stacked" style="">
+                    <li class="active">
+                        <a href="/privateequipment/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-th-large"></i>
+                            密码机配置管理   
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatecertmanage/import/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-lock"></i>
+                            证书管理        
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatechannel/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-inbox"></i>
+                            隧道管理       
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatesystem/net/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-cog"></i>
+                            系统配置
+                        </a>
+                    </li>
+ 
+                    <li>
+                        <a href="/privateequipment/privatelog/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-file"></i>
+                            日志管理
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/equipment">
+                            <i class="glyphicon glyphicon-log-out"></i>
+                            返回
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-10">
+                <div class="modal fade" id="div-create-channel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">添加隧道</h4>
+                            </div>
+                            <form method="POST" action="/privateequipment/addchannel/{{ machine.id }}" enctype="multipart/form-data" >
+                                <input type='hidden' id='idaddc' value='{{ machine.id }}'>
+                                <input name='nonce' type='hidden' value="{{ nonce }}">
+                                <input type="hidden" name="lino" value="0">
+                                <div class="panel-body">
+                                    <div class="form-group" >
+                                        <input type="radio" name="relacert" value="1" onclick="selectcert.disabled=!this.checked?true:false;i1.disabled=!this.checked?true:true;mit.disabled=!this.checked?true:false;" checked/>已安装对机证书<br/>
+                                        <label class="control-label">证书</label>
+                                        <select class="form-control" name="certificateid" id="selectcert">
+                                        {% for certificate in certificates %}
+                                            <option value="{{ certificate.cert_name}}" text="{{ certificate.cert_name }}">{{ certificate.cert_name }}</option>
+                                        {% endfor %}
+                                        </select>
+                                        <select class="form-control" name="certificateid" style="display:none;">
+                                            <option value=""></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-gruop">
+                                        <input type="radio" name="relacert" value="2" onclick="i1.disabled=!this.checked?true:false;selectcert.disabled=!this.checked?true:true;xj.disabled=!this.checked?true:false;mit.disabled=!this.checked?true:true;mt.disabled=!this.checked?true:false;"/>未安装对机证书(输入对机IP)<br />
+                                        <input type="text" class="form-control host-input" name="ip" maxlength="15" required id="i1" disabled value="" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                                        <div style="display:none;">
+                                            <input type="text" name="ip" maxlength=3 size=3>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <div class="form-gruop">
+                                        <label class="control-label">隧道工作模式:</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="cworkmodel" value="0" id="mit"/>密通模式 
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="cworkmodel" value="1" id="xj"/> 选择性加密模式
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="cworkmodel" value="2" checked id="mt"/> 明通模式
+                                    </div>
+                                    <hr/>
+                                    <div class="form-group">
+                                        <input type="checkbox" name="usevlan" onclick="v.disabled=!this.checked?true:false"/>绑定VLAN
+                                        <select class="form-control" name="vlan" id="v" disabled>
+                                        {% for vlan in vlans %}
+                                        <option value="{{ vlan.id}}" text="{{ vlan.id }}">{{ vlan.vid }}</option>
+                                        {% endfor %}
+                                        </select>
+                                        <select class="form-control" name="vlan" style="display:none;">
+                                        <option value=""></option>
+                                        </select>
+                                    </div>
+                                    <hr/>
+                                    <div class="form-group">
+                                        <label class="control-label">隧道名称</label>
+                                       <!--  <input type="text" name="channelname" class="form-control host-input" placeholder="Name" id="channelname" maxlength="10" required> -->
+                                        <textarea name="channelname" id="commentText2" class="form-control host-input" style="height:35px;"></textarea>
+                                        <div id="dsa2"></div>
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button id="div-btn-add" type="submit" class="btn btn-primary">添加</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="div-edit-channel-name" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">修改隧道名称</h4>
+                            </div>
+                            <form method="POST" action="" enctype="multipart/form-data">
+                                <input type="hidden" name="choosechannelnumber">
+                                <input name='nonce' type='hidden' value="{{ nonce }}">
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label class="control-label">隧道名称</label>
+                                        <textarea name="newname" id="commentText" class="form-control host-input" style="height:35px;"></textarea>
+                                        <div id="dsa"></div> 
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button id="div-btn-edit-channelname" type="button" class="btn btn-primary">确定</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="div-set-channel-group" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">绑定隧道组</h4>
+                            </div>
+                            <form method="POST" action="" enctype="multipart/form-data">
+                                <input type="hidden" name="totalchoosenumber">
+                                <input name='nonce' type='hidden' value="{{ nonce }}">
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label class="control-label">请对下列隧道进行操作</label>
+                                        <input type="text" name="choosechannelnumber" class="form-control host-input" readonly>
+                                    </div>
+                                    <div class="panel-body">
+                                        <input type="radio" name="group" value="0"  onclick="t.disabled=!this.checked?true:true"/>随机产生组ID<br/>
+                                        <input type="radio" name="group" value="1" id="groupid"  onclick="t.disabled=!this.checked?true:false"/>设定组ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        组ID&nbsp;&nbsp;<input type="text" name="groupnumber" id="t" disabled required="true" onkeyup="this.value=this.value.replace(/\D/g,'')"  onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                                        <input type="hidden" name="groupnumber"><br/>
+                                        <input type="radio" name="group" value="2" onclick="t.disabled=!this.checked?true:true">取消组设定
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button id="div-btn-set-channelgroup" type="button" class="btn btn-primary">确定</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                        隧道管理
+                        <p style="float:right;">装置名称：{{ machine.machinenumber }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;装置IP地址：{{ machine.ip }}</p>
+                        </h4>
+                    </div> 
+                    <div class="panel-body">
+                        <p>
+                            <input type="radio" name="croad" value="1" checked/>第1路&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            {% if line == True %}
+                            <input type="radio" name="croad" value="2" onclick="to_change()" />第2路&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            {% else %}
+                             <input type="radio" name="croad" value="2" disabled/>第2路&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            {% endif %}
+                            主主模式：
+                            {% if mainmode %}
+                            <input type="checkbox" name="usemainmode" onclick="setmainmode()" checked/>启用
+                            {% else %}
+                            <input type="checkbox" name="usemainmode" onclick="setmainmode()"/>启用
+                            {% endif %}
+                        </p>
+                        <div class="panel panel-primary"> 
+                            <div class="panel-heading">
+                                <h3 class="panel-title">已有隧道（共 {{ channel_total }} 条）</h3>
+                            </div>
+                            <div class="panel-body ">
+                                <form id="query_channel" method="POST">
+                                    <input type="hidden" name="choosechannelnumber" id="inputdata">
+                                    <button type="button" class="btn btn-sm btn-primary" id="btn-find-channel" >查找隧道</button>&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-sm btn-primary btn-create-channel" >添加隧道</button>&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-sm btn-warning" id="btn-reset-channel">重置隧道</button>&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-sm btn-warning" id="btn-delete-channel">删除隧道</button>&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-sm btn-warning btn-editname-channel" >修改隧道名称</button>&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-sm btn-warning" id="btn-probe-channel">发送探测请求</button>&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-sm btn-success" id="btn-bind-channel">绑定隧道</button>&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-sm btn-success" id="btn-unbind-channel" >解绑隧道</button>&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-sm btn-success btn-bind-channel-group" >绑定隧道组</button>
+                                </form><br/>
+                                <div class="scrollspy">
+                                    <table class="table table-bordered table-responsive tScroll">
+                                        <thead>
+                                            <tr>
+                                                <th><input onclick="selectAll();" type="checkbox" name="controlAll" style="controlAll" id="controlAll"/></th>
+                                                <th>对端IP</th>
+                                                <th>隧道ID</th>
+                                                <th>从隧道ID</th>
+                                                <th>工作模式</th>
+                                                <th>VLAN ID</th>
+                                                <th>名称</th>
+                                                <th>组ID</th>
+                                                <th>链路</th>
+                                                <th>策略管理</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                           {% for channel in channels %}
+                                            <tr style="overflow-x: auto;" onClick="change({{channel.channelnumber}})">
+                                                <td style="display:none;">{{ loop.index }}
+                                                <input type="hidden" name="machineid" value="{{ channel.id }}"></td>
+                                                <td>
+                                                <input type="checkbox" name="schannelnumber" class="checkboxes" value="{{channel.channelnumber}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#d8f3f3'}else{this.parentNode.parentNode.style.background=''}"></td>
+                                                <td class="peerip">{{ channel.peer_addr }}</td>
+                                                <td class="channelnumber">{{ channel.channelnumber }}</td>
+                                                <td class="bandchannelnumber">{{ channel.channelnumber_band }}</td>
+                                                <td>{{ channel.work_model }}
+                                                <td>{{ channel.vlan_id }}</td>
+                                                <td>{{ channel.channelname }}</td>
+                                                <td>{{ channel.teamid }}</td>
+                                                {% if channel.lino == 0 %}
+                                                <td>第1路</td>
+                                                {% elif channel.lino == 1 %}
+                                                <td>第2路</td>
+                                                {% else %}
+                                                <td>未知</td>
+                                                {% endif %}
+                                                <td>
+                                                    {% if channel.channelnumber != None %}
+                                                    <a href='/privateequipment/privatestrategy/{{ machine.id }}/{{channel.channelnumber}}'>Go</a>
+                                                    {% else %}
+                                                    <span>Go</span>
+                                                    {% endif %}
+                                                 </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>    
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="/static/js/bootstrap-scrollspy.js"></script>
+<script>
+//----------to_change()
+function to_change(){
+    window.location.href='/privateequipment/privatechannel2/{{ machine.id }}';
+}
+
+
+//----------judgeoperationresult
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '1': alert('操作失败'); break;
+        case '2': alert('该隧道已存在'); break;
+        case '3': alert('签名验证失败'); break;
+        case "6": alert('解密出的明文数据不合法'); break;
+        case '7': alert('该项操作当前被禁止'); break;
+        case '8': alert('获取加密统计数据失败'); break;
+        case '10': alert('添加隧道安全策略时失败'); break;
+        case '11': alert('删除隧道安全策略时失败'); break;
+        case '12': alert('重置装置失败'); break;
+        case '13': alert('重置隧道失败'); break;
+        case '14': alert('获取日志文件长度失败'); break;
+        case '15': alert('读取日志文件失败'); break;
+        case '17': alert('操作冲突'); break; 
+        case '-2': alert('请求超时'); break;
+        case '-1': alert('返回数据包错误'); break;
+        case '-3': alert('输入信息有误'); break;
+        case '-4': alert('隧道已经被绑定，请正确选择隧道');break;
+        case '-5': alert('所选隧道不存在绑定关系，请正确选择隧道');break;
+        case '-6': alert('输入IP不合法'); break;
+        case '-7': alert('该证书的隧道已存在，请重新选择证书！');break;
+        case '-8': alert('证书不能为空，请选择有效证书！');break;
+        case '0': alert('操作成功'); break;                
+        default: alert('操作异常');
+    }
+}
+
+function getchannelnumber() {
+    var obj = document.getElementsByName("schannelnumber");
+    for(var i=0; i<obj.length; i ++){
+        if(obj[i].checked){
+            $('#inputdata').val(obj[i].value);
+        }
+    }   
+}
+
+//------------------limitname
+function lengthLimit(elem, showElem, max){ 
+    var elem = document.getElementById(elem); 
+    var showElem = document.getElementById(showElem); 
+    var max = max || 50;
+    function getTextLength(str){
+        return str.replace(/[^\x00-\xff]/g,"xx").length; 
+    }; 
+    if(/msie (\d+\.\d)/i.test(navigator.userAgent) == true) {
+        elem.onpropertychange = textChange; 
+    }else{ 
+        elem.addEventListener("input", textChange, false); 
+    } 
+    function textChange(){
+    var text = elem.value; 
+    var count = getTextLength(text); 
+    if(count > max){
+        for(var i=0; i<text.length; i++){ 
+            if(getTextLength(text.substr(0, i)) >= max){ 
+                elem.value = text.substr(0, i); 
+                break; 
+                }; 
+            } 
+        }
+    }; 
+    textChange();// 加载时先初始化 
+}; 
+
+lengthLimit("commentText", "dsa", 20); 
+lengthLimit("commentText2", "dsa2", 20); 
+
+//-------------------checkall
+function selectAll(){
+    var checklist = document.getElementsByName ("schannelnumber");
+    if(document.getElementById("controlAll").checked)
+    {
+        for(var i=0;i<checklist.length;i++)
+        {
+            checklist[i].checked = 1;
+            checklist[i].parentNode.parentNode.style.background='#e5f5f5';
+        } 
+    }else{
+        for(var j=0;j<checklist.length;j++)
+        {
+            checklist[j].checked = 0;
+            checklist[j].parentNode.parentNode.style.background='';
+        }
+    }
+}
+
+$('.checkboxes').click(function (e){
+    var elem = $(this).parent().parent();
+    if(this.checked == false){
+        $("#controlAll").removeAttr("checked");
+    }
+})
+
+function change(change) {
+    var oObj = window.event.srcElement;
+    //alert(change.tagName.toLowerCase());
+    if(oObj.tagName.toLowerCase() == "td"){   
+        var oTr = oObj.parentNode;
+        if(oTr.style.backgroundColor == ''){
+           oTr.style.backgroundColor = '#e5f5f5';   
+           oTr.tag = true;
+           var tr = event.srcElement.parentElement; 
+           tr.cells[1].children[0].checked=true;   
+        }else{
+           oTr.style.backgroundColor = '';   
+           oTr.tag = true;
+           var tr = event.srcElement.parentElement; 
+           tr.cells[1].children[0].checked=false;   
+        }   
+          
+    }
+}
+
+//---------------add_channel
+$('.btn-create-channel').click(function (e) {
+    $('#div-create-channel').modal("toggle")
+});
+
+$('#div-btn-add').click(function(e){
+    e.preventDefault();
+    $.post($('#div-create-channel form').attr('action'), $('#div-create-channel form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data != "0"){
+            SwitchStatusCode(data)
+            // $('#div-create-channel').modal("hide")
+        }else{
+            alert("添加成功！");
+            location.reload()
+        }
+    })
+});
+
+//---------------find_channel
+$('#btn-find-channel').click(function(){
+    $.post('/privateequipment/findchannel/{{ machine.id }}', {'nonce':'{{ nonce }}' }, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        }else{
+            SwitchStatusCode(data)
+        }
+    })
+})
+
+//---------------reset_channel
+$('#btn-reset-channel').click(function(e){
+  var obj=document.getElementsByName('schannelnumber');  
+  var s='';
+  var j=0;
+  for(var i=0; i<obj.length; i++){
+    if(obj[i].checked) {
+        s+=obj[i].value; 
+        j++;
+        }
+    }
+    if (j != ""){
+        if (j>1){
+            alert("选择的隧道不能超过1个！");
+        }
+        if (j == 1){
+            $.post('/privateequipment/resetchannel/{{machine.id}}', {
+                choosechannelnumber:s,
+                'nonce':'{{ nonce }}', 
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    alert('重置隧道成功！');
+                    //location.reload()
+                }else{
+                    SwitchStatusCode(data)
+                }
+            })
+        }
+    }else{
+         alert("请先选择1条要重置的隧道!");
+    }
+});
+
+
+//--------------delete_channel
+$('#btn-delete-channel').click(function(e){
+  var obj=document.getElementsByName('schannelnumber');  
+  var s='';
+  var j=0;
+  for(var i=0; i<obj.length; i++){
+    if(obj[i].checked) {
+        s+=obj[i].value+','; 
+        j++;
+        }
+    }
+    if (j != ""){
+        if(confirm("确定要删除隧道吗？")){
+            $.post('/privateequipment/deletechannel/{{machine.id}}', {
+                choosechannelnumber:s,
+                'nonce':'{{ nonce }}', 
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    location.reload()
+                }else{
+                    SwitchStatusCode(data)
+                }
+            })
+        }
+    }else{
+         alert("请先选择要删除的隧道!");
+    }
+});
+
+
+
+//--------------probe_channel
+$('#btn-probe-channel').click(function(e){
+  var obj=document.getElementsByName('schannelnumber');  
+  var s='';
+  var j=0;
+  for(var i=0; i<obj.length; i++){
+    if(obj[i].checked) {
+        s+=obj[i].value; 
+        j++;
+        }
+    }
+    if (j != ""){
+        if (j>1){
+            alert("选择的隧道不能超过1个！");
+        }
+        if (j == 1){
+            $.post('/privateequipment/probechannel/{{machine.id}}', {
+                choosechannelnumber:s,
+                'nonce':'{{ nonce }}', 
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    alert("请求成功")
+                    //location.reload()
+                }else{
+                    SwitchStatusCode(data)
+                }
+            })
+        }
+    }else{
+         alert("请先选择1条探测的隧道!");
+    }
+});
+
+
+//----------------edit_channel_name
+$('.btn-editname-channel').click(function () {
+  var obj=document.getElementsByName('schannelnumber');  
+  var channelnumber='';
+  var j=0;
+  for(var i=0; i<obj.length; i++){
+    if(obj[i].checked) {
+        channelnumber+=obj[i].value; 
+        j++;
+        }
+    }
+    if (j != ""){
+        if (j>1){
+            alert("选择的隧道不能超过1个！");
+        }else{
+            load_edit_modal(channelnumber);
+        }
+    }else{
+         alert("请先选择1条要设置的隧道!");
+    }
+
+})
+
+
+function load_edit_modal(channelnumber){
+    var modal_form = $('#div-edit-channel-name form');
+    
+    modal_form.find('input[name=choosechannelnumber]').val(channelnumber)
+
+    $('#div-edit-channel-name form').attr('action','/privateequipment/editchannelname/{{machine.id}}')
+    $('#div-edit-channel-name').modal('toggle');
+}
+
+
+$('#div-btn-edit-channelname').click(function(e){
+    e.preventDefault();
+    $.post($('#div-edit-channel-name form').attr('action'), $('#div-edit-channel-name form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data != "0"){
+             SwitchStatusCode(data)
+            $('#div-edit-channel-name').modal("hide")
+        }else{
+             location.reload()
+        }
+    })
+});
+
+//-----------setmainmode()
+function setmainmode(){
+    var checked=false; 
+    var ids= document.getElementsByName("usemainmode"); 
+    for(var i=0;i<ids.length;i++){ 
+        if(ids[i].checked){ 
+            checked=true; 
+        } 
+    } 
+    if(!checked){
+        if(confirm("确定要关闭主主模式吗？")){
+                $.post('/privateequipment/setmainmode/{{machine.id}}', {
+                whether:"0",
+                'nonce':'{{ nonce }}', 
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    location.reload()
+                }else{
+                    SwitchStatusCode(data)
+                    $("input[name='usemainmode']").prop('checked',true);
+                }
+            })
+        }else{
+            $("input[name='usemainmode']").prop('checked',true);
+        } 
+    } 
+    if (checked){
+         if(confirm("确定要启用主主模式吗？")){
+                $.post('/privateequipment/setmainmode/{{machine.id}}', {
+                whether:"1",
+                'nonce':'{{ nonce }}', 
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    location.reload()
+                }else{
+                    SwitchStatusCode(data)
+                    $("input[name='usemainmode']").removeAttr("checked");
+                }
+            })
+            }else{
+                $("input[name='usemainmode']").removeAttr("checked");
+            }        
+    } 
+}  
+
+//--------------------two_channel_bind
+$('#btn-bind-channel').click(function(e){
+  var obj=document.getElementsByName('schannelnumber');  
+  var s='';
+  var j=0;
+  for(var i=0; i<obj.length; i++){
+    if(obj[i].checked) {
+        s+=obj[i].value+','; 
+        j++;
+        }
+    }
+    if (j>2){
+        alert("选择的隧道不能超过2个！");
+    }
+    if (j == 2){
+        $.post('/privateequipment/bindchannel/{{machine.id}}', {
+            choosechannelnumber:s,
+            'nonce':'{{ nonce }}', 
+        }, function(data){
+           var data = $.parseJSON(JSON.stringify(data))
+           if (data == "0"){
+                location.reload()
+           }else{
+               SwitchStatusCode(data)
+                }
+            })
+        }
+    if (j<2){
+        alert("请先选择2条要绑定的隧道!");
+    }
+});
+
+
+//-------------------two_channel_unbinding
+$('#btn-unbind-channel').click(function(e){
+  var obj=document.getElementsByName('schannelnumber');  
+  var s='';
+  var j=0;
+  for(var i=0; i<obj.length; i++){
+    if(obj[i].checked) {
+        s+=obj[i].value+','; 
+        j++;
+        }
+    }
+    if (j>2){
+        alert("选择的隧道不能超过2个！");
+    }
+    if (j == 2){
+        $.post('/privateequipment/unbindchannel/{{machine.id}}', {
+            choosechannelnumber:s,
+            'nonce':'{{ nonce }}', 
+        }, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                location.reload()
+            }else{
+                if(data == "-4"){
+                    alert("这两条不是绑定的隧道，请重新选择！");
+                }else{
+                    SwitchStatusCode(data)
+                }
+            }
+        })
+    }
+    if (j<2){
+        alert("请先选择2条要解绑的隧道!");
+    }
+});
+
+//-------------set_channel_group
+$('.btn-bind-channel-group').click(function () {
+  var obj=document.getElementsByName('schannelnumber');  
+  var channelnumber='';
+  var j=0;
+  for(var i=0; i<obj.length; i++){
+    if(obj[i].checked) {
+        channelnumber+=obj[i].value+','; 
+        j++;
+        }
+    }
+    if (j == ""){
+         alert("请先选择要设置的隧道!");
+    }else{
+        load_set_modal(j,channelnumber);
+    }
+})
+
+
+function load_set_modal(j,channelnumber){
+    var modal_form = $('#div-set-channel-group form');
+    
+    modal_form.find('input[name=totalchoosenumber]').val(j)
+    modal_form.find('input[name=choosechannelnumber]').val(channelnumber)
+
+    $('#div-set-channel-group form').attr('action','/privateequipment/setchannelgroup/{{machine.id}}')
+    $('#div-set-channel-group').modal('toggle');
+}
+
+
+$('#div-btn-set-channelgroup').click(function(e){
+    e.preventDefault();
+    $.post($('#div-set-channel-group form').attr('action'), $('#div-set-channel-group form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data != "0"){
+             SwitchStatusCode(data)
+            $('#div-set-channel-group').modal("hide")
+        }else{
+             location.reload()
+        }
+    })
+});
+
+</script>
+{% endblock %}

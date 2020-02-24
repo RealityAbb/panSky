@@ -1,0 +1,629 @@
+{% extends "base.html" %}
+{% import "macrosid.html" as macrosid %}
+{% block title %}
+密码机隧道管理
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+    #main-nav {
+    margin-left: 1px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #347ab6;
+        background: #fff;
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #fff;
+        background: #347ab6;
+        background: -webkit-linear-gradient(top, #347ab6 0%);
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li {
+        margin-bottom: 4px;
+    }
+
+    .scrollspy{
+        height:530px;
+        overflow: auto;
+        position: relative;
+    }
+    .tScroll {
+   /*     min-height:101%;*/
+        min-width: 100%;
+    } 
+</style>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <ul id="main-nav" class="nav nav-tabs nav-stacked" style="">
+                     <li class="active">
+                        <a href="/commonequipment/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-th-large"></i>
+                            密码机配置管理   
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/commonequipment/stancertmanage/{{ machine.id }}" >
+                            <i class="glyphicon glyphicon-lock"></i>
+                            证书管理        
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/commonequipment/stanchannel/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-inbox"></i>
+                            隧道管理     
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/commonequipment/stanlog/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-file"></i>
+                            日志管理
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/equipment">
+                            <i class="glyphicon glyphicon-log-out"></i>
+                            返回
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-10">
+
+             <div class="modal fade" id="div-create-channel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="exampleModalLabel">添加隧道</h4>
+                        </div>
+                        <form method="POST" action="/commonequipment/addchannel/{{ machine.id }}" enctype="multipart/form-data" >
+                            <input type='hidden' id='idaddc' value='{{ machine.id }}'>
+                            <input name='nonce' type='hidden' value="{{ nonce }}">
+                            <div class="panel-body">
+                                <div class="form-group" >
+                                    对&nbsp;&nbsp;&nbsp;端&nbsp;&nbsp;&nbsp;&nbsp;IP&nbsp;&nbsp;&nbsp;&nbsp;地&nbsp;&nbsp;&nbsp;址：
+                                    <select class="form-control" name="oip" id="selectcert">
+                                    {% for cert in certs %}
+                                       <option value="{{ cert.certname}}">{{ cert.certname }}</option>
+                                    {% endfor %}
+                                    </select>
+<!--                                     <select class="form-control" name="oip" style="display:none;">
+    <option value=""></option>
+</select>  -->
+                                </div>
+                                <div class="form-group" >
+                                    对端互备装置IP地址：
+                                    <input class="form-control" type="text" name="eip" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')" maxlength="15">
+                                </div>  
+                                <div class="form-group" >
+                                    隧&nbsp;&nbsp;道&nbsp;&nbsp;工&nbsp;&nbsp;作&nbsp;&nbsp;模&nbsp;&nbsp;式：&nbsp;
+                                    <input type="radio" name="cworkmodel" value="0" checked/>密通模式 
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="cworkmodel" value="1" /> 选择性加密模式
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="cworkmodel" value="2" /> 明通模式
+                                </div>
+                            </div>
+                            <div class="panel-footer">
+                                <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button id="div-btn-add" type="submit" class="btn btn-primary">添加</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="div-set-channel-workmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="exampleModalLabel">设置隧道工作模式</h4>
+                        </div>
+                        <form method="POST" action="" enctype="multipart/form-data">
+                            <input type="hidden" name="choosechannelnumber">
+                            <input name='nonce' type='hidden' value="{{ nonce }}">
+                            <div class="panel-body">
+                                <p>
+                                    隧道工作模式：
+                                    <input type="radio" name="cworkmodel" value="0" checked="true" />密通模式 
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="cworkmodel" value="1" /> 选择性加密模式
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="cworkmodel" value="2" /> 明通模式
+                                </p>
+                            </div>
+                            <div class="panel-footer">
+                                <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button id="div-btn-set-workmodel" type="button" class="btn btn-primary">确定</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="div-query-channel-status" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="exampleModalLabel">隧道状态</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="panel-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                           <th>参数</th>
+                                           <th>状态</th>
+                                       </tr>
+                                    </thead>
+                                        <tr>
+                                            <td>本隧道对端装置IP地址</td>
+                                            <td id="show-uip"></td>
+                                        </tr>
+                                        <tr >
+                                            <td>模式</td>
+                                            <td id="show-mode"></td>
+                                        </tr >
+                                        <tr>
+                                            <td>主从状态</td>
+                                            <td id="show-mainsub"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>已定义安全策略数目</td>
+                                            <td id="show-strategy"></td>
+                                        </tr>
+                                        <tr >
+                                            <td>隧道会话密钥协商状态</td>
+                                            <td id="show-negostatus"></td>
+                                        </tr>
+                                        <tr >
+                                            <td>上次协商成功时间</td>
+                                            <td id="show-successtime"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>已加密数据包数</td>
+                                            <td id="show-encrypt"></td>
+                                        </tr>
+                                        <tr >
+                                            <td>已解密数据包数</td>
+                                            <td id="show-decrypt"></td>
+                                        </tr>
+                                        <tr >
+                                            <td>加密发生错误总数</td>
+                                            <td id="show-errorencrypt"></td>
+                                        </tr>
+                                        <tr >
+                                            <td>解密发生错误总数</td>
+                                            <td id="show-errordecrypt"></td>
+                                        </tr>
+                                        <tr >
+                                            <td>已发送协商数据包总数</td>
+                                            <td id="show-send"></td>
+                                        </tr>
+                                        <tr >
+                                            <td>已接收正确协商数据包总数</td>
+                                            <td id="show-receive"></td>
+                                        </tr>
+                                        <tr >
+                                            <td>接收错误协商数据包总数</td>
+                                            <td id="show-errorreceive"></td>
+                                        </tr>  
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                    隧道管理
+                    </h4>
+                </div> 
+                <div class="panel-body">
+                    <p align="center"> 
+                        装置名称：<strong>{{ machine.machinenumber }}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        装置IP地址：<strong>{{ machine.ip }}</strong>
+                    </p>
+                    <div class="panel panel-primary"> 
+                        <div class="panel-heading">
+                            <h3 class="panel-title">隧道信息（共 {{ channel_total }} 条）</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form id="query_channel" method="POST">
+                                <input name='nonce' type='hidden' value="{{ nonce }}">
+                                <input type='hidden' id='idsuidao' value='{{ machine.id }}'>
+                                <input type="hidden" name="choosechannelnumber" id="inputdata">
+                                <button type="button" id="div-btn-channel" class="btn btn-sm btn-primary" style="float:left;" >查询已设置隧道</button>&nbsp;&nbsp;
+                                <button type="button" class="btn btn-sm btn-primary btn-create-channel" >添加隧道</button>
+                                <div class="button-bar" style="float:right;">
+                                    <button type="button" class="btn btn-sm btn-warning" id="btn-query-channel">查询状态</button>
+                                    <button type="button" class="btn btn-sm btn-warning btn-setmode-channel">设置模式</button>
+                                    <button type="button" class="btn btn-sm btn-warning" id="btn-reset-channel">重置隧道</button>
+                                    <button type="button" class="btn btn-sm btn-warning" id="btn-delete-channel">删除隧道</button>
+                                </div> 
+                            </form>
+                            <br/>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="scrollspy">
+                                        <table class="table table-bordered table-responsive tScroll" id="table1">
+                                            <thead>
+                                                <tr>
+                                                   <th>隧道号</th>
+                                                   <th>对端装置IP地址</th>
+                                                   <th>工作模式</th>
+                                                   <th>已定义策略数目</th>
+                                                   <th>会话密钥协商状态</th>
+                                                   <th>查看详情</th>
+                                                   <th>策略管理</th>
+                                               </tr>
+                                            </thead>    
+                                            <tbody>
+                                                {% for channel in channel %}
+                                                <tr style="overflow-x: auto;" onMouseOver="over()" onClick="change({{ loop.index }})" onMouseOut="out()">
+                                                    <td class="channelnumber">{{ channel.channelnumber }}</td>
+                                                    {% if channel.uip == None %}
+                                                    <td>未知</td>
+                                                    {% else %}
+                                                    <td class="uip">{{ channel.uip }}</td>
+                                                    {% endif %}
+                                                    {% if channel.mode == 0 %}
+                                                    <td>密通模式</td>
+                                                    {% elif channel.mode == 1 %}
+                                                    <td>选择性加密模式</td>
+                                                    {% elif channel.mode == 2 %}
+                                                    <td>明通模式</td>
+                                                    {% else %}
+                                                    <td>未知模式</td>
+                                                    {% endif %}
+                                                    {% if channel.strategy == None %}
+                                                    <td>未知</td>
+                                                    {% else %}
+                                                    <td>{{ channel.strategy }}</td>
+                                                    {% endif %}
+                                                    {% if channel.negostatus == 0 %}
+                                                    <td>初始</td>
+                                                    {% elif channel.negostatus == 1 %}
+                                                    <td>请求与发送</td>
+                                                    {% elif channel.negostatus == 2 %}
+                                                    <td>响应与发送</td>
+                                                    {% elif channel.negostatus == 3 %}
+                                                    <td>打开</td>
+                                                    {% else %}
+                                                    <td>未知</td>
+                                                    {% endif %}
+                                                    <td >
+                                                        {% if channel.mode != None %}
+                                                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                                        {% else %}
+                                                        <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if channel.channelnumber != None %}
+                                                       
+                                                        <!-- <a href="{{ url_for(".standard_stragtegy", page=pagination.page, machineid=machine.id,channelid=channel.channelnumber)}}">Go</a> -->
+                                                        <a href='/commonequipment/stanstrategy/{{ machine.id }}/{{channel.channelnumber}}'>Go</a>
+                                                        {% else %}
+                                                        <span>Go</span>
+                                                        {% endif %}
+                                                     </td>
+                                                     <td style="display:none;" class="mode">{{ channel.mode }}</td>
+                                                     <td style="display:none;" class="mainsub">{{ channel.mainsub }}</td>
+                                                     <td style="display:none;" class="strategy">{{ channel.strategy }}</td>
+                                                     <td style="display:none;" class="negostatus">{{ channel.negostatus }}</td>
+                                                     <td style="display:none;" class="successtime">{{ channel.successtime }}</td>
+                                                     <td style="display:none;" class="encrypt">{{ channel.encrypt }}</td>
+                                                     <td style="display:none;" class="decrypt">{{ channel.decrypt }}</td>
+                                                     <td style="display:none;" class="errorencrypt">{{ channel.errorencrypt }}</td>
+                                                     <td style="display:none;" class="errordecrypt">{{ channel.errordecrypt }}</td>
+                                                     <td style="display:none;" class="send">{{ channel.send }}</td>
+                                                     <td style="display:none;" class="receive">{{ channel.receive }}</td>
+                                                     <td style="display:none;" class="errorreceive">{{ channel.errorreceive }}</td>
+                                                </tr>
+                                                {% endfor %}                                          
+                                            </tbody>
+
+
+                                        </table>
+                                            {% if pagination %}
+                                                <div calss="pagination" align="center">
+                                                    {{ macrosid.pagination_widget(pagination, '.standard_pagination_channel',machine.id) }}
+                                                </div>
+                                            {% endif %}                                            
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/bootstrap-scrollspy.js"></script>
+<script>
+//----------judgeoperationresult
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '1': alert('不存在该隧道'); break;
+        case '2': alert('该隧道证书不存在，请先导入证书！'); break;
+        case '3': alert('签名验证失败'); break;
+        case "6": alert('解密出的明文数据不合法'); break;
+        case '7': alert('该项操作当前被禁止'); break;
+        case '8': alert('获取加密统计数据失败'); break;
+        case '10': alert('添加隧道安全策略时失败'); break;
+        case '11': alert('删除隧道安全策略时失败'); break;
+        case '12': alert('重置装置失败'); break;
+        case '13': alert('重置隧道失败'); break;
+        case '14': alert('获取日志文件长度失败'); break;
+        case '15': alert('读取日志文件失败'); break;
+        case '17': alert('操作冲突'); break; 
+        case '-2': alert('请求超时'); break;
+        case '-1': alert('返回数据包错误'); break;
+        case '-3': alert('输入信息有误'); break;
+        case '-4': alert('对端IP不能为空，请先上传对端证书！'); break;
+        case '0': alert('操作成功'); break;                
+        default: alert('操作异常');
+    }
+}
+
+function findstrategynumber(id){
+    var tab=document.getElementById("table1");
+    choosechannelnumber = tab.rows[id].cells[0].innerHTML;
+    $('#inputdata').val(choosechannelnumber);
+}
+
+ //鼠标点击选择行时候变色
+function change(change) {
+    var oObj = window.event.srcElement;
+    //alert(change.tagName.toLowerCase());
+    if(oObj.tagName.toLowerCase() == "td"){   
+        var oTr = oObj.parentNode;   
+        for(var i=1; i<document.all.table1.rows.length; i++)   {   
+            document.all.table1.rows[i].style.backgroundColor   =   "";   
+            document.all.table1.rows[i].tag = false;   
+        }
+        oTr.style.backgroundColor = "#CCCCFF";   
+        oTr.tag = true;
+        findstrategynumber(change);   
+    }
+}
+
+//鼠标点击另外一行时关闭已选行变色
+function out() {
+    var oObj = event.srcElement;
+    if(oObj.tagName.toLowerCase() == "td"){
+        var oTr = oObj.parentNode;
+        if(!oTr.tag) oTr.style.backgroundColor = "";
+    }
+}
+
+//鼠标移动到选择行上时的行变色
+function over(){   
+    var oObj = event.srcElement;
+    if(oObj.tagName.toLowerCase() == "td"){   
+    var oTr = oObj.parentNode;
+    if(!oTr.tag) oTr.style.backgroundColor = "#E1E9FD";
+    }
+}
+
+
+//---------------query_channel
+$('#div-btn-channel').click(function(){
+    $.post('/commonequipment/querychannel/'+$('#idsuidao').val(), {'nonce':'{{ nonce }}' }, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        }else{
+                SwitchStatusCode(data)
+        }
+    })
+})
+
+//---------------add_channel
+$('.btn-create-channel').click(function (e) {
+    $('#div-create-channel').modal("toggle")
+});
+
+$('#div-btn-add').click(function(e){
+    e.preventDefault();
+    $.post($('#div-create-channel form').attr('action'), $('#div-create-channel form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data != "0"){
+            SwitchStatusCode(data)
+        }else{
+            alert("添加成功！");
+            location.reload()
+        }
+    })
+});
+
+//---------------query_channel_status
+$('#btn-query-channel').click(function(e){
+    var choosechannelnumber = document.getElementById('inputdata').value
+    if (choosechannelnumber != ""){
+            $.post('/commonequipment/querychannelstatus/'+$('#idsuidao').val(), {'nonce':'{{ nonce }}' ,
+            'choosechannelnumber':choosechannelnumber,
+        }, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                location.reload()
+            }else{
+               SwitchStatusCode(data);
+            }
+        })
+    }else{
+        alert("请先选择要查询的隧道！");
+    }
+});
+
+//----------------set_channel_workmodel
+$('.btn-setmode-channel').click(function () {
+    var choosechannelnumber = document.getElementById('inputdata').value
+    if (choosechannelnumber != ""){
+        load_set_modal(choosechannelnumber);
+    }else{
+        alert("请先选择要设置的隧道！");
+    }
+})
+
+
+function load_set_modal(choosechannelnumber){
+    var modal_form = $('#div-set-channel-workmodel form');
+    
+    modal_form.find('input[name=choosechannelnumber]').val(choosechannelnumber)
+
+    $('#div-set-channel-workmodel form').attr('action','/commonequipment/setchannelworkmodel/{{machine.id}}')
+    $('#div-set-channel-workmodel').modal('toggle');
+}
+
+
+$('#div-btn-set-workmodel').click(function(e){
+    e.preventDefault();
+    $.post($('#div-set-channel-workmodel form').attr('action'), $('#div-set-channel-workmodel form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data != "0"){
+               SwitchStatusCode(data);
+            $('#div-set-channel-workmodel').modal("hide")
+        }else{
+             $('#div-set-channel-workmodel').modal("hide")
+             alert("设置成功！");
+             location.reload()
+        }
+    })
+});
+
+//---------------------------------eye
+$('.glyphicon-eye-open').click(function(){
+    var elem = $(this).parent().parent();
+
+    var uip = elem.find('.uip').text().trim();
+    var mode = elem.find('.mode').text().trim();
+    if (mode == 0 ){
+        modeshow = "密通模式"
+    }else if(mode == 1){
+        modeshow = "选择性加密模式"
+    }else if(mode == 2){
+        modeshow = "明通模式"
+    }else{
+        modeshow = "未知"
+    }
+    var mainsub = elem.find('.mainsub').text().trim();
+    if (mainsub == 0){
+        mainsubshow = "本地主装置-对端主装置"
+    }else if (mainsub == 1){
+        mainsubshow = "本地主装置-对端从装置"
+    }else if (mainsub == 2){
+        mainsubshow = "本地从装置-对端主装置"
+    }else if (mainsub == 3){
+        mainsubshow = "本地从装置-对端从装置"
+    }else{
+        mainsubshow = "未知"
+    }
+    var strategy = elem.find('.strategy').text().trim();
+    var negostatus = elem.find('.negostatus').text().trim();
+    if (negostatus == 0){
+        negostatusshow = "初始"
+    }else if(negostatus == 1){
+        negostatusshow = "请求与发送"
+    }else if(negostatus == 2){
+        negostatusshow = "响应与发送"
+    }else if(negostatus == 3){
+        negostatusshow = "打开"
+    }else{
+        negostatusshow = "未知"
+    }
+    var successtime = elem.find('.successtime').text().trim();
+    var encrypt = elem.find('.encrypt').text().trim();
+    var decrypt = elem.find('.decrypt').text().trim();
+    var errorencrypt = elem.find('.errorencrypt').text().trim();
+    var errordecrypt = elem.find('.errordecrypt').text().trim();
+    var send = elem.find('.send').text().trim();
+    var receive = elem.find('.receive').text().trim();
+    var errorreceive = elem.find('.errorreceive').text().trim();
+ 
+    load_edit_modal(uip, modeshow, mainsubshow, strategy, negostatusshow, successtime, encrypt, decrypt, errorencrypt, errordecrypt, send, receive, errorreceive);
+});
+
+function load_edit_modal(uip, modeshow, mainsubshow, strategy, negostatusshow, successtime, encrypt, decrypt, errorencrypt, errordecrypt, send, receive, errorreceive){
+    var modal = $('#div-query-channel-status');
+    
+    modal.find('#show-uip').text(uip)
+    modal.find('#show-mode').text(modeshow)
+    modal.find('#show-mainsub').text(mainsubshow)
+    modal.find('#show-strategy').text(strategy)
+    modal.find('#show-negostatus').text(negostatusshow)
+    modal.find('#show-successtime').text(successtime)
+    modal.find('#show-encrypt').text(encrypt)
+    modal.find('#show-decrypt').text(decrypt)
+    modal.find('#show-errorencrypt').text(errorencrypt)
+    modal.find('#show-errordecrypt').text(errordecrypt)
+    modal.find('#show-send').text(send)
+    modal.find('#show-receive').text(receive)
+    modal.find('#show-errorreceive').text(errorreceive)
+
+    $('#div-query-channel-status').modal('toggle');
+}
+
+//---------------reset_channel
+$('#btn-reset-channel').click(function(e){
+    var choosechannelnumber = document.getElementById('inputdata').value
+    if (choosechannelnumber != ""){
+            $.post('/commonequipment/resetchannel/'+$('#idsuidao').val(), {'nonce':'{{ nonce }}' ,
+            'choosechannelnumber':choosechannelnumber,
+        }, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                //location.reload()
+                alert('重置隧道成功！');
+            }else{
+               SwitchStatusCode(data);
+            }
+        })
+    }else{
+        alert("请先选择要重置的隧道！");
+    }
+});
+
+//--------------delete_channel
+$('#btn-delete-channel').click(function(e){
+    var choosechannelnumber = document.getElementById('inputdata').value
+    if (choosechannelnumber != ""){
+            $.post('/commonequipment/deletechannel/'+$('#idsuidao').val(), {'nonce':'{{ nonce }}' ,
+            'choosechannelnumber':choosechannelnumber,
+        }, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                location.reload()
+            }else{
+               SwitchStatusCode(data);
+            }
+        })
+    }else{
+        alert("请先选择要删除的隧道！");
+    }
+});
+
+</script>
+{% endblock %}
+

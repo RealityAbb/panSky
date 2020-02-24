@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+
+{% block title %}
+网络配置
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+    .scrollspy{
+    height:300px;
+    overflow: auto;
+    position: relative;
+    }
+</style>
+
+
+<div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                前置机IP管理
+                </h4>
+            </div>
+            <div class="panel-body" id="configroute" align="center">
+                <form method="POST" action='' id="setroute">
+                    <input type='hidden' name='nonce' value='{{ nonce }}'>
+                    <p>
+                        IP&nbsp;地址:
+                        <input type="text" name="rip" id="rip" value="{{rip}}" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                    </p>
+                    <p>
+                        掩&nbsp;&nbsp;&nbsp;&nbsp;码:
+                        <input type="text" name="mask" id="mask" value="{{mask}}" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                    </p> 
+                    <p>
+                        网&nbsp;&nbsp;&nbsp;&nbsp;关:
+                        <input type="text" name="gateway" id="gateway" value="{{ gateway }}" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                    </p>
+                    <p>
+                        <input type="radio" name="interface" id="interface" value="0" checked/>外网1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="interface" id="interface" value="1" />外网2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="interface" id="interface" value="2" />外网3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="interface" id="interface" value="3" />外网4
+                    </p>  
+                    <p>
+                        <input type="radio" name="style" value="1" checked/> 主机路由
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="style" value="0" /> 网络路由
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="style" value="2" /> 默认路由
+                    </p>
+                    <br/>
+                    <div class="button-bar" align="center">
+                        {% if count >= 16 %}
+                        <button type="button" class="btn btn-primary" id="configlmroute" disabled>添加路由</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        {% else %}
+                        <button type="button" class="btn btn-primary" id="configlmroute">添加路由</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        {% endif %}
+                        <button type="button" id="div-btn-deleteroute" class="btn btn-primary">删除路由</button>
+                    </div>
+                </form>                                                             
+            </div>
+            <div class="scrollspy">
+                <table class="table table-bordered table-responsive" id="table1">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>IP地址</th>
+                            <th>掩码</th>
+                            <th>网关</th>
+                            <th>网口</th>
+                            <th>路由类型</th>
+                        </tr>
+                    </thead> 
+                    <tbody>
+                    {% for lmroute in lmroutes %}  
+                    <tr style="overflow-x: auto;" onMouseOver="over()" onClick="change({{ loop.index }})" onMouseOut="out()">                 
+                        <td>{{ loop.index }}</td>
+                        <td class="Ipaddr">{{lmroute.IPAddr}}</td>
+                        <td class="Mask">{{lmroute.Mask}}</td>
+                        <td class="Gateway">{{lmroute.Gateway}}</td>
+                        {% if lmroute.interface == "ixp1" %}
+                        <td>网口1</td>
+                        {% elif lmroute.interface == "ixp0" %}
+                        <td>网口2</td>
+                        {% elif lmroute.interface == "eth1" %}
+                        <td>网口3</td>
+                        {% elif lmroute.interface == "eth0" %}
+                        <td>网口4</td>
+                        {% endif %}
+                        <td>{{lmroute.style}}</td>
+                    </tr>
+                       {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '1': alert('不存在该隧道'); break;
+        case '2': alert('该隧道已存在'); break;
+        case '3': alert('签名验证失败'); break;
+        case "6": alert('解密出的明文数据不合法'); break;
+        case '7': alert('该项操作当前被禁止'); break;
+        case '8': alert('获取加密统计数据失败'); break;
+        case '10': alert('添加隧道安全策略时失败'); break;
+        case '11': alert('删除隧道安全策略时失败'); break;
+        case '12': alert('重置装置失败'); break;
+        case '13': alert('重置隧道失败'); break;
+        case '14': alert('获取日志文件长度失败'); break;
+        case '15': alert('读取日志文件失败'); break;
+        case '17': alert('操作冲突'); break; 
+        case '-2': alert('请求超时'); break;
+        case '-1': alert('操作失败'); break;
+        case '-3': alert('输入信息有误'); break;
+        case '0': alert('操作成功'); break;                
+        default: alert('操作异常');
+    }
+}
+
+$('#configlmroute').click(function(e){
+    var obj1 = document.getElementsByName("interface");
+    var obj2 = document.getElementsByName("style");
+    ip=document.getElementById('rip').value
+    mask=document.getElementById('mask').value
+    gateway=document.getElementById('gateway').value
+    for(var i=0; i<obj1.length; i++){
+        if(obj1[i].checked){
+            interfacen = obj1[i].value;
+            }
+        }
+    for(var j=0;j<obj2.length;j++){
+        if(obj2[j].checked){
+        style = obj2[j].value;
+        }
+    }
+    if (ip != "" && mask !="" && gateway !=""){
+        $.post('/initial4/setroute',{
+        rip:ip,
+        mask:mask,
+        gateway:gateway,
+        interface:interfacen,
+        style:style,
+        'nonce':'{{ nonce }}', 
+        },function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                alert("操作成功！");
+                location.reload();
+
+            }else{
+                SwitchStatusCode(data)
+            }
+        })
+    }else{
+        alert("请输入完整信息！");
+    }
+});
+
+$('#div-btn-deleteroute').click(function(e){
+    var obj1 = document.getElementsByName("interface");
+    var obj2 = document.getElementsByName("style");
+    ip=document.getElementById('rip').value
+    mask=document.getElementById('mask').value
+    gateway=document.getElementById('gateway').value
+    for(var i=0; i<obj1.length; i++){
+        if(obj1[i].checked){
+            interfacen = obj1[i].value;
+            }
+        }
+    for(var j=0;j<obj2.length;j++){
+        if(obj2[j].checked){
+        style = obj2[j].value;
+        }
+    }
+    if (ip != "" && mask !="" && gateway !=""){
+        $.post('/netset/deleteroute',{
+        ip:ip,
+        mask:mask,
+        gateway:gateway,
+        interfacen:interfacen,
+        style:style,
+        'nonce':'{{ nonce }}', 
+        },function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                alert("操作成功！");
+                location.reload();
+
+            }else{
+                SwitchStatusCode(data)
+            }
+        })
+    }else{
+        alert("请输入完整信息！");
+    }
+})
+
+function findstrategynumber(id){
+    var tab=document.getElementById("table1");
+    ip = tab.rows[id].cells[1].innerHTML;
+    mask = tab.rows[id].cells[2].innerHTML;
+    gateway = tab.rows[id].cells[3].innerHTML;
+    cinterface = tab.rows[id].cells[4].innerHTML;
+    style = tab.rows[id].cells[5].innerHTML;
+    document.getElementById("rip").value=ip;
+    document.getElementById("mask").value=mask;
+    document.getElementById("gateway").value=gateway;
+
+
+    if (cinterface == "网口1"){
+        var interfacevalue = document.getElementsByName("interface");
+        for(i=0; i<interfacevalue.length; i++){
+            if(interfacevalue[i].value==0){
+                interfacevalue[i].checked = "checked";
+            }
+        }
+    }else if(cinterface == "网口2"){
+        var interfacevalue = document.getElementsByName("interface");
+        for(i=0; i<interfacevalue.length; i++){
+            if(interfacevalue[i].value==1){
+                interfacevalue[i].checked = "checked";
+            }
+        }
+    }else if(cinterface == "网口3"){
+        var interfacevalue = document.getElementsByName("interface");
+        for(i=0; i<interfacevalue.length; i++){
+            if(interfacevalue[i].value==2){
+                interfacevalue[i].checked = "checked";
+            }
+        }
+    }else{
+        var interfacevalue = document.getElementsByName("interface");
+        for(i=0; i<interfacevalue.length; i++){
+            if(interfacevalue[i].value==3){
+                interfacevalue[i].checked = "checked";
+            }
+        }
+    }
+
+    if (style == "主机路由"){
+        var stylevalue = document.getElementsByName("style");
+        for(i=0; i<stylevalue.length; i++){
+            if(stylevalue[i].value==1){
+                stylevalue[i].checked = "checked";
+            }
+        }
+    }else if(style == "网络路由"){
+        var stylevalue = document.getElementsByName("style");
+        for(i=0; i<stylevalue.length; i++){
+            if(stylevalue[i].value==0){
+                stylevalue[i].checked = "checked";
+            }
+        }
+    }else{
+        var stylevalue = document.getElementsByName("style");
+        for(i=0; i<stylevalue.length; i++){
+            if(stylevalue[i].value==2){
+                stylevalue[i].checked = "checked";
+            }
+        }
+    }
+}
+
+
+ //鼠标点击选择行时候变色
+function change(change) {
+    var oObj = window.event.srcElement;
+    //alert(change.tagName.toLowerCase());
+    if(oObj.tagName.toLowerCase() == "td"){   
+        var oTr = oObj.parentNode;   
+        for(var i=1; i<document.all.table1.rows.length; i++)   {   
+            document.all.table1.rows[i].style.backgroundColor   =   "";   
+            document.all.table1.rows[i].tag = false;   
+        }
+        oTr.style.backgroundColor = "#bce7e9";   
+        oTr.tag = true;
+        findstrategynumber(change);   
+    }
+}
+
+//鼠标点击另外一行时关闭已选行变色
+function out() {
+    var oObj = event.srcElement;
+    if(oObj.tagName.toLowerCase() == "td"){
+        var oTr = oObj.parentNode;
+        if(!oTr.tag) oTr.style.backgroundColor = "";
+    }
+}
+
+//鼠标移动到选择行上时的行变色
+function over(){   
+    var oObj = event.srcElement;
+    if(oObj.tagName.toLowerCase() == "td"){   
+    var oTr = oObj.parentNode;
+    if(!oTr.tag) oTr.style.backgroundColor = "#E1E9FD";
+    }
+}
+
+
+</script>
+{% endblock %}

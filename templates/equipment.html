@@ -1,0 +1,1023 @@
+{% extends "base.html" %}
+{% import "macros.html" as macros %}
+{% import "macroselect.html" as macroselect %}
+{% block title %}
+密码机管理
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+    .scrollspy {
+        height:680px;
+        overflow: auto;
+        position: relative;
+    }
+    * 
+    { 
+        margin:0px; 
+        padding:0px; 
+    } 
+    .zhezhao 
+    { 
+      width:100%; 
+      height:100%; 
+      background-color:#000; 
+      filter:alpha(opacity=80); 
+      -moz-opacity:0.5; 
+      opacity:0.5; 
+      position:fixed; 
+      left:0px; 
+      top:0px; 
+      display:none; 
+      z-index:1000; 
+     } 
+    .login 
+    { 
+      width:280px; 
+      height:180px; 
+      position:fixed; 
+      top:35%; 
+      left:45%; 
+      background-image: url(/static/img/zhuan.gif);
+      background-repeat: no-repeat;
+      display:none; 
+      z-index:1500;  
+     } 
+</style> 
+
+<div class="col-md-3" style="padding-left: 1em;" >
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                密码机管理树
+            </h4>
+        </div>
+        <div class="panel-body">
+            <div class="panel-body">
+            目前密码机总数为:<strong> {{ lm_total }} 台</strong>
+            </div>
+            <div class="button-bar" style="float:right;">
+                <button type="button" class="btn btn-danger btn-sm" id="btn-delete-tree">删除节点</button>
+                <button type="button" class="btn btn-primary btn-sm btn-add">添加节点</button>  
+            </div>
+            </br></br> 
+            <div class="scrollspy" id="tree"></div>
+        </div>
+    </div>
+</div> 
+
+<div class="modal fade" id="div-create" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">添加密码机</h4>
+            </div>
+            <form method="POST" action="/equipment/new" enctype="multipart/form-data" onsubmit="return submitTest();">
+                <input name='nonce' type='hidden' value="{{ nonce }}">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="host" class="control-label">IP地址</label>
+                        <input type="text" class="form-control host-input"  name="ip" id="ip" placeholder="IP" required maxlength="15" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">名称</label>
+                        <!-- <input type="text" class="form-control host-input" name="machinenumber"  placeholder="Name" maxlength="20"> -->
+                        <textarea name="machinenumber" id="commentText" class="form-control host-input" placeholder="Name" style="height:35px;"></textarea>
+                        <div id="dsa"></div>    
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">第一级</label>
+                        <input type="text" class="form-control host-input" name="first" id="first" placeholder="First" required maxlength="5">    
+                    </div>
+                    <div class="form-group" >
+                        <label class="control-label">第二级</label>
+                        <input type="text" class="form-control host-input" name="second" id="second"  placeholder="Second" maxlength="5">    
+                    </div>
+                    <div class="form-gruop">
+                        <label class="control-label">第三级</label>
+                        <input type="text" class="form-control host-input" name="third" id="third"  placeholder="Third" maxlength="5">   
+                    </div>
+                    <div class="form-gruop">
+                        <label class="control-label">第四级</label>
+                        <input type="text" class="form-control host-input" name="fourth" id="fourth" placeholder="Fourth" maxlength="5">   
+                    </div>
+                    <div class="form-gruop">
+                        <label class="control-label">厂家</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <select name="manufacture" class="form-control host-input" >
+                            <option value="兴唐">兴唐</option>
+                            <option value="科东">科东</option>
+                            <option value="南瑞">南瑞</option>
+                            <option value="卫士通">卫士通</option>
+                            <option value="江南所">江南所</option>
+                        </select>  
+                    </div>
+                    <div class="form-gruop">
+                        <label class="control-label">备注</label>
+                        <input type="text" class="form-control host-input" name="discription" id="discription" placeholder="Discription" maxlength="8">   
+                    </div><hr/>
+                    <div class="form-group">
+                        <label class="control-label">证书文件类型</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="cerstyle" value="0" checked/>RSA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="cerstyle" value="1"/>ECC
+                    </div>
+                    <div class="form-gruop">
+                      <strong>证书文件</strong>  
+                      <input type="file" name="files[]" multiple="multiple" required>
+                    </div><br/>
+                    <div class="form-group" >
+                        <label class="control-label">证书编码</label>
+                        <select name="cert_format" id="s2" class="form-control host-input" >
+                            <option value="0">BASE-64编码 </option>
+                            <option value="1">DER二进制编码</option>
+                        </select>  
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">创建</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="div-add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">添加节点</h4>
+            </div>   
+            <div class="panel-body">
+                <form method="POST" action="/equipment/addtree" enctype="multipart/form-data" onsubmit="return submitcheck();">
+                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="control-label">第一级</label>
+                            <input type="text" class="form-control host-input" name="tprovince" id="tprovince" placeholder="Province" required >    
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">第二级</label>
+                            <input type="text" class="form-control host-input" name="tcity" id="tcity" placeholder="City" >    
+                        </div>
+                        <div class="form-gruop">
+                           <label class="control-label">第三级</label>
+                           <input type="text" class="form-control host-input" name="tpart" id="tpart"  placeholder="Part" >   
+                        </div>
+                        <div class="form-gruop">
+                           <label class="control-label">第四级</label>
+                           <input type="text" class="form-control host-input" name="tfourth" id="tfourth" placeholder="Fou" >   
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button id="div-btn-create" type="submit" class="btn btn-primary">添加</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="div-query" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    查询条件
+                </h4>
+            </div>
+            <div class="panel-body">
+                <form action ="/checkciper" method ="POST" enctype="multipart/form-data">
+                <input name="nonce" type="hidden" value="{{ nonce }}">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>IP</td>
+                            <td><input type="text" name="sip" maxlength="15" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"></td>
+                        </tr>
+                        <tr>
+                            <td>第一级</td>
+                            <td><input type="text" name="sheng" maxlength="8"></td>
+                        </tr>
+                        <tr>
+                            <td>第二级</td>
+                            <td><input type="text" name="shi" maxlength="8"></td>
+                        </tr>
+                        <tr>
+                            <td>第三级</td>
+                            <td><input type="text" name="fenqu" maxlength="8"></td>
+                        </tr>
+                        <tr>
+                            <td>第四级</td>
+                            <td><input type="text" name="four" maxlength="8"></td>
+                        </tr>
+                        <tr>
+                            <td>名称</td>
+                            <td><input type="text" name="name" maxlength="8"></td>
+                        </tr>
+                        <tr>
+                            <td>厂家</td>
+                            <td><input type="text" name="manufacture" maxlength="5"></td>
+                        </tr>
+                    </table>
+                    <div align="center">
+                        <button type="submit" class="btn btn-primary div-btn-query">查询</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> 
+
+<div class="col-md-9" style="padding-right: 1em;">
+    <div class="panel panel-primary" style="height:835px;">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                  密码机基本信息
+            </h4>
+        </div>
+        <div class="panel-body">
+            <div class="button-bar" style="float:left;">
+                <button type="button" class="btn btn-sm btn-primary btn-create" >添加密码机</button>&nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-danger" id="btn-delete-machine">删除密码机</button>&nbsp;&nbsp;&nbsp;
+               <!--  <button type="button" class="btn btn-sm btn-warning" id="btn-import-machine">导入密码机</button>&nbsp;&nbsp;&nbsp; -->
+                <button type="button" class="btn btn-sm btn-primary btn-query" >查找密码机</button>
+            </div>
+            <div class="button-bar" style="float:right">
+                <a href="/equipment"><button type="button" class="btn btn-sm btn-primary">显示全部密码机</button></a>&nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm glyphicon glyphicon-refresh"></button>
+            </div>
+            </br></br>
+            <div id="imformation">
+            
+                <div class="modal fade" id="div-edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">编辑密码机</h4>
+                            </div>   
+                            <div class="panel-body">        
+                                <form method="POST" action="" enctype="multipart/form-data">               
+                                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                                    <div class="form-group">
+                                        <label class="control-label">IP地址</label>
+                                        <input type="text" name="ip" class="form-control host-input" placeholder="IP" maxlength="15" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">名称</label>
+                                        <!-- <input type="text" class="form-control host-input" name="machinenumber" maxlength="8"  placeholder="Name" >   --> 
+                                        <textarea id="commentText2" name="machinenumber" class="form-control host-input" placeholder="Name" style="height:35px;"></textarea>
+                                        <div id="dsa2"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">第一级</label>
+                                        <input type="text" class="form-control host-input" name="province"  placeholder="First" maxlength="8" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">第二级</label>
+                                        <input type="text" class="form-control host-input" name="city" maxlength="8"  placeholder="Second" > 
+                                    </div>
+                                    <div class="form-gruop">
+                                        <label class="control-label">第三级</label>
+                                        <input type="text" class="form-control host-input" name="part" maxlength="8"  placeholder="Part" >   
+                                    </div>
+                                    <div class="form-gruop">
+                                        <label class="control-label">第四级</label>
+                                        <input type="text" class="form-control host-input" name="fourth" maxlength="8"  placeholder="Fourth" >   
+                                    </div>
+                                    <div class="form-gruop">
+                                        <label class="control-label">厂家</label>
+                                        <select name="manufacture" class="form-control host-input" >
+                                            <option value="兴唐">兴唐</option>
+                                            <option value="科东">科东</option>
+                                            <option value="南瑞">南瑞</option>
+                                            <option value="卫士通">卫士通</option>
+                                            <option value="江南所">江南所</option>
+                                        </select>  
+                                    </div>
+                                    <div class="form-gruop">
+                                        <label class=“control-label>备注</label><br/>
+                                        <input type="text" class="form-control host-input" name="discription" maxlength="8" placeholder="remark">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                        <button id="div-btn-edit" type="button" class="btn btn-primary">保存</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="div-edit-cert" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">修改证书</h4>
+                            </div>   
+                            <div class="panel-body">        
+                                <form method="POST" action="/equipment/replacecert" enctype="multipart/form-data">               
+                                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                                    <input name="peer_ip" id="peer_ip" type="hidden">
+                                    <div class="form-group">
+                                        <label class="control-label">证书文件类型</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="cerstyle" value="0"/>RSA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="cerstyle" value="1" checked />ECC
+                                    </div>
+                                    <div class="form-gruop">
+                                      <strong>证书文件</strong>  
+                                      <input type="file" name="files[]" multiple="multiple" required>
+                                    </div><br/>
+                                    <div class="form-group" >
+                                        <label class="control-label">证书编码</label>
+                                        <select name="cert_format" id="s2" class="form-control host-input" >
+                                            <option value="0">BESE-64编码 </option>
+                                            <option value="1">DER二进制编码</option>
+                                        </select>  
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                        <button type="submit" class="btn btn-primary">修改</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="div-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">删除密码机</h4>
+                            </div>
+                            <form method="POST" action="'/equipment/delete'" enctype="multipart/form-data">
+                                <div class="panel-body">
+                                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                                    <div class="form-group">
+                                        <label class="control-label">你确定要删除以下密码机吗？</label>
+                                        <input type="hidden" name="choosemachinenumber" class="form-control host-input">
+                                        <textarea type="text" id="showip" class="form-control host-input" readonly></textarea>
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button id="div-btn-delete" type="button" class="btn btn-primary">删除</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                   <table class="table table-bordered" id="table1">
+                        <thead>
+                        <tr>
+                            <th><input onclick="selectAll()" type="checkbox" name="controlAll" style="controlAll" id="controlAll"/></th>
+                            <!-- <th>选择</th> -->
+                            <th>序号</th>
+                            <th>是否在线</th>
+                            <th>IP地址</th>
+                            <th>名称</th>
+                            <th>第一级</th>
+                            <th>第二级</th>
+                            <th>第三级</th>
+                            <th>第四级</th>
+                            <th>厂家</th>
+                            <!-- <th>证书</th> -->
+                            <th>备注</th>
+                            <th>类型</th>
+                            <th>修改</th>
+                        </tr>
+                       </thead>
+                            {% for machine in cipermachines %}
+                            <tr style="overflow-x: auto;" onClick="change({{ machine.id }})">
+                            <td>
+                            <input type="checkbox" name="selectmachine" class="checkboxes" value="{{machine.id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>
+                            <td class="mid">{{ loop.index}}
+                            <input type="hidden" name="id" value="{{ machine.id }}"></td>
+                            {% if machine.isonline == True %}
+                            <td><img src="/static/img/green.png"></td>
+                            {% elif machine.isonline == False %}
+                            <td><img src="/static/img/red.png"></td>
+                            {% endif %}
+                            {% if machine.manufacture == "兴唐" %}
+                            <td class="ip"><a href="javascript:void(0)" class="change">
+                            {{machine.ip}}</a></td>
+                            {% else %}
+                            <td class="ip"><a href="javascript:void(0)" class="change2">{{machine.ip}}</a></td>
+                            {% endif %}
+                            <td style="display:none;">{{machine.ip}}</td>
+                            <td class="machinenumber">{{machine.machinenumber}}</td>
+                            <td class="province">{{machine.province}}</td>
+                            <td class="city">{{machine.city}}</td>
+                            <td class="part">{{machine.part}}</td>
+                            <td class="fourth">{{machine.fourth}}</td>
+                            <td class="manufacture">{{machine.manufacture}}</td>
+                            <!-- {%if machine.certsign == true%}
+                            <td class="cert">存在</td>
+                            {% else %}
+                            <td class="cert">无</td>
+                            {% endif %} -->
+                            <td class="discription">{{machine.discription}}</td>
+                            {% if machine.encrypttype == 1 %}
+                            <td class="encrypttype">ECC</td>
+                            {% else %}
+                            <td class="encrypttype">RSA</td>
+                            {% endif %}
+
+
+                            <td>
+                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                <span class="glyphicon glyphicon-open" aria-hidden="true"></span>
+                            </td>   
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                   </table>
+                {% if pagination %}
+                    {% if viewfunc==".user2" %}
+                    <div calss="pagination" align="center">
+                        {{ macros.pagination_widget(pagination, viewfunc) }}
+                    </div>
+                    {% elif viewfunc==".checkciper" %}
+                    <div calss="pagination" align="center">
+                        {{ macroselect.pagination_widget(pagination, viewfunc,ip,province,city,part,fourth,name,manufacturer) }}
+                    </div>
+                    {% endif %}  
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<body onload="AlertFunc()">
+    <input id="AlertInfo" value="{{AlertInfo}}" type="hidden">
+</body>
+
+<form id="formdata" action="/equipment/deletetree" method="POST" enctype="multipart/form-data">
+    <input name='nonce' type='hidden' value="{{ nonce }}">
+    <input type="hidden" name="firstnode" id="node" >
+    <input type="hidden" name="secondenode" id="pnode">
+    <input type="hidden" name="thirdnode" id="cnode">
+    <input type="hidden" name="fourthnode" id="gnode">
+</form>
+
+<form id="formdata2" method="POST" enctype="multipart/form-data">
+    <input name='nonce' type='hidden' value="{{ nonce }}">
+    <input type="hidden" name="data" id="inputdata">
+</form>
+
+<div class="zhezhao" id="zhezhao"></div> 
+<div class="login" id="login"></div>
+
+{% for machine in cipermachines %}
+<input type="hidden" value="{{ machine.ip }}" name="machinip">
+{% endfor %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/bootstrap-treeview.js"></script>
+<script type="text/javascript">
+function AlertFunc()
+{
+    var info=document.getElementById("AlertInfo").value;
+    if(info != "")
+        alert(info);
+}
+
+function submitTest()
+{
+    var obj=document.getElementById("ip").value
+    var exp=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+    var reg = obj.match(exp);
+    if(reg==null){
+        alert("IP地址不合法！");
+        ip.focus();
+        return false;
+    }
+    var obj1=document.getElementById("second").value
+    var obj2=document.getElementById("third").value
+    var obj3=document.getElementById("fourth").value
+    if (obj3 != "" && (obj2 == "" ||  obj1 =="")){
+        alert("不允许跨级添加，请输入完整信息！");
+        return false;
+    }else if(obj1 == "" && (obj2 != "" || obj3 !=="")){
+        alert("不允许跨级添加，请输入完整信息！");
+        return false;
+    }
+}
+
+function submitcheck()
+{
+    var obj1=document.getElementById("tcity").value
+    var obj2=document.getElementById("tpart").value
+    var obj3=document.getElementById("tfourth").value
+    if (obj3 != "" && (obj2 == "" ||  obj1 =="")){
+        alert("不允许跨级添加，请输入完整信息！");
+        return false;
+    }else if(obj1 == "" && (obj2 != "" || obj3 !=="")){
+        alert("不允许跨级添加，请输入完整信息！");
+        return false;
+    }
+}
+
+//------------------limitname
+function lengthLimit(elem, showElem, max){ 
+    var elem = document.getElementById(elem); 
+    var showElem = document.getElementById(showElem); 
+    var max = max || 50;
+    function getTextLength(str){
+        return str.replace(/[^\x00-\xff]/g,"xx").length; 
+    }; 
+    if(/msie (\d+\.\d)/i.test(navigator.userAgent) == true) {
+        elem.onpropertychange = textChange; 
+    }else{ 
+        elem.addEventListener("input", textChange, false); 
+    } 
+    function textChange(){
+    var text = elem.value; 
+    var count = getTextLength(text); 
+    if(count > max){
+        for(var i=0; i<text.length; i++){ 
+            if(getTextLength(text.substr(0, i)) >= max){ 
+                elem.value = text.substr(0, i); 
+                break; 
+                }; 
+            } 
+        }
+    }; 
+    textChange();// 加载时先初始化 
+}; 
+
+lengthLimit("commentText", "dsa", 20); 
+
+lengthLimit("commentText2", "dsa2", 20); 
+
+$('.export').click(function(){
+    $.post('/equipment/export',{
+        'nonce' : '{{nonce}}',
+    }, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+            window.location="/static/uploads/equipment.csv"
+        }
+    })
+});
+
+
+$('.change').click(function(){
+    var zhezhao=document.getElementById("zhezhao"); 
+    var login=document.getElementById("login"); 
+    zhezhao.style.display="block"; 
+    login.style.display="block"; 
+    var elem = $(this).parent().parent();
+    var id = elem.find('input[name=id]').val();
+    $.post('/operation/privateequipment/'+id, {
+        'nonce':'{{ nonce }}', 
+    }, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            window.location.href='/privateequipment/'+id;
+        }else{
+            alert(data);
+            zhezhao.style.display="none"; 
+            login.style.display="none"; 
+            //window.location.href='/privateequipment/'+id;
+        }
+    });
+});
+
+$('.change2').click(function(){
+    var zhezhao=document.getElementById("zhezhao"); 
+    var login=document.getElementById("login"); 
+    zhezhao.style.display="block"; 
+    login.style.display="block"; 
+    var elem = $(this).parent().parent();
+    var id = elem.find('input[name=id]').val();
+    $.post('/operation/commonequipment/'+id, {
+        'nonce':'{{ nonce }}', 
+    }, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            window.location.href='/commonequipment/'+id;
+        }else{
+            alert(data);
+            zhezhao.style.display="none"; 
+            login.style.display="none"; 
+            //window.location.href='/commonequipment/'+id;
+        }
+    });
+});
+
+
+//------------refresh
+$('.glyphicon-refresh').click(function(e){
+    var nodeall = document.getElementById('inputdata').value
+    if(nodeall != ""){
+        $.post('/machineshow', {
+            firstnode:firstnode,
+            secondnode:secondnode,
+            thirdnode:thirdnode,
+            fourthnode:fourthnode,
+            'nonce':'{{ nonce }}',
+        }, function(data){
+            $("#imformation").html(data);
+        })
+    }else{
+        location.reload()
+    }
+});
+
+
+//----------judgeoperationresult
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '1': alert('不存在该隧道'); break;
+        case '2': alert('该隧道已存在'); break;
+        case '3': alert('签名验证失败'); break;
+        case "6": alert('解密出的明文数据不合法'); break;
+        case '7': alert('该项操作当前被禁止'); break;
+        case '8': alert('获取加密统计数据失败'); break;
+        case '10': alert('添加隧道安全策略时失败'); break;
+        case '11': alert('删除隧道安全策略时失败'); break;
+        case '12': alert('重置装置失败'); break;
+        case '13': alert('重置隧道失败'); break;
+        case '14': alert('获取日志文件长度失败'); break;
+        case '15': alert('读取日志文件失败'); break;
+        case '17': alert('操作冲突'); break; 
+        case '-2': alert('请求超时'); break;
+        case '-1': alert('返回数据包错误'); break;
+        case '-3': alert('输入信息有误'); break;
+        case '-4': alert('该IP已存在，请重新输入！');break;
+        case '0': alert('操作成功'); break;                
+        default: alert('操作异常');
+    }
+}
+
+var arr = new Array()
+
+var machinip = document.getElementsByName("machinip");
+
+//-------------------checkall
+function selectAll(){
+    arr = []
+    var checklist = document.getElementsByName("selectmachine");
+    if(document.getElementById("controlAll").checked)
+    {
+        for(var i=0;i<checklist.length;i++)
+        {
+            checklist[i].checked = 1;
+            checklist[i].parentNode.parentNode.style.background='#e5f5f5';
+            arr.splice(0,0,machinip[i].value)
+            $('#showip').val(arr)
+        }
+    }else{
+        for(var j=0;j<checklist.length;j++)
+        {
+            checklist[j].checked = 0;
+            checklist[j].parentNode.parentNode.style.background='';
+            arr = []
+            $('#showip').val(arr)
+        }
+    }
+}
+
+
+$('.checkboxes').click(function (e){
+    var elem = $(this).parent().parent();
+
+    var id = elem.find('input[name=id]').val();
+    var ip = elem.find('.ip').text().trim();
+
+    if(this.checked){
+        arr.splice(0,0,ip)
+        $('#showip').val(arr)
+    }else{
+        $("#controlAll").removeAttr("checked");
+        arr.indexOf(ip)
+        arr.remove(ip) 
+        $('#showip').val(arr)
+    }
+})
+
+function change(change) {
+    var oObj = window.event.srcElement;
+    //alert(change.tagName.toLowerCase());
+    if(oObj.tagName.toLowerCase() == "td"){   
+        var oTr = oObj.parentNode;
+        if(oTr.style.backgroundColor == ''){
+           oTr.style.backgroundColor = '#e5f5f5';   
+           oTr.tag = true;
+           var tr = event.srcElement.parentElement; 
+           tr.cells[0].children[0].checked=true;   
+           var ip = tr.cells[4].innerHTML;
+           arr.splice(change,0,ip)
+           $('#showip').val(arr)
+        }else{
+           oTr.style.backgroundColor = '';   
+           oTr.tag = true;
+           var tr = event.srcElement.parentElement; 
+           tr.cells[0].children[0].checked=false;
+           var ip = tr.cells[4].innerHTML;
+           arr.indexOf(ip)
+           arr.remove(ip)
+           $('#showip').val(arr)
+        }   
+          
+    }
+}
+
+Array.prototype.indexOf = function(val) {
+    for (var i = 0; i < this.length; i++) {
+        if (this[i] == val) return i;
+    }
+    return -1;
+};
+
+Array.prototype.remove = function(val) {
+    var index = this.indexOf(val);
+    if (index > -1) {
+        this.splice(index, 1);
+    }
+};
+
+//------------addmachine
+$('.btn-create').click(function (e) {
+    $('#div-create').modal("toggle")
+});
+
+//-------------query
+$('.btn-query').click(function (e) {
+    $('#div-query').modal("toggle")
+});
+
+//----------------------change_cert
+$('.glyphicon-open').click(function(){
+    var elem = $(this).parent().parent();
+    var ip = elem.find('.ip').text().trim();
+    var id = elem.find('.id').text().trim();
+    $('#peer_ip').val(ip)
+    //$('#id').val(id)
+    $('#div-edit-cert').modal("toggle")
+})
+
+
+//-------------addtree
+$('.btn-add').click(function(e){
+    $('#div-add').modal("toggle")
+});
+
+//-------------deletetree
+$('.btn-delete').click(function(e){
+    $('#div-delete-tree').modal("toggle")
+});
+
+//------------edit
+$('#div-btn-edit').click(function(e){
+    e.preventDefault();
+    $.post($('#div-edit form').attr('action'), $('#div-edit form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "1"){
+            location.reload()
+        }else{
+            SwitchStatusCode(data)
+        }
+    })
+});
+
+function load_edit_modal(id, ip, machinenumber, province, city, part, fourth, manufacture,discription){
+    var modal_form = $('#div-edit form');
+    
+    modal_form.find('input[name=id]').val(id)
+    modal_form.find('input[name=ip]').val(ip)
+    /*modal_form.find('input[name=machinenumber]').val(machinenumber)*/
+    $('#commentText2').val(machinenumber)
+    modal_form.find('input[name=province]').val(province)
+    modal_form.find('input[name=city]').val(city)
+    modal_form.find('input[name=part]').val(part)
+    modal_form.find('input[name=fourth]').val(fourth)
+
+    if (manufacture == "南瑞"){
+        modal_form.find('select[name=manufacture]').find("option[value='南瑞']").attr("selected","selected")
+    }else if(manufacture == "科东"){
+        modal_form.find('select[name=manufacture]').find("option[value='科东']").attr("selected","selected")
+    }else if(manufacture == "卫士通"){
+        modal_form.find('select[name=manufacture]').find("option[value='卫士通']").attr("selected","selected")
+    }else if(manufacture == "江南所"){
+        modal_form.find('select[name=manufacture]').find("option[value='江南所']").attr("selected","selected")
+    }else if(manufacture == "兴唐"){
+        modal_form.find('select[name=manufacture]').find("option[value='兴唐']").attr("selected","selected")
+    }
+
+    modal_form.find('input[name=manufacture]').val(manufacture)
+    modal_form.find('input[name=discription]').val(discription)
+
+    $('#div-edit form').attr('action', '/equipment/'+id+'/edit')
+    $('#div-edit').modal('toggle');
+}
+
+$('.glyphicon-pencil').click(function(){
+    var elem = $(this).parent().parent();
+
+    var id = elem.find('input[name=id]').val();
+    var ip = elem.find('.ip').text().trim();
+    var machinenumber = elem.find('.machinenumber').text().trim();
+    var province = elem.find('.province').text().trim();
+    var city = elem.find('.city').text().trim();
+    var part = elem.find('.part').text().trim();
+    var fourth = elem.find('.fourth').text().trim();
+    var manufacture = elem.find('.manufacture').text().trim();
+    var discription = elem.find('.discription').text().trim();
+    load_edit_modal(id, ip, machinenumber, province, city, part, fourth, manufacture,discription);
+})
+
+//--------------delete_machine
+$('#btn-delete-machine').click(function () {
+    var elem = $(this).parent().parent();
+    var id = elem.find('input[name=id]').val();
+    var obj=document.getElementsByName('selectmachine');  
+    var machinenumber='';
+    var j=0;
+    for(var i=0; i<obj.length; i++)
+    {
+        if(obj[i].checked)
+        {
+            machinenumber+=obj[i].value+','; 
+            j++;
+        }
+    }
+    if (j == "")
+    {
+         alert("请先选择删除的密码机!");
+    }
+    else
+    {
+        load_delete_machine(machinenumber);
+    }
+});
+
+
+function load_delete_machine(machinenumber){
+    //alert("load_delete_machine");
+    var modal_form = $('#div-delete form');
+    
+    modal_form.find('input[name=choosemachinenumber]').val(machinenumber)
+
+    $('#div-delete form').attr('action','/equipment/delete')
+    $('#div-delete').modal('toggle');
+}
+
+
+$('#div-btn-delete').click(function(e){
+    e.preventDefault();
+    //alert("#div-btn-delete");
+    $.post($('#div-delete form').attr('action'), $('#div-delete form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            window.location="/equipment"
+        }
+        else
+        {
+             if(data == "-2")
+                alert("网络连接超时！")
+            else
+            {
+                alert("证书删除失败！");
+            }
+        }
+    })
+});
+
+
+//-----------------------deletetree
+$('#btn-delete-tree').click(function(e){
+    var nodeall = document.getElementById('inputdata').value
+    if(nodeall != ""){
+        node = nodeall.substring(nodeall.indexOf("(")+1,nodeall.indexOf(")"))
+        if(node != "0"){
+            alert("此节点下还有密码机，不可删除！");
+        }else{
+            if(confirm("确定要删除这个节点吗？")){
+                $('#formdata').submit()
+            }
+        }  
+    }else{
+        alert("请先选择要删除的节点！");
+    }
+})
+
+
+//---------------------------------tree
+$.post('/tree', {
+        'nonce':'{{ nonce }}', 
+    }, function(data1){
+        var da = []
+        node = data1.tree
+
+    $('#tree').treeview({data: node});
+
+    $('#tree').on('nodeSelected', function(event, data) {
+        var txts=document.getElementsByTagName("input");  
+        for(var i=0;i<txts.length;i++)  
+        {  
+            if(txts[i].type=="text")  
+            {  
+              txts[i].value ="";  
+            }  
+        }
+        choosedata = data.text;
+        var parent = $('#tree').treeview('getParent',data); 
+        var grandparent = $('#tree').treeview('getParent',parent);
+        var mainparent = $('#tree').treeview('getParent',grandparent);
+        cdata = choosedata.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
+        $('#inputdata').val(choosedata);
+        if (parent.text.length == 1){
+            firstnode = cdata
+            secondnode = ""
+            thirdnode = ""
+            fourthnode = ""
+            $('#node').val(cdata)
+            $('#pnode').val()
+            $('#cnode').val()
+            $('#gnode').val()
+            $('#first').val(cdata)
+            $('#second').val()
+            $('#third').val()
+            $('#fourth').val()
+            $('#tprovince').val(cdata)
+            $('#tcity').val()
+            $('#tpart').val()
+            $('#tfourth').val()
+        }else if(parent.text.length > 1 && grandparent.text.length == 1){
+            firstnode = parent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
+            secondnode = cdata
+            thirdnode = ""
+            fourthnode = ""
+            $('#node').val(firstnode)
+            $('#pnode').val(secondnode)
+            $('#cnode').val()
+            $('#gnode').val()
+            $('#first').val(firstnode)
+            $('#second').val(secondnode)
+            $('#third').val()
+            $('#fourth').val()
+            $('#tprovince').val(firstnode)
+            $('#tcity').val(secondnode)
+            $('#tpart').val()
+            $('#tfourth').val()
+        }else if(parent.text.length > 1 && grandparent.text.length > 1 && mainparent.text.length == 1){
+            firstnode = grandparent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
+            secondnode = parent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
+            thirdnode = cdata
+            fourthnode = ""
+            $('#node').val(firstnode)
+            $('#pnode').val(secondnode)
+            $('#cnode').val(thirdnode)
+            $('#gnode').val()
+            $('#first').val(firstnode)
+            $('#second').val(secondnode)
+            $('#third').val(thirdnode)
+            $('#fourth').val()
+            $('#tprovince').val(firstnode)
+            $('#tcity').val(secondnode)
+            $('#tpart').val(thirdnode)
+            $('#tfourth').val()
+        }else if(parent.text.length > 1 && grandparent.text.length > 1 && mainparent.text.length > 1){
+            firstnode = mainparent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
+            secondnode = grandparent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
+            thirdnode = parent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
+            fourthnode = cdata
+            $('#node').val(firstnode)
+            $('#pnode').val(secondnode)
+            $('#cnode').val(thirdnode)
+            $('#gnode').val(fourthnode)
+            $('#first').val(firstnode)
+            $('#second').val(secondnode)
+            $('#third').val(thirdnode)
+            $('#fourth').val(fourthnode)
+            $('#tprovince').val(firstnode)
+            $('#tcity').val(secondnode)
+            $('#tpart').val(thirdnode)
+            $('#tfourth').val(fourthnode)
+        }
+        $.post('/machineshow', {
+            firstnode:firstnode,
+            secondnode:secondnode,
+            thirdnode:thirdnode,
+            fourthnode:fourthnode,
+            'nonce':'{{ nonce }}',
+        }, function(data){
+            $("#imformation").html(data);
+        })
+    }); 
+}); 
+</script>
+{% endblock %}

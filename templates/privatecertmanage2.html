@@ -1,0 +1,455 @@
+{% extends "base.html" %}
+{% block title %}
+密码机证书操作
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+    #main-nav {
+    margin-left: 1px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #347ab6;
+        background: #fff;
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #fff;
+        background: #347ab6;
+        background: -webkit-linear-gradient(top, #347ab6 0%);
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li {
+        margin-bottom: 4px;
+    }
+
+    .zhezhao 
+    { 
+      width:100%; 
+      height:100%; 
+      background-color:#fff; 
+      filter:alpha(opacity=20); 
+      -moz-opacity:0; 
+      opacity:0; 
+      position:fixed; 
+      left:0px; 
+      top:0px; 
+      display:none; 
+      z-index:1000; 
+     }
+    .login 
+    { 
+      width:280px; 
+      height:180px; 
+      position:fixed; 
+      top:35%; 
+      left:45%; 
+      background-image: url(/static/img/zhuan.gif);
+      background-repeat: no-repeat;
+      display:none; 
+      z-index:1500;  
+     } 
+
+    .scrollspy {
+        height:465px;
+        overflow: auto;
+        position: relative;
+    }
+
+    .tScroll {
+        /*min-height:101%;*/
+        min-width: 100%;
+    }
+</style>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <ul id="main-nav" class="nav nav-tabs nav-stacked" style="">
+                    <li class="active">
+                        <a href="/privateequipment/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-th-large"></i>
+                            密码机配置管理   
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatecertmanage/import/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-lock"></i>
+                            证书管理        
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatechannel/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-inbox"></i>
+                            隧道管理          
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatesystem/net/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-cog"></i>
+                            系统配置
+                        </a>
+                    </li>
+ 
+                    <li>
+                        <a href="/privateequipment/privatelog/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-file"></i>
+                            日志管理
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/equipment">
+                            <i class="glyphicon glyphicon-log-out"></i>
+                            返回
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-10">
+                <div class="modal fade" id="div-rename" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">证书重命名</h4>
+                            </div>
+                            <form method="POST" action="" enctype="multipart/form-data">
+                                <input name='nonce' type='hidden' value="{{ nonce }}">
+                                <div class="panel-body">
+                                    <p>
+                                        目前证书名：
+                                        <input type="text" name="oldname"  class="form-control host-input"  readonly/>
+                                    </p>
+                                    <p>
+                                        请输入新证书名：
+                                        </br>
+                                        <input type="text" class="form-control host-input"  name="ip" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')" maxlength="15">
+                                    </p>
+                                </div>
+                                <div class="panel-footer">
+                                    <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button id="div-btn-rename" type="button" class="btn btn-primary">确定</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                        证书管理
+                        <p style="float:right;">装置名称：{{ machine.machinenumber }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;装置IP地址：{{ machine.ip }}</p>
+                        </h4>
+                    </div> 
+                    <div class="panel-body">
+                       <ul class="nav nav-tabs nav-justified nav-pills"> 
+                            <li><a href="/privateequipment/privatecertmanage/import/{{ machine.id }}">导入证书</a></li>
+                            <li class="active"><a href="/privateequipment/privatecertmanage/manage/{{ machine.id }}">证书管理</a></li>
+                        </ul>
+                        <br />
+
+                        <div class="modal fade" id="div-query" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            查询条件
+                                        </h4>
+                                    </div>
+                                    <div class="panel-body">
+                                        <form action ="/privateequipment/serachcert/{{machine.id}}" method ="POST" enctype="multipart/form-data">
+                                        <input name="nonce" type="hidden" value="{{ nonce }}">
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <td>证书</td>
+                                                    <td><input type="text" name="sip" size="20" maxlength="20"></td>
+                                                </tr>
+                                            </table>
+                                            <div align="center">
+                                                <button type="submit" class="btn btn-primary div-btn-query">查找</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">已安装证书</h4>
+                                    </div>
+                                    <div class="panel-body">
+                                        <button type="button" class="btn btn-default" id="searchcert">查找证书</button>
+                                        <button type="button" id="btn-query-certlist" class="btn btn-primary" style="float:right;">查询证书列表</button>
+                                        <br/><br/>
+                                        <div class="scrollspy">
+                                            <table class="table table-bordered table-responsive tScroll" id="table1">
+                                                <thead>
+                                                    <tr>
+                                                        <th>序号</th>
+                                                        <th>证书</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for certificate in certificates %}
+                                                    <tr style="overflow-x: auto;" onMouseOver="over()" onClick="change({{ loop.index }})" onMouseOut="out()">
+                                                        <td>{{ loop.index }}</td>
+                                                        <td>{{certificate.cert_name}}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7" id="partrefresh">
+                                <div class="panel panel-primary" >
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">证书信息</h4>
+                                    </div>
+                                    <form method="POST" id="deliverparameter" enctype="multipart/form-data">
+                                        <div class="panel-body">
+                                            <input name='nonce' type='hidden' value="{{ nonce }}">
+                                            <input name="choosecertip" type="hidden" id="inputdata">
+                                            <div class="form-gruop">
+                                                <label class="control-label">国家：中国</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label">省</label>
+                                                    <input type="text" class="form-control host-input" name="province" id="province" value="{{ province }}"  placeholder="province" readonly>    
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label">直辖市</label>
+                                                    <input type="text" class="form-control host-input" name="city" id="city" value="{{ city }}"  placeholder="city" readonly>    
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label">组织</label>
+                                                    <input type="text" class="form-control host-input" name="organization" id="organization" value="{{ organ }}" placeholder="Organization" readonly>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label">部门</label>
+                                                    <input type="text" class="form-control host-input" name="department" id="department" value="{{ depart }}" placeholder="Department" readonly>    
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label">名称</label>
+                                                <input type="text" class="form-control host-input" name="name" id="certname" value="{{ name }}" placeholder="Name" readonly>
+                                            </div> 
+                                            <div class="form-group">
+                                                <label class="control-label">邮箱</label>
+                                                <input type="email" required class="form-control host-input" id="certemail" name="email" value="{{ email }}" placeholder="email" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="button-bar" align="center">
+                                            <button type="button" class="btn btn-danger" id="btn-delete-certificate" >&nbsp;删&nbsp;除&nbsp;</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <button type="button" class="btn btn-warning" id="btn-rename" >重命名</button>       
+                                        </div>
+                                        <br/>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<div class="zhezhao" id="zhezhao"></div> 
+<div class="login" id="login"></div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="/static/js/bootstrap-scrollspy.js"></script>
+<script>
+//-------------------SwitchStatusCode()
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '1': alert('操作失败'); break;
+        case '2': alert('该隧道已存在'); break;
+        case '3': alert('签名验证失败'); break;
+        case "6": alert('解密出的明文数据不合法'); break;
+        case '7': alert('该项操作当前被禁止'); break;
+        case '8': alert('获取加密统计数据失败'); break;
+        case '10': alert('添加隧道安全策略时失败'); break;
+        case '11': alert('删除隧道安全策略时失败'); break;
+        case '12': alert('重置装置失败'); break;
+        case '13': alert('重置隧道失败'); break;
+        case '14': alert('获取日志文件长度失败'); break;
+        case '15': alert('读取日志文件失败'); break;
+        case '17': alert('操作冲突'); break; 
+        case '-2': alert('请求超时'); break;
+        case '-1': alert('返回数据包错误'); break;
+        case '-3': alert('输入信息有误'); break;
+        case '0': alert('操作成功'); break;                
+        default: alert('操作异常');
+    }
+}
+
+$('#searchcert').click(function(e){
+    $('#div-query').modal("toggle");
+})
+
+function findstrategynumber(id){
+    var zhezhao=document.getElementById("zhezhao"); 
+    var login=document.getElementById("login"); 
+    zhezhao.style.display="block"; 
+    login.style.display="block"; 
+    var tab=document.getElementById("table1");
+    choosecertip = tab.rows[id].cells[1].innerHTML;
+    $('#inputdata').val(choosecertip);
+    $.post('/privateequipment/querycertification/{{ machine.id }}', {'nonce':'{{ nonce }}' ,
+    'choosecertip':choosecertip,
+    }, function(data){
+        // var data = $.parseJSON(JSON.stringify(data))
+        if (data.status == "0"){
+           zhezhao.style.display="none"; 
+           login.style.display="none"; 
+           province = data.province
+           city = data.city
+           organ = data.organ
+           depart = data.depart
+           name = data.name
+           email = data.email
+           show_certificate_content(province,city,organ,depart,name,email)
+        }else{
+            // alert(data.status)
+            SwitchStatusCode(data.status)
+            zhezhao.style.display="none"; 
+            login.style.display="none"; 
+        }
+    })
+}
+
+function show_certificate_content (province,city,organ,depart,name,email) {
+    document.getElementById("province").value=province;
+    document.getElementById("city").value=city;
+    document.getElementById("organization").value=organ;
+    document.getElementById("department").value=depart;
+    document.getElementById("certname").value=name;
+    document.getElementById("certemail").value=email;
+}
+
+ //鼠标点击选择行时候变色
+function change(change) {
+    var oObj = window.event.srcElement;
+    //alert(change.tagName.toLowerCase());
+    if(oObj.tagName.toLowerCase() == "td"){   
+        var oTr = oObj.parentNode;   
+        for(var i=1; i<document.all.table1.rows.length; i++)   {   
+            document.all.table1.rows[i].style.backgroundColor   =   "";   
+            document.all.table1.rows[i].tag = false;   
+        }
+        oTr.style.backgroundColor = "#CCCCFF";   
+        oTr.tag = true;
+        findstrategynumber(change);   
+    }
+}
+
+//鼠标点击另外一行时关闭已选行变色
+function out() {
+    var oObj = event.srcElement;
+    if(oObj.tagName.toLowerCase() == "td"){
+        var oTr = oObj.parentNode;
+        if(!oTr.tag) oTr.style.backgroundColor = "";
+    }
+}
+
+//鼠标移动到选择行上时的行变色
+function over(){   
+    var oObj = event.srcElement;
+    if(oObj.tagName.toLowerCase() == "td"){   
+    var oTr = oObj.parentNode;
+    if(!oTr.tag) oTr.style.backgroundColor = "#E1E9FD";
+    }
+}
+
+
+
+//------------------query_certification_list
+$('#btn-query-certlist').click(function(){
+    $.post('/privateequipment/querycertificationlist/{{ machine.id }}', {'nonce':'{{ nonce }}' }, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            window.location.href='/privateequipment/privatecertmanage/manage/{{machine.id}}'
+        }else{
+            SwitchStatusCode(data)
+        }
+    })
+})
+
+
+//---------------delete_certification
+$('#btn-delete-certificate').click(function(e){
+    choosecertip=document.getElementById('inputdata').value
+    if (choosecertip != ""){
+        if(confirm("确定要删除这个证书吗？")){
+                $.post('/privateequipment/deletecertification/{{ machine.id }}', {'nonce':'{{ nonce }}' ,
+                'choosecertip':choosecertip,
+            }, function(data){
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "0"){
+                    location.reload()
+                }else{
+                   SwitchStatusCode(data)
+                }
+            })
+        }
+    }else{
+        alert("请先选择要删除的证书！");
+    }
+});
+
+
+//------------rename_certification
+$('#btn-rename').click(function () {
+    oldname=document.getElementById('inputdata').value
+    if (oldname != ""){
+        load_rename_modal(oldname);
+    }else{
+        alert("请先选择要修改的证书！");
+    }
+})
+
+function load_rename_modal(oldname){
+    var modal_form = $('#div-rename form');
+
+    modal_form.find('input[name=oldname]').val(oldname)
+
+    $('#div-rename form').attr('action','/privateequipment/renamecertification/{{machine.id}}')
+    $('#div-rename').modal('toggle');
+}
+
+
+$('#div-btn-rename').click(function(e){
+    e.preventDefault();
+    $.post($('#div-rename form').attr('action'), $('#div-rename form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data != "0"){
+            SwitchStatusCode(data)
+            $('#div-rename').modal("hide")
+        }else{
+             location.reload()
+        }
+    })
+});
+
+
+
+
+</script>
+{% endblock %}

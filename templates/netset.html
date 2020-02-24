@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}
+网络配置
+{% endblock %}
+
+{% block content %}
+<div class="col-md-12">
+   <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+            前置机IP管理
+            </h4>
+        </div>
+        <div class="panel-body" align="center" id="configip">
+            <form method="POST" action='/initial3/setip'>
+                <input type='hidden' name='nonce' value='{{ nonce }}'>
+                <p>注意：5个IP必须为不同网段</p>
+                <p>
+                    内&nbsp;网  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IP&nbsp;地址:
+                    <input type="text" name="ip5" value="{{ lmipaddress[4] }}" style="background-color:#b2b2b2"; readonly>&nbsp;&nbsp;&nbsp;&nbsp;
+                    掩码:
+                    <input type="text" name="ipmask5" value="{{ lmipmask[4] }}" style="background-color:#b2b2b2"; readonly>
+                    <br/><br/>
+                    外网1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IP&nbsp;地址:
+                    <input type="text" name="ip1" value="{{ lmipaddress[0] }}" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">&nbsp;&nbsp;&nbsp;
+                    &nbsp;掩码:
+                    <input type="text" name="ipmask1" value="{{ lmipmask[0] }}" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                    <br/><br/>
+                    外网2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IP&nbsp;地址:
+                    <input type="text" name="ip2" value="{{ lmipaddress[1] }}" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">&nbsp;&nbsp;&nbsp;
+                    &nbsp;掩码:
+                    <input type="text" name="ipmask2" value="{{ lmipmask[1] }}" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                    <br/><br/>
+                    外网3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IP&nbsp;地址:
+                    <input type="text" name="ip3" value="{{ lmipaddress[2] }}" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">&nbsp;&nbsp;&nbsp;
+                    &nbsp;掩码:
+                    <input type="text" name="ipmask3" value="{{ lmipmask[2] }}" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                    <br/><br/>
+                    外网4 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IP&nbsp;地址:
+                    <input type="text" name="ip4" value="{{ lmipaddress[3] }}" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">&nbsp;&nbsp;&nbsp;
+                    &nbsp;掩码:
+                    <input type="text" name="ipmask4" value="{{ lmipmask[3] }}" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+
+                </p>
+                <br/>
+                <div class="button-bar" align="center">
+                    <button type="submit" class="btn btn-primary" id="configlmip">配置IP</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="div-btn-lmip" class="btn btn-primary">查看IP</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '1': alert('不存在该隧道'); break;
+        case '2': alert('该隧道已存在'); break;
+        case '3': alert('签名验证失败'); break;
+        case "6": alert('解密出的明文数据不合法'); break;
+        case '7': alert('该项操作当前被禁止'); break;
+        case '8': alert('获取加密统计数据失败'); break;
+        case '10': alert('添加隧道安全策略时失败'); break;
+        case '11': alert('删除隧道安全策略时失败'); break;
+        case '12': alert('重置装置失败'); break;
+        case '13': alert('重置隧道失败'); break;
+        case '14': alert('获取日志文件长度失败'); break;
+        case '15': alert('读取日志文件失败'); break;
+        case '17': alert('操作冲突'); break; 
+        case '-2': alert('请求超时'); break;
+        case '-1': alert('返回数据包错误'); break;
+        case '-3': alert('输入信息有误'); break;
+        case '0': alert('操作成功'); break;
+        case '-4': alert('输入IP不能在同一网段！'); break;                
+        default: alert('操作异常');
+    }
+}
+
+$('#configlmip').click(function(e){
+    e.preventDefault();
+    $.post($('#configip form').attr('action'), $('#configip form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data != "0"){
+            SwitchStatusCode(data);
+        }else{
+            alert("配置成功! ")
+            //location.reload()
+        }
+    })
+});
+
+$('#div-btn-lmip').click(function(e){
+    $.post("/initial3/querylmip",{'nonce':'{{ nonce }}'}, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data != "0"){
+            SwitchStatusCode(data);
+        }else{
+            //alert("查看成功!请进行下一步！ ")
+             location.reload()
+            //window.location = '/netset'
+        }
+    })
+});
+
+
+</script>
+
+{% endblock %}

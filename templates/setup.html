@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+超级用户登录 | Wolf设备管理系统</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon" />
+<!-- Bootstrap core CSS -->
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+<link href="/static/css/app.css" rel="stylesheet">
+<style type="text/css">
+    .logo {
+    width: 40px;
+    height: 40px;
+    float: left;
+    margin-right: 20px;
+    margin:10px;
+    background-image: url(/static/img/BFS_logo.gif);
+    } 
+</style>
+</head>
+<body style='background-image: url(/static/img/back3.jpg); background-size:cover;'>
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="logo" href="/base"></a>
+            <a class="navbar-brand" href="/base">DMS设备管理系统</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse navbar-responsive-collapse">
+            <ul class="nav navbar-nav navbar-right">
+				<li>
+                    <div id="clocktime"></div>
+                </li>
+             	<li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">帮助<span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/help2">关于VPN设备管理系统</a></li>
+                        </ul>
+           		</li>
+            </ul>           
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="container">
+    {% for error in errors %}
+        <div class="large-8 large-centered columns">
+            <div data-alert class="alert-box alert radius centered text-center">
+                <span>{{ error }}</span>
+                <a href="#" class="close">×</a>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+    
+	<div class="container">
+		<div class="page-header">
+			<h1 class="text-center">超级用户登录</h1>
+		</div>
+		<form class="form-signin" method="POST" id="formpost">
+			<strong>用户名</strong>
+			<input type="text" name="name" class="form-control" placeholder="Name" required autofocus>
+			<strong>密码</strong>
+            <input type="hidden" name="epassword" id="epassword" onkeydown="KeyDown">
+			<input type="password" name="password" class="form-control" placeholder="Password" required id="password" onkeydown="KeyDown">
+			</br>
+			<button class="btn btn-lg btn-primary btn-block" id="btn-login" type="button">开始初始化</button>
+		</form>
+	</div> 
+</div>
+
+<script src="/static/js/jquery.min-1.11.2.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/enc.js/"></script>
+<script type="text/javascript">
+$('#btn-login').click(function(e){
+    var b = document.getElementById('password').value
+    var a = new Encrypt();  
+    var str = a.encode(b);  
+    $('#epassword').val(str)
+    $('#formpost').submit();
+})
+
+var SubmitOrHidden = function(evt){
+    evt = window.event || evt;
+    if(evt.keyCode == 13){
+        document.getElementById("btn-login").click();
+    }
+}
+
+window.document.onkeydown=SubmitOrHidden;
+</script>
+</body>
+</html>

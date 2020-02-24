@@ -1,0 +1,488 @@
+{% extends "base.html" %}
+{% block title %}
+密码机管理
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+    #main-nav {
+    margin-left: 1px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #347ab6;
+        background: #fff;
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #fff;
+        background: #347ab6;
+        background: -webkit-linear-gradient(top, #347ab6 0%);
+    }
+
+    
+    #main-nav.nav-tabs.nav-stacked > li {
+        margin-bottom: 4px;
+    }
+
+    .scrollspy1 {
+        height:330px;
+        overflow: auto;
+        position: relative;
+    }
+
+    .scrollspy2 {
+        height:250px;
+        overflow: auto;
+        position: relative;
+    }
+
+    .tScroll {
+        min-width: 150%;
+    }
+</style>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <ul id="main-nav" class="nav nav-tabs nav-stacked">
+                    <li class="active">
+                        <a href="/privateequipment/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-th-large"></i>
+                            密码机配置管理   
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatecertmanage/import/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-lock"></i>
+                            证书管理        
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatechannel/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-inbox"></i>
+                            隧道管理             
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatesystem/net/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-cog"></i>
+                            系统配置
+                        </a>
+                    </li>
+ 
+                    <li>
+                        <a href="/privateequipment/privatelog/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-file"></i>
+                            日志管理
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/equipment">
+                            <i class="glyphicon glyphicon-log-out"></i>
+                            返回
+                        </a>
+                    </li>
+ 
+                </ul>
+            </div>
+            <div class="col-md-10">
+                <div class="panel panel-primary" >
+            	   <div class="panel-heading">
+            		    <h4 class="panel-title">
+          			        参数列表
+                            <p style="float:right;">装置名称：{{ machine.machinenumber }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            装置IP地址：{{ machine.ip }}</p>
+                      </h4>
+				   </div> 
+				   <div class="panel-body">
+                        <form id="query_status" method="POST">
+                            <input type='hidden' id='id' value='{{ machine.id }}'>
+                            <input name='nonce' type='hidden' value="{{ nonce }}">
+                            <button type="button" id="div-btn-query" class="btn btn-primary" style="float:left;">查看系统配置</button>      
+                        </form>
+					    <br/><br/>
+                        <div class="scrollspy1">
+		    		    <table class="table table-bordered table-condensed table-responsive scrollspy1" >
+                            <thead>
+                                <tr>
+                                   <th style="width:500px;">参数</th>
+                                   <th style="width:500px;">状态</th>
+                                   <th style="width:500px;">说明</th>
+                               </tr>
+                            </thead>
+                                <tr>
+                                    <td style="text-align:left">工作模式</td>
+                                    {% if status.work_model == 0 %}
+                                    <td>安全模式</td>
+                                    {% elif status.status == 2 %}
+                                    <td>旁路模式</td>
+                                    {% else %}
+                                    <td>未知</td>
+                                    {% endif %}                                 
+                                    <td style="text-align:left">工作模式分为：安全模式、旁路模式</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">加密卡数目</td>
+                                    <td>{{ status.ncard }}</td>
+                                    <td style="text-align:left">初始化为1</td>
+                                <tr>
+                                    <td style="text-align:left">装置状态</td>
+                                    {% if status.work_status == 1 %}
+                                    <td>正常</td>
+                                    {% else %}
+                                    <td>异常</td>
+                                    {% endif %}
+                                    <td style="text-align:left">密码机的工作状态</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td style="text-align:left">启用防火墙标志</td>
+                                    {% if status.firewall %}
+                                    <td>启用</td>
+                                    {% else %}
+                                    <td>禁用</td>
+                                    {% endif %}
+                                    <td style="text-align:left">装置是否启用防火墙</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">会话密钥生命周期</td>
+                                    <td>{{ status.dk_lifetime }}</td>
+                                    <td style="text-align:left">会话密钥生命周期</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">会话密钥最大使用次数</td>
+                                    <td>{{ status.dk_encrypt_times_max }}</td>
+                                    <td style="text-align:left">会话密钥最大使用次数</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">KeyNegd协商失败重新协商时间间隔</td>
+                                    <td>{{ status.dk_retry_interval }}</td>
+                                    <td style="text-align:left">KeyNegd协商失败重新协商时间间隔</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">RMAgent可容忍的连续错误数</td>
+                                    <td>{{ status.rm_error_can_tolerance }}</td>
+                                    <td style="text-align:left">RMAgent可容忍的连续错误数</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">RMAgent对上述来源数据包的阻塞时间</td>
+                                    <td>{{ status.rm_block_request_time }}</td>
+                                    <td style="text-align:left">RMAgent对上述来源数据包的阻塞时间</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">证书格式</td>
+                                    {% if status.cert_format  %}
+                                    <td>PEM</td>
+                                    {% else %}
+                                    <td>DER</td>
+                                    {% endif %}                                    
+                                    <td style="text-align:left">证书格式分为：PEM，DER</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">系统DEBUG标志</td>
+                                    <td>{{ status.debug }}</td>
+                                    <td style="text-align:left">系统DEBUG标志</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">装置数据压缩标志</td>
+                                    <td>{{ status.compress }}</td>
+                                    <td style="text-align:left">装置数据压缩标志</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">运行于单机方式或主备方式</td>
+                                    {% if status.isstandalone %}
+                                    <td>单机方式</td>
+                                    {% else %}
+                                    <td>主备方式</td>
+                                    {% endif %}                                    
+                                    <td style="text-align:left">运行于单机方式或主备方式</td>
+                                </tr>
+
+                                <tr>                                
+                                    <td style="text-align:left">主装置或备份装置标志</td>
+                                    {% if status.isstandalone  %}
+                                    <td> </td>
+                                    {% elif status.ismaster %}                             
+                                    <td> 主装置</td>
+                                    {% else %}
+                                    <td>备装置</td>                                    
+                                    {% endif %}                                     
+                                    <td style="text-align:left">主装置或备装置标志</td>
+                                </tr>
+
+                                <tr>
+                                    <td style="text-align:left">链路1生成树协议</td>
+                                    {% if status.stp_state %}
+                                    <td>启用</td>
+                                    {% else %}
+                                    <td>禁用</td>
+                                    {% endif %}
+                                    <td style="text-align:left">链路1生成树协议启用标志</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">链路2生成树协议</td>
+                                    {% if status.stp_state %}
+                                    <td>启用</td>
+                                    {% else %}
+                                    <td>禁用</td>
+                                    {% endif %}
+                                    <td style="text-align:left">链路2生成树协议启用标志</td>
+                                </tr>                                
+                                <tr>
+                                    <td style="text-align:left">双机热备使用</td>
+                                    <td>{{ status.stp_prio }}</td>
+                                    <td style="text-align:left">双机热备使用</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">主备数据同步超时1</td>
+                                    <td>{{ status.syn_timeout1 }}</td>
+                                    <td style="text-align:left">主备数据同步超时1</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">主备数据同步超时2</td>
+                                    <td>{{ status.syn_timeout2 }}</td>
+                                    <td style="text-align:left">主备数据同步超时2</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">现用于全局转发策略</td>
+                                    <td>{{ status1.twin_active }}</td>
+                                    <td style="text-align:left">现用于全局转发策略</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">声音报警</td>
+                                    {% if status.no_alarm %}
+                                    <td>禁用</td>
+                                    {% else %}
+                                    <td>启用</td>
+                                    {% endif %}                                  
+                                    <td style="text-align:left">报警标志</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">现用于本机（通过网络的）可达性</td>
+                                    <td>{{ status.change_time }}</td>
+                                    <td style="text-align:left">现用于本机（通过网络的）可达性</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">链路1IP地址</td>
+                                    <td>{{ status1.ipaddr }}</td>
+                                    <td style="text-align:left">第1路密码机网口地址</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">链路1IP地址掩码</td>
+                                    <td>{{ status1.ipmask }}</td>
+                                    <td style="text-align:left">第1路密码机网口子网掩码地址</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">链路1备机IP地址</td>
+                                    <td>{{ status1.ipmask }}</td>
+                                    <td style="text-align:left">第1路备机IP地址</td>
+                                </tr>                                                             
+                                <tr>
+                                    <td style="text-align:left">链路1配置网口IP地址</td>
+                                    <td>{{ status1.man_nic_addr }}</td>
+                                    <td style="text-align:left">链路1配置网口IP地址</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">链路2IP地址</td>
+                                    <td>{{ status2.ipaddr }}</td>
+                                    <td style="text-align:left">第2路密码机网口地址</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">链路2IP地址掩码</td>
+                                    <td>{{ status2.ipmask }}</td>
+                                    <td style="text-align:left">第21路密码机网口子网掩码地址</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">链路2备机IP地址</td>
+                                    <td>{{ status2.ipmask }}</td>
+                                    <td style="text-align:left">第2路备机IP地址</td>
+                                </tr>                                                             
+                                <tr>
+                                    <td style="text-align:left">链路2配置网口IP地址</td>
+                                    <td>{{ status2.man_nic_addr }}</td>
+                                    <td style="text-align:left">链路2配置网口IP地址</td>
+                                </tr>                                
+                                <tr>
+                                    <td style="text-align:left">网卡数目</td>
+                                    <td>{{ status.nic_num }}</td>
+                                    <td style="text-align:left">网卡数目</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">日志文件的最大长度</td>
+                                    <td>{{ status.max_log_size }}</td>
+                                    <td style="text-align:left">日志文件的最大长度</td>
+                                </tr>
+                                <tr> 
+                                    <td style="text-align:left">启用后分片标志</td>
+                                    {% if status1.post_fragment_enabled %}
+                                    <td>启用</td>
+                                    {% else %}
+                                    <td>禁用</td>
+                                    {% endif %}                                    
+                                    <td style="text-align:left">启用后分片标志</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">加密数据包总数</td>
+                                    <td>{{ status.enc_packets }}</td>
+                                    <td style="text-align:left">加密数据包总数</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">解密数据包总数</td>
+                                    <td>{{ status.dec_packets }}</td>
+                                    <td style="text-align:left">解密数据包总数</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">加密发生错误总数</td>
+                                    <td>{{ status.enc_errors }}</td>
+                                    <td style="text-align:left">加密发生错误总数</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">解密发生错误总数</td>
+                                    <td>{{ status.dec_errors }}</td>
+                                    <td style="text-align:left">解密发生错误总数</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">已处理数据包总数</td>
+                                    <td>{{ status.packets_total }}</td>
+                                    <td style="text-align:left">已处理数据包总数</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">装置编号</td>
+                                    <td>{{  status.equipment_id }}</td>
+                                    <td style="text-align:left">密码机的编号</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left">软件的版本和日期</td>
+                                    <td>{{ status.equipment_info }}</td>
+                                    <td style="text-align:left">软件的版本和日期</td>
+                                </tr>
+                           </table>
+                        </div>
+				   </div>
+			    </div>
+        	    <div class="panel panel-primary">
+        		    <div class="panel-heading">
+        			     <h4 class="panel-title">
+        			     隧道状态
+        			     </h4>
+        		    </div>
+        		    <div class="panel-body">
+                        <form id="query_channel" method="POST">
+                            <input type='hidden' id='id' value='{{ machine.id }}'>
+                            <input name='nonce' type='hidden' value="{{ nonce }}">
+                            <button type="button" id="div-btn-channel" class="btn btn-primary" style="float:left;">获取隧道信息列表</button>            
+                        </form>
+                        <br /><br />
+                        <div class="scrollspy2">
+            			    <table class="table table-bordered table-responsive tScroll">
+            				    <thead>
+            					   <tr>
+                                      <th>序号</th>
+            						  <th>隧道名称</th>
+            						  <th>对端IP</th>
+            						  <th>隧道号</th>
+                                      <th>组ID</th>
+            						  <th>策略条数</th>
+                                      <th>协商状态</th>
+                                      <th>加密模式</th>
+                                      <th>对端状态</th>
+                                      <th>对端主备机状态</th>
+            						  <th>上次协商成功时间</th>
+            						  <th>已发送的协商包数</th>
+            						  <th>已接收的协商包数</th>
+                                      <th>协商错误包数</th>
+                                      <th>隧道组ID</th>
+                                      <th>链路号</th>
+            					  </tr>
+            				    </thead>
+            				    <tbody>
+                                    {% for channel in channels %}
+                                    <tr>
+                                        <td>{{ loop.index }}
+                                        <input type="hidden" name="id" value="{{ channel.id }}"></td>
+                                        <td class="name">{{channel.channelname}}</td>
+                                        <td class="ip">{{channel.peer_addr}}</td>
+                                        <td class="channelnumber">{{channel.channelnumber}}</td>
+                                        <td class="samegruopip">{{channel.teamid}}</td>                                   
+                                        <td class="stragetynumber">{{channel.policy_num}}</td>
+                                        <td class="negotiation ">{{channel.neg_status }}</td>
+                                        <td class="encryption">{{channel.work_model}}</td>
+                                        <td class="opposite">{{channel.peer_state}}</td>
+                                        <td class="oppositestatus">{{channel.peer_prior}}</td>
+                                        <td class="successtime">{{channel.last_neg_successtime}}</td>
+                                        <td class="send">{{channel.neg_packets_sent}}</td>
+                                        <td class="receive">{{channel.neg_packets_recv}}</td>
+                                        <td class="error">{{channel.neg_packets_err}}</td>
+                                        <td class="teamid">{{channel.teamid}}</td>
+                                        <td class="linkid">{{channel.lino}}</td>
+                                    </tr>
+                                    {% endfor %}
+            				    </tbody>	
+            			    </table>
+                        </div>
+        		    </div>
+        	   </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}                      
+
+{% block scripts %}
+<script src="/static/js/bootstrap-scrollspy.js"></script>
+
+<script>
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '1': alert('不存在该隧道'); break;
+        case '2': alert('该隧道已存在'); break;
+        case '3': alert('签名验证失败'); break;
+        case "6": alert('解密出的明文数据不合法'); break;
+        case '7': alert('该项操作当前被禁止'); break;
+        case '8': alert('获取加密统计数据失败'); break;
+        case '10': alert('添加隧道安全策略时失败'); break;
+        case '11': alert('删除隧道安全策略时失败'); break;
+        case '12': alert('重置装置失败'); break;
+        case '13': alert('重置隧道失败'); break;
+        case '14': alert('获取日志文件长度失败'); break;
+        case '15': alert('读取日志文件失败'); break;
+        case '17': alert('操作冲突'); break; 
+        case '-2': alert('请求超时'); break;
+        case '-1': alert('返回数据包错误'); break;
+        case '-3': alert('输入信息有误'); break;
+        case '0': alert('操作成功'); break;                
+        default: alert('操作异常');
+    }
+}
+
+$('#div-btn-query').click(function(){
+    $.post('/privateequipment/querysystemconfigure/'+$('#id').val(), {'nonce':'{{ nonce }}' }, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload();
+        }else{
+            alert(data);
+        }
+    })
+})
+
+$('#div-btn-channel').click(function(){
+    $.post('/privateequipment/querychannel/'+$('#id').val(), {'nonce':'{{ nonce }}' }, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        }else{
+            SwitchStatusCode(data)
+        }
+    })
+})
+
+</script>
+{% endblock %}

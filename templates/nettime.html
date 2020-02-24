@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}
+系统通信配置
+{% endblock %}
+
+{% block content %}
+<div class="col-md-10" style="padding-left: 16em;">
+   <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+            系统通信管理
+            </h4>
+        </div>
+        <div class="panel-body" align="center">
+			<div class="panel-body" align="center">
+                <p>
+                    网络超时时间：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="number" class="data-input" name="outtime" value="{{ out_time }}" onkeyup="value=value.replace(/[^\d]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))" min="1" required>&nbsp;秒&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" align="right" id="btn-set-outtime" class="btn btn-primary">设置</button>
+                </p>
+                <hr/>
+                <p>
+                    出错重发次数：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="number" class="data-input" name="resend" value="{{ resend_time }}" onkeyup="value=value.replace(/[^\d]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))" min="0" required>&nbsp;次&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" align="right" id="btn-set-resend" class="btn btn-primary">设置</button>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$('#btn-set-outtime').click(function(e){
+    var elem = $(this).parent().parent();
+    judge = elem.find('input[name=outtime]').val()
+    if (judge != "" && judge <60 && judge>0){
+        $.post("/setouttime",{
+        outtime:elem.find('input[name=outtime]').val(),
+        'nonce':'{{ nonce }}',
+      },function(data){
+         if (data == "0")
+         {
+            //location.reload()
+            alert('设置成功')
+        }else{
+            SwitchStatusCode(data)
+        }
+      })
+    }else{
+        alert("请先输入正确的超时时间！范围为：1~60。");
+    }
+});
+
+$('#btn-set-resend').click(function(e){
+    var elem = $(this).parent().parent();
+    judge = elem.find('input[name=resend]').val()
+    if (judge != "" && judge <10 && judge>0){
+        $.post("/setresendtimes",{
+        resend:elem.find('input[name=resend]').val(),
+        'nonce':'{{ nonce }}',
+      },function(data){
+         if (data == "0")
+         {
+            //location.reload()
+            alert('设置成功')
+        }else{
+            SwitchStatusCode(data)
+        }
+      })
+    }else{
+        alert("请先输入正确的重发次数！范围为：0~10。");
+    }
+});
+
+
+</script>
+{% endblock %}

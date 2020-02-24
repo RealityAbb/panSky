@@ -1,0 +1,448 @@
+{% extends "base.html" %}
+
+{% block title %}
+统计查询
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+    .scrollspy {
+        height:450px;
+        overflow: auto;
+        position: relative;
+    }
+</style>
+
+<body onload="load()">
+
+<div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+             <ul class="nav nav-tabs nav-pills" id="myTab" > 
+                <li class="active"><a href="#query">查询</a></li> 
+                <li><a href="#statistics">统计</a></li> 
+            </ul>
+        </div> 
+        <div class="panel-body">
+            <div class="tab-content">
+             
+                <div class="tab-pane active" id="query">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">查询选项</h3>
+                        </div>
+                        <form method="POST" action='/statistics'>
+                            <input type='hidden' name='nonce' value='{{ nonce }}'>
+                            <div class="panel-body">
+                                <label class="control-label">请选择查询条件</label>
+                                    <select class="form-control" name="choices" id="selector">
+                                        <option value="状态正常" >状态正常</option>
+                                        <option value="状态不正常" >状态不正常</option>
+                                        <option value="安全模式" >安全模式</option>
+                                        <option value="旁路模式" >旁路模式</option>
+                                        <option value="从装置" >从装置(非兴唐设备)</option>
+                                        <option value="主装置" >主装置(非兴唐设备)</option>
+                                        <option value="单机方式" >单机方式(兴唐设备)</option>
+                                        <option value="主备方式" >主备方式(兴唐设备)</option>
+                                        <option value="查看全部">查看全部</option>
+                                    </select>
+                            </div>
+                            <div class="panel-footer" align="center">
+                                <button type="submit" class="btn btn-primary">查询</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">数据列表</h3>
+                        </div>
+                        <div class="panel-body ">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="scrollspy">
+                                        <table class="table table-bordered table-responsive">
+                                            <thead>
+                                                <th colspan="5" style="color:#0000FF;">非兴唐公司装置</th>
+                                                <tr>
+                                                    <th>密码机IP</th>
+                                                    <th>状态</th>
+                                                    <th>工作模式</th>
+                                                    <th>主备标志</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for result in results %}
+                                                <tr>
+                                                    <td class="ip">{{ result[0].ip }}</td>
+                                                    {% if result[1].status == 0 %}
+                                                    <td class="status">正常</td>
+                                                    {% elif result[1].status == 1 %}
+                                                    <td class="status">不正常</td>
+                                                    {% endif %}
+                                                    {% if result[1].workmodel == 0 %}
+                                                    <td class="workmodel">安全模式</td>
+                                                    {% elif result[1].workmodel == 2 %}
+                                                    <td class="workmodel">旁路模式</td>
+                                                    {% else %}
+                                                    <td class="workmodel">未知</td>
+                                                    {% endif %}
+                                                    {%if result[1].sign == 0 %}
+                                                    <td class="sign">从装置</td>
+                                                    {% elif result[1].sign == 1 %}
+                                                    <td class="sign">主装置</td>
+                                                    {% else %}
+                                                    <td class="sign">未知</td>
+                                                    {% endif %}
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="scrollspy">
+                                        <table class="table table-bordered table-responsive">
+                                            <thead>
+                                                <th colspan="5" style="color:#FF00FF;">兴唐公司装置</th>
+                                                <tr>
+                                                    <th>密码机IP</th>
+                                                    <th>状态</th>
+                                                    <th>工作模式</th>
+                                                    <th>单机或主备</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for result2 in result2s %}
+                                                <tr>
+                                                    <td class="id">{{ result2[0].ip }}</td> 
+                                                    {% if result2[1].work_status == 0 %}
+                                                    <td class="status">正常</td>
+                                                    {% elif result2[1].work_status == 1 %}
+                                                    <td class="status">不正常</td>
+                                                    {% endif %}
+                                                    {% if result2[1].work_model == 0 %}
+                                                    <td class="workmodel">安全模式</td>
+                                                    {% elif result2[1].work_model == 2 %}
+                                                    <td class="workmodel">旁路模式</td>
+                                                    {% else %}
+                                                    <td class="workmodel">未知</td>
+                                                    {% endif %}
+                                                    {% if result2[1].isstandalone %}
+                                                    <td>单机方式</td>
+                                                    {% elif result2[1].isstandalone == None %}
+                                                    <td>未知</td>
+                                                    {% else %}
+                                                    <td>主备方式</td>
+                                                    {% endif %}        
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+         
+                        
+                <div class="tab-pane" id="statistics">
+                    <div id="keys-pie-graph"></div>
+                    <div id="nomalechart" style="width: 600px;height:400px;float:left"></div>
+                    <div id="modelechart" style="width: 600px;height:400px;float:left"></div><br/>
+                    <div id="deviceechart" style="width: 600px;height:400px;float:right"></div>
+                    <div id="privatedeviceechart" style="width: 600px;height:400px;float:right"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        
+
+{% for machine in machines%}
+<input type="hidden" value="{{ machine.status }}" name="statusechart">
+<input type="hidden" value="{{ machine.workmodel }}" name="modelstatusechart">
+<input type="hidden" value="{{ machine.sign }}" name="primaryflagechart">
+{% endfor %}
+
+{% for privatemachine in privatemachines %}
+<input type="hidden" value="{{ privatemachine.work_status }}" name="privateworkchart">
+<input type="hidden" value="{{ privatemachine.work_model }}" name="privatemodelchart">
+<input type="hidden" value="{{ privatemachine.isstandalone }}" name="privatestatusechart">
+{% endfor %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/echarts.min.js"></script>
+<script src="/static/js/bootstrap-scrollspy.js"></script>
+<script>
+function load()
+{
+    $("#selector").find("option[value='{{choices}}']").attr("selected",true); 
+}
+
+
+
+$(function () { 
+    $('#myTab a:first').tab('show');
+        $('#myTab a').click(function (e) { 
+          e.preventDefault();
+          $(this).tab('show'); 
+    }) 
+})
+
+$('#myTab a[href="#query"]').tab('show'); 
+
+var chart1 = echarts.init(document.getElementById('nomalechart'));
+var chart2 = echarts.init(document.getElementById('modelechart'));
+var chart3 = echarts.init(document.getElementById('deviceechart'));
+var chart4 = echarts.init(document.getElementById('privatedeviceechart'));
+
+
+var statusechart = document.getElementsByName("statusechart");
+var privateworkchart = document.getElementsByName("privateworkchart");
+
+var modelstatusechart = document.getElementsByName("modelstatusechart");
+var privatemodelchart = document.getElementsByName("privatemodelchart");
+
+var primaryflagechart = document.getElementsByName("primaryflagechart");
+var privatestatusechart = document.getElementsByName("privatestatusechart");
+
+
+var normalstatus = 0;
+var abnormalstatus = 0;
+var securitystyle = 0;
+var sidestyle = 0;
+var secondarydevice = 0;
+var primarydevice = 0;
+var alone = 0;
+var master = 0;
+
+for (var i=0;i<statusechart.length;i++)
+{
+    if (statusechart[i].value == 0)
+    {
+        normalstatus++;
+    } else if (statusechart[i].value == 1){
+        abnormalstatus++;
+    } else {
+        console.log("error!!");
+    }
+}
+
+for (var i=0;i<privateworkchart.length;i++)
+{
+    if (privateworkchart[i].value == 0)
+    {
+        normalstatus++;
+    } else if (privateworkchart[i].value == 1){
+        abnormalstatus++;
+    } else {
+        console.log("error!!");
+    }
+}
+
+for (var i=0;i<modelstatusechart.length;i++)
+{
+
+    if (modelstatusechart[i].value == 0)
+    {
+        securitystyle++;
+    } else if (modelstatusechart[i].value == 2){
+        sidestyle++;
+    } else {
+        console.log("error!!");
+    }
+}
+
+for (var i=0;i<privatemodelchart.length;i++)
+{
+
+    if (privatemodelchart[i].value == 0)
+    {
+        securitystyle++;
+    } else if (privatemodelchart[i].value == 2){
+        sidestyle++;
+    } else {
+        console.log("error!!");
+    }
+}
+
+
+for (var i=0;i<primaryflagechart.length;i++)
+{
+    if (primaryflagechart[i].value == 0)
+    {
+        secondarydevice++;
+    } else if (primaryflagechart[i].value == 1){
+        primarydevice++;
+    } else {
+        console.log("error!!");
+    }
+}
+
+for (var i=0;i<privatestatusechart.length;i++)
+{
+    if (privatestatusechart[i].value == "True")
+    {
+        alone++;
+    } else if (privatestatusechart[i].value == "False"){
+        master++;
+    } else {
+        console.log("error!!");
+    }
+}
+
+var option1 = {
+    title : {
+        text: '密码机状态',
+        x:'center'
+    },
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    legend: {
+        orient: 'vertical',
+        left: 'left',
+        data: ['正常','不正常']
+    },
+    series : [
+        {
+            name: '密码机状态',
+            type: 'pie',
+            radius : '55%',
+            center: ['50%', '60%'],
+            color:['#fd0000','#00fd4d','#28c6b9','#84e6f1','#dddddd'],
+            data:[
+                {value:abnormalstatus, name:'不正常'},
+                {value:normalstatus, name:'正常'},
+            ],
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }
+    ]
+};
+
+var option2 = {
+    title : {
+        text: '密码机工作模式',
+        x:'center'
+    },
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    legend: {
+        orient: 'vertical',
+        left: 'left',
+        data: ['安全模式','旁路模式']
+    },
+    series : [
+        {
+            name: '密码机工作模式',
+            type: 'pie',
+            radius : '55%',
+            center: ['50%', '60%'],
+            color:['#00448a','#0580b9','#28c6b9','#84e6f1','#dddddd'],
+            data:[
+                {value:securitystyle, name:'安全模式'},
+                {value:sidestyle, name:'旁路模式'},
+            ],
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }
+    ]
+};
+
+var option3 = {
+    title : {
+        text: '密码机主备标志(非兴唐公司装置)',
+        x:'center'
+    },
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    legend: {
+        orient: 'vertical',
+        left: 'left',
+        data: ['从装置','主装置']
+    },
+    series : [
+        {
+            name: '密码机主备标志',
+            type: 'pie',
+            radius : '55%',
+            center: ['50%', '60%'],
+            color:['#002ffc','#fd00e1','#00448a','#0580b9','#28c6b9'],
+            data:[
+                {value:secondarydevice, name:'从装置'},
+                {value:primarydevice, name:'主装置'},
+            ],
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }
+    ]
+};
+
+var option4 = {
+    title : {
+        text: '密码机单机或主备方式(兴唐公司装置)',
+        x:'center'
+    },
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    legend: {
+        orient: 'vertical',
+        left: 'left',
+        data: ['单机方式','主备方式']
+    },
+    series : [
+        {
+            name: '密码机单机或主备方式',
+            type: 'pie',
+            radius : '55%',
+            center: ['50%', '60%'],
+            color:['#fe4200','#00448a','#0580b9','#dddddd','#28c6b9'],
+            data:[
+                {value:alone, name:'单机方式'},
+                {value:master, name:'主备方式'},
+            ],
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }
+    ]
+};
+
+
+chart1.setOption(option1);
+chart2.setOption(option2);
+chart3.setOption(option3);
+chart4.setOption(option4);
+</script>   
+
+{% endblock %}

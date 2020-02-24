@@ -1,0 +1,370 @@
+{% extends "base.html" %}
+{% block title %}
+密码机配置MAC地址
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+    #main-nav {
+    margin-left: 1px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li > a {
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #347ab6;
+        background: #fff;
+        border: 1px solid #D5D5D5;
+        border-radius: 4px;
+    }
+
+    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
+        color: #fff;
+        background: #347ab6;
+        background: -webkit-linear-gradient(top, #347ab6 0%);
+    }
+
+    
+    #main-nav.nav-tabs.nav-stacked > li {
+        margin-bottom: 4px;
+    }
+
+    .scrollspy {
+        height:200px;
+        overflow: auto;
+        position: relative;
+    }
+</style>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <ul id="main-nav" class="nav nav-tabs nav-stacked" style="">
+                   <li class="active">
+                        <a href="/privateequipment/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-th-large"></i>
+                            密码机配置管理   
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatecertmanage/import/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-lock"></i>
+                            证书管理        
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatechannel/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-inbox"></i>
+                            隧道管理         
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/privateequipment/privatesystem/net/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-cog"></i>
+                            系统配置
+                        </a>
+                    </li>
+ 
+                    <li>
+                        <a href="/privateequipment/privatelog/{{ machine.id }}">
+                            <i class="glyphicon glyphicon-file"></i>
+                            日志管理
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/equipment">
+                            <i class="glyphicon glyphicon-log-out"></i>
+                            返回
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-10">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                        系统配置
+                        <p style="float:right;">装置名称：{{ machine.machinenumber }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;装置IP地址：{{ machine.ip }}</p>
+                        </h4>
+                    </div> 
+                    <div class="panel-body">
+                        <ul class="nav nav-tabs nav-justified nav-pills" id="myTab" > 
+                           <li><a href="/privateequipment/privatesystem/net/{{ machine.id }}">网络配置</a></li>
+                           <li><a href="/privateequipment/privatesystem/vlan/{{ machine.id }}">配置VLAN</a></li>
+                           <li class="active"><a href="/privateequipment/privatesystem/mac/{{machine.id}}">配置MAC地址</a></li>
+                           <li><a href="/privateequipment/privatesystem/interation/{{machine.id}}">互备装置</a></li>
+                           <li><a href="/privateequipment/privatesystem/sundry/{{machine.id}}">杂项配置</a></li> 
+                           <li><a href="/privateequipment/privatesystem/log/{{ machine.id }}">日志服务器设置</a></li> 
+                           <li><a href="/privateequipment/privatesystem/safe/{{ machine.id }}">安全管理</a></li>    
+                        </ul>
+
+                        <br/>
+                        <form>
+                            <div class="form-group" align="center">
+                                <input type="radio" name="road" value="1" onclick="to_change()"/> <strong>第1路</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <input type="radio" name="road" value="2" checked /> <strong>第2路</strong>
+                            </div>
+                                <div align="center">
+                                    <input type="checkbox" name="routemac" onclick="setText(this)"/>
+                                    路由器MAC：
+                                    <input type="text" name="routemac1" value="{{route_mac[0]}}" maxlength=2 size=2 required disabled id="rp1">:
+                                    <input type="text" name="routemac2" value="{{route_mac[1]}}" maxlength=2 size=2 required disabled id="rp2">:
+                                    <input type="text" name="routemac3" value="{{route_mac[2]}}" maxlength=2 size=2 required disabled id="rp3">:
+                                    <input type="text" name="routemac4" value="{{route_mac[3]}}" maxlength=2 size=2 required disabled id="rp4">:
+                                    <input type="text" name="routemac5" value="{{route_mac[4]}}" maxlength=2 size=2 required disabled id="rp5">:
+                                    <input type="text" name="routemac6" value="{{route_mac[5]}}" maxlength=2 size=2 required disabled id="rp6">
+                                </div>
+                                <br /> <br />
+                                <div align="center">
+                                    <input type="checkbox" name="switchmac" onclick="setText2(this)"/>
+                                    交换机MAC：
+                                    <input type="text" name="switchmac1" value="{{switch_mac[0]}}" maxlength=2 size=2 required disabled id="sp1">:
+                                    <input type="text" name="switchmac2" value="{{switch_mac[1]}}" maxlength=2 size=2 required disabled id="sp2">:
+                                    <input type="text" name="switchmac3" value="{{switch_mac[2]}}" maxlength=2 size=2 required disabled id="sp3">:
+                                    <input type="text" name="switchmac4" value="{{switch_mac[3]}}" maxlength=2 size=2 required disabled id="sp4">:
+                                    <input type="text" name="switchmac5" value="{{switch_mac[4]}}" maxlength=2 size=2 required disabled id="sp5">:
+                                    <input type="text" name="switchmac6" value="{{switch_mac[5]}}" maxlength=2 size=2 required disabled id="sp6">
+                                </div>
+                                <br /><br />
+                            <div class="button-bar">
+                                <button type="button" class="btn btn-primary" id="div-btn-edit">修改</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <button onClick="funClear()" type="button" class="btn btn-primary ">清空</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn-primary" id="div-btn-refresh">重新获取</button>
+                            </div>      
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+<script src="/static/js/bootstrap-scrollspy.js"></script>
+
+{% block scripts %}
+<script>
+//----------to_change()
+function to_change(){
+    window.location.href='/privateequipment/privatesystem/mac/{{ machine.id }}';
+}
+
+//----------judgeoperationresult
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        case '1': alert('操作失败'); break;
+        case '2': alert('该隧道已存在'); break;
+        case '3': alert('签名验证失败'); break;
+        case "6": alert('解密出的明文数据不合法'); break;
+        case '7': alert('该项操作当前被禁止'); break;
+        case '8': alert('获取加密统计数据失败'); break;
+        case '10': alert('添加隧道安全策略时失败'); break;
+        case '11': alert('删除隧道安全策略时失败'); break;
+        case '12': alert('重置装置失败'); break;
+        case '13': alert('重置隧道失败'); break;
+        case '14': alert('获取日志文件长度失败'); break;
+        case '15': alert('读取日志文件失败'); break;
+        case '17': alert('操作冲突'); break; 
+        case '-2': alert('请求超时'); break;
+        case '-1': alert('返回数据包错误'); break;
+        case '-3': alert('输入信息有误'); break;
+        case '0': alert('操作成功'); break;                
+        default: alert('操作异常');
+    }
+}
+
+//----------------------clean
+function funClear(){
+    var txts=document.getElementsByTagName("input");  
+    for(var i=0;i<txts.length;i++)  
+    {  
+        if(txts[i].type=="text")  
+        {  
+          txts[i].value ="";  
+        }  
+    }
+ }
+
+//-----------------disable
+function setText(obj)
+{
+    if(obj.checked==true)
+    {
+        document.getElementById("rp1").disabled=false;
+        document.getElementById("rp2").disabled=false;
+        document.getElementById("rp3").disabled=false;
+        document.getElementById("rp4").disabled=false;
+        document.getElementById("rp5").disabled=false;
+        document.getElementById("rp6").disabled=false;
+    }
+    else
+    {
+        document.getElementById("rp1").disabled=true;
+        document.getElementById("rp2").disabled=true;
+        document.getElementById("rp3").disabled=true;
+        document.getElementById("rp4").disabled=true;
+        document.getElementById("rp5").disabled=true;
+        document.getElementById("rp6").disabled=true;
+    }
+}
+
+function setText2(obj)
+{
+    if(obj.checked==true)
+    {
+        document.getElementById("sp1").disabled=false;
+        document.getElementById("sp2").disabled=false;
+        document.getElementById("sp3").disabled=false;
+        document.getElementById("sp4").disabled=false;
+        document.getElementById("sp5").disabled=false;
+        document.getElementById("sp6").disabled=false;
+    }
+    else
+    {
+        document.getElementById("sp1").disabled=true;
+        document.getElementById("sp2").disabled=true;
+        document.getElementById("sp3").disabled=true;
+        document.getElementById("sp4").disabled=true;
+        document.getElementById("sp5").disabled=true;
+        document.getElementById("sp6").disabled=true;
+    }
+}
+
+$('#div-btn-refresh').click(function(){
+    $.post('/privateequipment/privatesystem/refresh/{{machine.id}}', {
+        linenumber:"1",
+        'nonce':'{{ nonce }}',
+    }, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        }else{
+           alert("操作失败！");
+        }
+    })
+})
+
+
+//-----------------------edit
+$('#div-btn-edit').click(function(e){
+    var checked1=false; 
+    var ids= document.getElementsByName("routemac"); 
+    var checked2=false;
+    var apr = document.getElementsByName("switchmac");
+    for(var i=0;i<ids.length;i++){ 
+        if(ids[i].checked){ 
+            checked1=true; 
+        } 
+    }
+    for(var j=0;j<apr.length;j++){
+         if(apr[j].checked){ 
+            checked2=true; 
+        } 
+    }
+    if(!checked1 && !checked2){ 
+        alert("请先选择要修改的Mac地址！");
+    }
+    if(checked1 && !checked2){
+        var elem = $(this).parent().parent();
+        switchmac1 = ""
+        switchmac2 = ""
+        switchmac3 = ""
+        switchmac4 = ""
+        switchmac5 = ""
+        switchmac6 = ""
+        $.post("/privateequipment/privatesystem/edit/{{machine.id}}",{
+            select:"0",
+            linenumber:"1",
+            routemac1:elem.find('input[name=routemac1]').val(),
+            routemac2:elem.find('input[name=routemac2]').val(),
+            routemac3:elem.find('input[name=routemac3]').val(),
+            routemac4:elem.find('input[name=routemac4]').val(),
+            routemac5:elem.find('input[name=routemac5]').val(),
+            routemac6:elem.find('input[name=routemac6]').val(),
+            
+            switchmac1:switchmac1,
+            switchmac2:switchmac2,
+            switchmac3:switchmac3,
+            switchmac4:switchmac4,
+            switchmac5:switchmac5,
+            switchmac6:switchmac6,
+            'nonce':'{{ nonce }}', 
+          },function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                location.reload()
+            }else{
+                SwitchStatusCode(data)
+            }
+        })
+    }
+    if(!checked1 && checked2){
+        var elem = $(this).parent().parent();
+        routemac1 = ""
+        routemac2 = ""
+        routemac3 = ""
+        routemac4 = ""
+        routemac5 = ""
+        routemac6 = ""
+        $.post("/privateequipment/privatesystem/edit/{{machine.id}}",{
+            select:"1",
+            linenumber:"1",
+            routemac1:routemac1,
+            routemac2:routemac2,
+            routemac3:routemac3,
+            routemac4:routemac4,
+            routemac5:routemac5,
+            routemac6:routemac6,
+            
+            switchmac1:elem.find('input[name=switchmac1]').val(),
+            switchmac2:elem.find('input[name=switchmac2]').val(),
+            switchmac3:elem.find('input[name=switchmac3]').val(),
+            switchmac4:elem.find('input[name=switchmac4]').val(),
+            switchmac5:elem.find('input[name=switchmac5]').val(),
+            switchmac6:elem.find('input[name=switchmac6]').val(),
+            'nonce':'{{ nonce }}', 
+          },function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                location.reload()
+            }else{
+                SwitchStatusCode(data)
+            }
+        })
+    }
+    if(checked1 && checked2){
+        var elem = $(this).parent().parent();
+        $.post("/privateequipment/privatesystem/edit/{{machine.id}}",{
+            select:"2",
+            linenumber:"1",
+            routemac1:elem.find('input[name=routemac1]').val(),
+            routemac2:elem.find('input[name=routemac2]').val(),
+            routemac3:elem.find('input[name=routemac3]').val(),
+            routemac4:elem.find('input[name=routemac4]').val(),
+            routemac5:elem.find('input[name=routemac5]').val(),
+            routemac6:elem.find('input[name=routemac6]').val(),
+            
+            switchmac1:elem.find('input[name=switchmac1]').val(),
+            switchmac2:elem.find('input[name=switchmac2]').val(),
+            switchmac3:elem.find('input[name=switchmac3]').val(),
+            switchmac4:elem.find('input[name=switchmac4]').val(),
+            switchmac5:elem.find('input[name=switchmac5]').val(),
+            switchmac6:elem.find('input[name=switchmac6]').val(),
+            'nonce':'{{ nonce }}', 
+          },function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+                location.reload()
+            }else{
+                SwitchStatusCode(data)
+            }
+        })
+    }
+
+})
+
+</script>
+{% endblock %}
