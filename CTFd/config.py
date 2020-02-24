@@ -6,7 +6,7 @@ sys.setdefaultencoding('utf-8')
 
 ##### SERVER SETTINGS #####
 SECRET_KEY = os.urandom(128)
-SQLALCHEMY_DATABASE_URI = "mysql://root:root@localhost:3306/vpn?charset=utf8"
+SQLALCHEMY_DATABASE_URI = "mysql://root:root@localhost:3306/pan?charset=utf8"
 SESSION_TYPE = "filesystem"
 SESSION_FILE_DIR = "/tmp/flask_session"
 SESSION_COOKIE_HTTPONLY = True
