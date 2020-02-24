@@ -4042,7 +4042,7 @@ def init_auth(app):
             AlertInfo = ""
             if status != 0: 
                 AlertInfo = SwitchErrorCode(status)
-        return render_template('privatelog.html',machine=machine, logs=logs[::-1], pagination=pagination,AlertInfo=AlertInfo)
+            return render_template('privatelog.html',machine=machine, logs=logs[::-1], pagination=pagination,AlertInfo=AlertInfo)
         else:
             return redirect('/')
 
