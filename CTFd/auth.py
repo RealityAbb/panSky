@@ -3567,13 +3567,6 @@ def init_auth(app):
             machine = Cipermachine.query.filter_by(id=id).first()
             getmac = privatenetwork.CGetMacInfo(id,machine.ip,[lino],machine.encrypttype)
             status = getmac.SendAndReceive()
-            if status == 0:
-                linkstatus = models.DPrivateEquipmentLinkInfo.query.filter_by(id=id,lino=lino).first()
-                    if linkstatus != None:
-                        if linkstatus.route_mac != None:
-                            route_mac = linkstatus.route_mac.split(':')
-                        if linkstatus.switch_mac != None:
-                            switch_mac = linkstatus.switch_mac.split(':')
             return render_template('privatesystem/systemmac2.html', machine= machine , route_mac=route_mac,switch_mac=switch_mac)
         else :
             return redirect ( '/' )
@@ -3583,7 +3576,6 @@ def init_auth(app):
     def private_system_setmac(id):
         select = int(request.form['select'])
         linenumber = int(request.form['linenumber'])
-        print linenumber
         if select == 0:
             routemac = request.form['routemac1'] + ':' + request.form['routemac2'] + ':' + request.form['routemac3'] + ':' + request.form['routemac4'] + ":" + request.form['routemac5'] + ":" + request.form['routemac6']
             legal1 = check_mac(routemac)
