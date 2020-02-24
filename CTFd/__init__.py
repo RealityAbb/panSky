@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, abort, session, jso
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from logging.handlers import RotatingFileHandler
-from flask.ext.session import Session
+from flask_session import Session
 from datetime import timedelta
 import logging
 import os
