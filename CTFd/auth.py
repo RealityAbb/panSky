@@ -3654,15 +3654,6 @@ def init_auth(app):
             
             querysystemconfigure = privatesystem.CQuerySystemInfo(id, machine.ip, [0], machine.encrypttype)
             status = querysystemconfigure.SendAndReceive()
-                if status == 0:
-                    equipmentstatus = models.DPrivateEquipmentCommonInfo.query.filter_by(id=id).first()
-                    if equipmentstatus != None:
-                        if equipmentstatus.isstandalone != None:
-                            isstandalone = equipmentstatus.isstandalone
-                        if equipmentstatus.ismaster != None:
-                            ismaster = equipmentstatus.ismaster
-                        if equipmentstatus.one_ip_hotswap != None:
-                            masterchange = equipmentstatus.one_ip_hotswap
             return render_template('privatesystem/systeminteration.html',machine=machine,isstandalone=isstandalone, ismaster=ismaster, masterchange=masterchange)
         else:
             return redirect('/')
