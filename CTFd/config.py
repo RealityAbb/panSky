@@ -16,7 +16,7 @@ CONFIG_FOLDER = 'static' + os.sep + 'config'
 DEBUG=True
 MYSQL_USER = 'root'
 MYSQL_PASSWORD = 'root'
-DATEBASE_NAME = 'vpn'
+DATEBASE_NAME = 'pan'
 
 ##### SUPER USER #####
 ADMINNAME = 'admin'
