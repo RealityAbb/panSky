@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
 from CTFd.models import db, LMRoute, DLeadMachineCert,Certificates
 #from CTFd import models

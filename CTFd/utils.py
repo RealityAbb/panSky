@@ -7,7 +7,7 @@ from CTFd import mail
 from urlparse import urlparse, urljoin
 from functools import wraps
 from flask import current_app as app, g, request, redirect, url_for, session,render_template
-from flask.ext.mail import Message
+from flask_mail import Message
 from socket import inet_aton, inet_ntoa
 from struct import unpack, pack
 

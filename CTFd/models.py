@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
 from socket import inet_aton, inet_ntoa
 from struct import unpack, pack

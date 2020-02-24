@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
 from CTFd.models import LeadMachine, Cipermachine
 from CTFd import models, ukey
