@@ -56,7 +56,7 @@ def init_auth(app):
             password = base64.decodestring(epassword)
             # if
             # errors.append("登录失败")
-            # return render_template('login.html',errors=errors)
+            return redirect('/base')
         else:
             db.session.close()
             return render_template('login.html')
