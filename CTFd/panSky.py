@@ -1,30 +1,31 @@
 # coding=utf-8
-from flask import current_app as app, render_template, render_template_string, request, redirect, abort, jsonify, json as json_mod, url_for, session, send_from_directory
-from CTFd.utils import authed, allowed_file, sha512, judge_result, check_ip
-from CTFd import initial, ukey,Transport
-from CTFd.models import db, Users, Certificates,LeadMachine,Flag,LMIPAddr,LMRoute, DLeadMachineCert, Cipermachine, Terminallogs,Tree, EquipmentsStatus,UploadCertificates
-
-from jinja2.exceptions import TemplateNotFound
+from flask import render_template, request, redirect, abort, jsonify, url_for, session, flash, send_from_directory
+from CTFd.utils import sha512, authed, judge_result, check_ip, check_mac, allowed_file, AddCommonStatus, AddPrivateStatus
+from CTFd import initial, ukey, Transport
+from CTFd.models import db, Users, SysIPAddress, SystemRoutes, LeadMachine, Cipermachine, Terminallogs, LeadMachinelogs, EquipmentsStatus, Certificates, CertDetail, ChannelStatus, ChannelNumber,DSecurityStrategy,Tree,DRouteTable,DPrivateCertInfo,LMRoute,DPrivateChannelInfo,DStandarCertificate,UploadCertificates
+from CTFd import operationequipment, models,privatesystem,privatechannel, privatestrategy,privatenetwork,privatevlan,privatelog,privatesecurity,privatesundry,privatecert
+from itsdangerous import TimedSerializer, BadTimeSignature
 from passlib.hash import bcrypt_sha256
-from collections import OrderedDict
-from werkzeug.utils import secure_filename
 from flask import current_app as app
+from werkzeug.utils import secure_filename
+from CTFd.Transport import lock1
+
+from struct import *
+from generalfunction import SwitchErrorCode
 import base64
 import logging
-import os
-import shutil
-import re
-import sys
-import json
-import hashlib
-import os
-import datetime
 import time
-import chardet
+import datetime
+import socket
+import hashlib
+import re
+import os
+import sys
 import socket
 import struct
+import ctypes
+import zipcompress
 import MySQLdb
-from generalfunction import SwitchErrorCode
 authority = app.config['MYSQL_USER']
 password = app.config['MYSQL_PASSWORD']
 name = app.config['DATEBASE_NAME']
