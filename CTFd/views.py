@@ -34,25 +34,6 @@ sys.setdefaultencoding('utf-8')
 def init_views(app):
     @app.before_request
     def csrf():
-        if request.path == "/login":
-            print "/login###"
-            #pass
-        elif authed() and request.path[0:7] != "/static" and request.path != "/user/new" and request.path != "/logout":
-            errors = []
-            uid = session['uid']
-            ##print "session['uid'] = ",uid
-            if(uid != Transport.GetUid()):
-                session.clear()
-                errors.append("Ukey验证失败，请重新登录!")
-                return render_template('login.html',errors=errors)
-                ##return redirect('/relogin')
-            ##Transport.SetUid(uid)
-            checkflag = Transport.CheckUkey()
-            if checkflag == False:
-                session.clear()
-                errors.append("Ukey验证失败，请重新登录!")
-                return render_template('login.html',errors=errors)
-                #return redirect('/relogin')
         if authed() and request.method == "POST":
             if session['nonce'] != request.form.get('nonce'):
                 # abort(403)

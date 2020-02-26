@@ -52,71 +52,11 @@ def init_auth(app):
             return redirect('/base')
         if request.method == 'POST':
             errors = []
-            status = ukey.m_ukey_prepare()
-            if status != 0:
-                errors = judge_result(status)
-                return render_template('login.html',errors=errors)
-            else:
-                status2 = ukey.m_ukey_get_info()
-                result = status2['r']
-                ukeyid = status2['id_ptr'].split("\x00")[0]
-                if result != 0:
-                    errors = judge_result(result)
-                    return render_template('login.html',errors=errors)
-                else:
-                    user = Users.query.filter_by(ukeyid=ukeyid).first()
-                    if user == None:
-                        errors.append("没有这个用户！")
-                        return render_template('login.html',errors=errors)
-                    else:
-                        if user.losesign == 0:
-                            errors.append("此用户已申请挂失，无法使用！")
-                            return render_template('login.html',errors=errors)
-                        else:
-                            epassword = request.form['epassword']
-                            password = base64.decodestring(epassword)
-                            filename = user.pk
-                            if filename != "":
-                                filepath = os.path.join(app.config['CERTIFICATE_FOLDER'], filename)
-                                certfile = open(filepath, 'r')
-                                data = certfile.read() 
-                                parameters = [len(data), data]
-                                importcert = initial.CGetCertPK(parameters)
-                                status3,pk = importcert.SendAndReceive()
-                                if status3 != 0:
-                                    errors = judge_result(status3)
-                                    return render_template('login.html',errors=errors)
-                                else:
-                                    status4 = ukey.m_ukey_authenticate(user.name,password,user.ukeyid,pk,64)
-                                    if status4 != 0:
-                                        errors = judge_result(status4)
-                                        return render_template('login.html',errors=errors)
-                                    else:
-                                        flag = True
-                                        Transport.SetFlag(flag)
-                                        Transport.SetUid(user.ukeyid)
-                                        session.paramanent = False
-                                        session['username'] = user.name
-                                        session['uid'] = user.ukeyid
-                                        session['admin'] = user.admin
-                                        session['nonce'] = sha512(os.urandom(10))
-                                        db.session.close()
-                                        rank = "通告"
-                                        now = int(time.time())
-                                        name = user.name
-                                        style = "LOG_INFO"
-                                        content = "用户登录"
-                                        log = Terminallogs(rank,now,name,style,content)
-                                        db.session.add(log)
-                                        db.session.commit()
-                                        # if user.admin == 2:
-                                        #     Transport.SpingTransport()
-                                        #     Transport.CheckSping()
-                                        db.session.close()
-                                        return redirect('/base')
-                            else:
-                                errors.append("此用户没有公钥证书！")
-                                return render_template('login.html',errors=errors)                             
+            epassword = request.form['epassword']
+            password = base64.decodestring(epassword)
+            # if
+            # errors.append("登录失败")
+            # return render_template('login.html',errors=errors)
         else:
             db.session.close()
             return render_template('login.html')

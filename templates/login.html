@@ -8,7 +8,10 @@
 
 <div class="container">
 	<form class="form-signin" method="POST" action="/login" id="formpost" onsubmit="return submitTest();">
-		<strong>口令</strong>
+        <strong>用户名</strong>
+        <input type="hidden" name="eusername" id="eusername" onkeydown="KeyDown">
+		<input type="password" name="username" class="form-control" placeholder="user" id="user" required onkeydown="KeyDown">
+		<strong>密码</strong>
         <input type="hidden" name="epassword" id="epassword" onkeydown="KeyDown">
 		<input type="password" name="password" class="form-control" placeholder="Password" id="password" required onkeydown="KeyDown">
 		<button class="btn btn-lg btn-primary btn-block" id="btn-login" type="button">登录</button>
@@ -40,11 +43,12 @@ window.document.onkeydown=SubmitOrHidden;
 
 function submitTest()
 {
-    var b = document.getElementById('password').value
-    if(b == ""){
-        alert("请输入登录口令！");
+    var password = document.getElementById('password').value
+    var userName = document.getElementById('username').value
+    if(b == "" || userName == ""){
+        alert("请输入用户名密码");
         return false;
-    }else{
+    } else{
         $("#btn-login").attr("disabled", "true");
     }
 }
