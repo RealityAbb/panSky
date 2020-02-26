@@ -34,4 +34,9 @@ sys.setdefaultencoding('utf-8')
 def init_views(app):
     @app.route('/main', methods=['GET', 'POST'])
     def mainPage():
-        return render_template('main.html')
+        page = request.args.get('page',1, type=int)
+        pagination=Cipermachine.query.paginate(page,per_page=15,error_out=False)
+        cipermachine = pagination.items
+        total_count = db.session.query(db.func.count(Cipermachine.id)).first()[0]
+        viewfunc = ".user2"
+        return render_template('main.html',viewfunc=viewfunc,pagination=pagination,cipermachines=cipermachine, lm_total=total_count)

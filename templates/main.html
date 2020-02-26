@@ -1,68 +1,36 @@
 {% extends "base.html" %}
-{% import "macrosstrategy.html" as macrosstrategy %}
+{% import "macros.html" as macros %}
+{% import "macroselect.html" as macroselect %}
 {% block title %}
-密码机策略管理
+密码机管理
 {% endblock %}
 
 {% block content %}
-
 <style type="text/css">
-    #main-nav {
-    margin-left: 1px;
-    }
-
-    #main-nav.nav-tabs.nav-stacked > li > a {
-        padding: 10px 8px;
-        font-size: 12px;
-        font-weight: 400;
-        color: #347ab6;
-        background: #fff;
-        border: 1px solid #D5D5D5;
-        border-radius: 4px;
-    }
-
-    #main-nav.nav-tabs.nav-stacked > li.active > a, #main-nav.nav-tabs.nav-stacked > li > a:hover {
-        color: #fff;
-        background: #347ab6;
-        background: -webkit-linear-gradient(top, #347ab6 0%);
-    }
-
-    #main-nav.nav-tabs.nav-stacked > li {
-        margin-bottom: 4px;
-    }
-
     .scrollspy {
-        height:580px;
+        height:680px;
         overflow: auto;
         position: relative;
     }
-
-    .tScroll {
-        min-height:100%
-        min-height:101%;
-    }
-
     *
     {
         margin:0px;
         padding:0px;
     }
-
     .zhezhao
     {
       width:100%;
       height:100%;
-      background-color:#fff;
-      filter:alpha(opacity=20);
-      -moz-opacity:0;
-      opacity:0;
+      background-color:#000;
+      filter:alpha(opacity=80);
+      -moz-opacity:0.5;
+      opacity:0.5;
       position:fixed;
       left:0px;
       top:0px;
       display:none;
       z-index:1000;
      }
-
     .login
     {
       width:280px;
@@ -75,300 +43,604 @@
       display:none;
       z-index:1500;
      }
-
-    #page{width: 200px; margin: 0 auto; text-align: right;}
-    #test{width: 212px; padding: 2px; height: 22px; border: 1px solid #ddd; margin: 0 5px 0 0;}
-    #test option{padding: 2px 5px;}
-    #test option:first-child{display: none;}
-    #pre{position:relative;}
-    #itest{width: 212px;padding: 2px 15px 2px 5px; margin-bottom: -1px; background: url(http://bbs.blueidea.com/data/attachment/album/201410/28/114755leueqeys1ps8dtzy.jpg.thumb.jpg) no-repeat scroll right center; border: 1px solid #ccc; box-shadow: 0 1px 0 0 #eee inset; cursor: default;}
-    #itest:focus{cursor: text;}
-    #dtest{width: 210px;border: 1px solid #ddd; border-radius: 0 0 3px 3px; display: none; background-color: #ffffff;text-align: left;}
-    .soption{display: block; padding: 2px 5px;}
-    .soption:hover{background: #f9f9f9; border-top: 1px dotted #ddd; border-bottom: 1px dotted #ddd; padding: 1px 5px;}
 </style>
 
-
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-2">
-                <ul id="main-nav" class="nav nav-tabs nav-stacked" style="">
-                   <li class="active">
-                        <a href="/privateequipment/{{ machine.id }}">
-                            <i class="glyphicon glyphicon-th-large"></i>
-                            密码机配置管理
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/privateequipment/privatecertmanage/import/{{ machine.id }}">
-                            <i class="glyphicon glyphicon-lock"></i>
-                            证书管理
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/privateequipment/privatechannel/{{ machine.id }}">
-                            <i class="glyphicon glyphicon-inbox"></i>
-                            隧道管理
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/privateequipment/privatesystem/net/{{ machine.id }}">
-                            <i class="glyphicon glyphicon-cog"></i>
-                            系统配置
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/privateequipment/privatelog/{{ machine.id }}">
-                            <i class="glyphicon glyphicon-file"></i>
-                            日志管理
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/equipment">
-                            <i class="glyphicon glyphicon-log-out"></i>
-                            返回
-                        </a>
-                    </li>
-                </ul>
+<div class="col-md-3" style="padding-left: 1em;" >
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                密码机管理树
+            </h4>
+        </div>
+        <div class="panel-body">
+            <div class="panel-body">
+            目前密码机总数为:<strong> {{ lm_total }} 台</strong>
             </div>
+            <div class="button-bar" style="float:right;">
+                <button type="button" class="btn btn-danger btn-sm" id="btn-delete-tree">删除节点</button>
+                <button type="button" class="btn btn-primary btn-sm btn-add">添加节点</button>
+            </div>
+            </br></br>
+            <div class="scrollspy" id="tree"></div>
+        </div>
+    </div>
+</div>
 
-            <div class="col-md-10">
-                <div class="modal fade" id="div-copy-strategy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" id="exampleModalLabel">策略复制</h4>
-                            </div>
-                            <form method="POST" action="" enctype="multipart/form-data">
-                                <input type="hidden" name="choosechannelnumber">
-                                <input name='nonce' type='hidden' value="{{ nonce }}">
-                                <div class="panel-body" style="height:100px;">
-                                    <div class="form-group" align="center">
-                                        <label class="control-label">请选择目标隧道(隧道号——隧道名称）</label><br/>
-                                        <select id="test" name="test" style="display:none;" >
-                                            {% for channel in channels %}
-                                                <option value="{{ channel.channelnumber}}" text="{{ channel.channelnumber}}——{{channel.channelname}}">{{ channel.channelnumber}}——{{channel.channelname}} </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="panel-footer">
-                                    <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                                    <button id="div-btn-copy-stragety" type="button" class="btn btn-primary">确定</button>
-                                </div>
-                            </form>
-                        </div>
+<div class="modal fade" id="div-create" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">添加密码机</h4>
+            </div>
+            <form method="POST" action="/equipment/new" enctype="multipart/form-data" onsubmit="return submitTest();">
+                <input name='nonce' type='hidden' value="{{ nonce }}">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="host" class="control-label">IP地址</label>
+                        <input type="text" class="form-control host-input"  name="ip" id="ip" placeholder="IP" required maxlength="15" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">名称</label>
+                        <!-- <input type="text" class="form-control host-input" name="machinenumber"  placeholder="Name" maxlength="20"> -->
+                        <textarea name="machinenumber" id="commentText" class="form-control host-input" placeholder="Name" style="height:35px;"></textarea>
+                        <div id="dsa"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">第一级</label>
+                        <input type="text" class="form-control host-input" name="first" id="first" placeholder="First" required maxlength="5">
+                    </div>
+                    <div class="form-group" >
+                        <label class="control-label">第二级</label>
+                        <input type="text" class="form-control host-input" name="second" id="second"  placeholder="Second" maxlength="5">
+                    </div>
+                    <div class="form-gruop">
+                        <label class="control-label">第三级</label>
+                        <input type="text" class="form-control host-input" name="third" id="third"  placeholder="Third" maxlength="5">
+                    </div>
+                    <div class="form-gruop">
+                        <label class="control-label">第四级</label>
+                        <input type="text" class="form-control host-input" name="fourth" id="fourth" placeholder="Fourth" maxlength="5">
+                    </div>
+                    <div class="form-gruop">
+                        <label class="control-label">厂家</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <select name="manufacture" class="form-control host-input" >
+                            <option value="兴唐">兴唐</option>
+                            <option value="科东">科东</option>
+                            <option value="南瑞">南瑞</option>
+                            <option value="卫士通">卫士通</option>
+                            <option value="江南所">江南所</option>
+                        </select>
+                    </div>
+                    <div class="form-gruop">
+                        <label class="control-label">备注</label>
+                        <input type="text" class="form-control host-input" name="discription" id="discription" placeholder="Discription" maxlength="8">
+                    </div><hr/>
+                    <div class="form-group">
+                        <label class="control-label">证书文件类型</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="cerstyle" value="0" checked/>RSA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="cerstyle" value="1"/>ECC
+                    </div>
+                    <div class="form-gruop">
+                      <strong>证书文件</strong>
+                      <input type="file" name="files[]" multiple="multiple" required>
+                    </div><br/>
+                    <div class="form-group" >
+                        <label class="control-label">证书编码</label>
+                        <select name="cert_format" id="s2" class="form-control host-input" >
+                            <option value="0">BASE-64编码 </option>
+                            <option value="1">DER二进制编码</option>
+                        </select>
                     </div>
                 </div>
-
-                <div class="modal fade" id="div-batch-edit-strategy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" id="exampleModalLabel">批量修改</h4>
-                            </div>
-                            <form method="POST" action="/privateequipment/batcheditstrategy/{{machine.id}}/{{channel_number}}" enctype="multipart/form-data">
-                                <input name='nonce' type='hidden' value="{{ nonce }}">
-                                <div class="panel-body">
-                                    <div class="form-group" align="center">
-                                        工作模式：
-                                        <input type="radio" name="workmode" value="0" checked="true" />加密
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="workmode" value="1" /> 明文
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="workmode" value="2" /> 可选
-                                    </div>
-                                </div>
-                                <div class="panel-footer">
-                                    <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                                    <button id="div-btn-batch-edit-stragety" type="submit" class="btn btn-primary">确定</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                <div class="panel-footer">
+                    <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">创建</button>
                 </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                        策略管理
-                        <p style="float:right;">装置名称：{{ machine.machinenumber }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;装置IP地址：{{ machine.ip }}</p>
-                        </h4>
-                    </div>
+
+<div class="modal fade" id="div-add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">添加节点</h4>
+            </div>
+            <div class="panel-body">
+                <form method="POST" action="/equipment/addtree" enctype="multipart/form-data" onsubmit="return submitcheck();">
+                    <input name='nonce' type='hidden' value="{{ nonce }}">
                     <div class="panel-body">
-                        <p align="center">
-                            当前操作隧道号为：<strong style="color:#ff0000;">{{ channel_number }}</strong>&nbsp;&nbsp;&nbsp;
-                            隧道对端IP：<strong>{{ peer_addr }}</strong>
-                        </p>
-                        <hr/>
-                        <div class="row">
-                            <div class="col-md-5" style="height:600px;">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">隧道上的策略
-                                            <input type="button" class="btn btn-primary btn-sm" value="查询策略列表" style="position: absolute;right: 20px;top: 4px;" id="btn-query-strategy">
-                                        </h3>
-                                    </div>
-                                    <div class="scrollspy" >
-                                        <table class="table table-bordered table-responsive tScroll" id="table1">
-                                            <thead>
-                                                <tr>
-                                                    <th>策略序号</th>
-                                                    <th>策略名称</th>
-                                                    <!-- <th>操作</th> -->
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for strategy in strategies %}
-                                                <tr style="overflow-x: auto;" onMouseOver="over()" onClick="change({{ loop.index }})" onMouseOut="out()">
-                                                    <td class="strategynumber">{{ loop.index - 1  + pagination.page * 8 - 8 }}</td>
-                                                    <td class="strategyname">{{ strategy.Policy_Name }}</td>
-                                                    <td style="display:none;">{{ strategy.Source_Begin_IP }}</td>
-                                                    <td style="display:none;">{{ strategy.Source_End_IP }}</td>
-                                                    <td style="display:none;">{{ strategy.Dest_Begin_IP }}</td>
-                                                    <td style="display:none;">{{ strategy.Dest_End_IP }}</td>
-                                                    <td style="display:none;">{{ strategy.Port_Source_Begin }}</td>
-                                                    <td style="display:none;">{{ strategy.Port_Source_End }}</td>
-                                                    <td style="display:none;">{{ strategy.Port_Dest_Begin }}</td>
-                                                    <td style="display:none;">{{ strategy.Port_Dest_End }}</td>
-                                                    <td style="display:none;">{{ strategy.Direction }}</td>
-                                                    <td style="display:none;">{{ strategy.Protocol }}</td>
-                                                    <td style="display:none;">{{ strategy.WorkMode }}</td>
-                                                    <td style="display:none;">{{ strategy.NatMode }}</td>
-                                                    <td style="display:none;">{{ strategy.Policy_Name }}</td>
-                                                    <td style="display:none;">{{ strategy.Policy_limit }}</td>
-                                                    <td style="display:none;">{{ strategy.Policy_level }}</td>
-                                                {% endfor %}
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        {% if pagination %}
-                                        <div calss="pagination" align="center">
-                                            {{ macrosstrategy.pagination_widget(pagination, '.private_strategy_pagination',machine.id,channel_number) }}
-                                        </div>
-                                        {% endif %}
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="col-md-7">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">
-                                            策略定义
-                                            <input type="button" class="btn btn-success btn-sm" value="返回隧道管理" style="position: absolute;right: 20px;top: 4px;" onClick="to_change()">
-                                        </h3>
-                                    </div>
-                                    <form id="strategyinfo" method="POST">
-                                        <div class="panel-body">
-                                            <!-- <p align="center">当前操作策略序号为：{{ strnumber }}</p> -->
-                                            <input type="hidden" name="cstrnumber" id="cstrnumber" value="{{ strnumber }}">
-                                            <div class="form-group">
-                                                <label for="host" class="control-label">源IP地址范围：</label><br />
-                                                <p align="center">
-                                                    从&nbsp;&nbsp;<input type="text" name="sip" id="sip" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">&nbsp;&nbsp;
-                                                    到&nbsp;&nbsp;<input type="text" name="dip" id="dip" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
-                                                </p>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="host" class="control-label">目标IP地址范围：</label><br/>
-                                                <p align="center">
-                                                    从&nbsp;&nbsp;<input type="text" name="tip" id="tip" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">&nbsp;&nbsp;
-                                                    到&nbsp;&nbsp;<input type="text" name="tdip" id="tdip" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
-                                                </p>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="control-label">NAT模式：</label>
-                                                <select name="nat" id="choosenat">
-                                                    <option value="0" >无</option>
-                                                    <option value="1">源NAT</option>
-                                                </select>
-                                               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <label class="control-label">优&nbsp;&nbsp;先&nbsp;&nbsp;级：</label>
-                                                <select name="priority" id="choosepriority">
-                                                    <option value="0" selected >0</option>
-                                                    <option value="1">1</option>
-                                                    <option value="2">2</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="control-label">方&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;向：</label>
-                                                <input type="radio" name="destination" value="0" checked/>双向&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <input type="radio" name="destination" value="1" />外出&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <input type="radio" name="destination" value="2" />进入
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="control-label">协&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;议：</label>
-                                                <input type="radio" name="protocol" value="0" checked/>所有&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <input type="radio" name="protocol" value="1" />ICMP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <input type="radio" name="protocol" value="2" />TCP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <input type="radio" name="protocol" value="3" />UDP
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="control-label">工作模式：</label>
-                                                <input type="radio" name="workmodel" value="0" checked/>加密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <input type="radio" name="workmodel" value="1" />明文&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <input type="radio" name="workmodel" value="2" />可选
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="control-label">源端口范围：&nbsp;&nbsp;&nbsp;</label>
-                                                 从<input type="number" maxlength="5" size="5" name="sport1" value="{{sport1}}" id="sp1" placeholder="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" min="0" max="65535">
-                                                 到<input type="number" maxlength="5" size="5" name="sport2"  value="{{sport2}}" id="sp2" placeholder="65535" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" min="0" max="65535">
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="control-label">目的端口范围：</label>
-                                                 从<input type="number" maxlength="5" size="5" name="dport1" value="{{dport1}}" id="dp1" placeholder="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" min="0" max="65535">
-                                                 到<input type="number" maxlength="5" size="5" name="dport2"  value="{{dport2}}" id="dp2" placeholder="65535" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" min="0" max="65535" >
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="control-label">策略名称：</label>
-                                                <input type="text" name="name" id="name" placeholder="Name" maxlength="20">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="control-label">策略流量：</label>
-                                                <input type="number" name="limit" id="limit" placeholder="Limit" value="{{ limit }}" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" min="0" max="100">&nbsp;Mb
-                                            </div>
-                                            <br/>
-                                            <hr/>
-                                            <div class="button-bar">
-                                                <button type="button" class="btn btn-sm btn-primary" id="btn-create-stragety">添加策略</button>&nbsp;
-                                                <button type="button" class="btn btn-sm btn-warning" id="btn-find-strategy">查询内容</button>&nbsp;
-                                                <button type="button" class="btn btn-sm btn-warning" id="btn-edit-stragety">修改策略</button>&nbsp;
-                                                <button type="button" class="btn btn-sm btn-warning" id="btn-delete-stragety">删除策略</button>
-                                                <button type="button" class="btn btn-sm btn-warning" id="btn-copy-stragety">复制策略</button>&nbsp;
-                                                <button type="button" class="btn btn-sm btn-success" id="btn-batch-edit">批量修改</button>&nbsp;
-                                                <button type="button" class="btn btn-sm btn-success" id="btn-batch-delete">批量删除</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-
-                            </div>
+                        <div class="form-group">
+                            <label class="control-label">第一级</label>
+                            <input type="text" class="form-control host-input" name="tprovince" id="tprovince" placeholder="Province" required >
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">第二级</label>
+                            <input type="text" class="form-control host-input" name="tcity" id="tcity" placeholder="City" >
+                        </div>
+                        <div class="form-gruop">
+                           <label class="control-label">第三级</label>
+                           <input type="text" class="form-control host-input" name="tpart" id="tpart"  placeholder="Part" >
+                        </div>
+                        <div class="form-gruop">
+                           <label class="control-label">第四级</label>
+                           <input type="text" class="form-control host-input" name="tfourth" id="tfourth" placeholder="Fou" >
                         </div>
                     </div>
-                </div>
+                    <div class="panel-footer">
+                        <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button id="div-btn-create" type="submit" class="btn btn-primary">添加</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="zhezhao" id="zhezhao"></div>
-    <div class="login" id="login"></div>
+<div class="modal fade" id="div-query" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    查询条件
+                </h4>
+            </div>
+            <div class="panel-body">
+                <form action ="/checkciper" method ="POST" enctype="multipart/form-data">
+                <input name="nonce" type="hidden" value="{{ nonce }}">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>IP</td>
+                            <td><input type="text" name="sip" maxlength="15" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"></td>
+                        </tr>
+                        <tr>
+                            <td>第一级</td>
+                            <td><input type="text" name="sheng" maxlength="8"></td>
+                        </tr>
+                        <tr>
+                            <td>第二级</td>
+                            <td><input type="text" name="shi" maxlength="8"></td>
+                        </tr>
+                        <tr>
+                            <td>第三级</td>
+                            <td><input type="text" name="fenqu" maxlength="8"></td>
+                        </tr>
+                        <tr>
+                            <td>第四级</td>
+                            <td><input type="text" name="four" maxlength="8"></td>
+                        </tr>
+                        <tr>
+                            <td>名称</td>
+                            <td><input type="text" name="name" maxlength="8"></td>
+                        </tr>
+                        <tr>
+                            <td>厂家</td>
+                            <td><input type="text" name="manufacture" maxlength="5"></td>
+                        </tr>
+                    </table>
+                    <div align="center">
+                        <button type="submit" class="btn btn-primary div-btn-query">查询</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-9" style="padding-right: 1em;">
+    <div class="panel panel-primary" style="height:835px;">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                  密码机基本信息
+            </h4>
+        </div>
+        <div class="panel-body">
+            <div class="button-bar" style="float:left;">
+                <button type="button" class="btn btn-sm btn-primary btn-create" >添加密码机</button>&nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-danger" id="btn-delete-machine">删除密码机</button>&nbsp;&nbsp;&nbsp;
+               <!--  <button type="button" class="btn btn-sm btn-warning" id="btn-import-machine">导入密码机</button>&nbsp;&nbsp;&nbsp; -->
+                <button type="button" class="btn btn-sm btn-primary btn-query" >查找密码机</button>
+            </div>
+            <div class="button-bar" style="float:right">
+                <a href="/equipment"><button type="button" class="btn btn-sm btn-primary">显示全部密码机</button></a>&nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm glyphicon glyphicon-refresh"></button>
+            </div>
+            </br></br>
+            <div id="imformation">
+
+                <div class="modal fade" id="div-edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">编辑密码机</h4>
+                            </div>
+                            <div class="panel-body">
+                                <form method="POST" action="" enctype="multipart/form-data">
+                                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                                    <div class="form-group">
+                                        <label class="control-label">IP地址</label>
+                                        <input type="text" name="ip" class="form-control host-input" placeholder="IP" maxlength="15" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">名称</label>
+                                        <!-- <input type="text" class="form-control host-input" name="machinenumber" maxlength="8"  placeholder="Name" >   -->
+                                        <textarea id="commentText2" name="machinenumber" class="form-control host-input" placeholder="Name" style="height:35px;"></textarea>
+                                        <div id="dsa2"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">第一级</label>
+                                        <input type="text" class="form-control host-input" name="province"  placeholder="First" maxlength="8" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">第二级</label>
+                                        <input type="text" class="form-control host-input" name="city" maxlength="8"  placeholder="Second" >
+                                    </div>
+                                    <div class="form-gruop">
+                                        <label class="control-label">第三级</label>
+                                        <input type="text" class="form-control host-input" name="part" maxlength="8"  placeholder="Part" >
+                                    </div>
+                                    <div class="form-gruop">
+                                        <label class="control-label">第四级</label>
+                                        <input type="text" class="form-control host-input" name="fourth" maxlength="8"  placeholder="Fourth" >
+                                    </div>
+                                    <div class="form-gruop">
+                                        <label class="control-label">厂家</label>
+                                        <select name="manufacture" class="form-control host-input" >
+                                            <option value="兴唐">兴唐</option>
+                                            <option value="科东">科东</option>
+                                            <option value="南瑞">南瑞</option>
+                                            <option value="卫士通">卫士通</option>
+                                            <option value="江南所">江南所</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-gruop">
+                                        <label class=“control-label>备注</label><br/>
+                                        <input type="text" class="form-control host-input" name="discription" maxlength="8" placeholder="remark">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                        <button id="div-btn-edit" type="button" class="btn btn-primary">保存</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="div-edit-cert" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">修改证书</h4>
+                            </div>
+                            <div class="panel-body">
+                                <form method="POST" action="/equipment/replacecert" enctype="multipart/form-data">
+                                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                                    <input name="peer_ip" id="peer_ip" type="hidden">
+                                    <div class="form-group">
+                                        <label class="control-label">证书文件类型</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="cerstyle" value="0"/>RSA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" name="cerstyle" value="1" checked />ECC
+                                    </div>
+                                    <div class="form-gruop">
+                                      <strong>证书文件</strong>
+                                      <input type="file" name="files[]" multiple="multiple" required>
+                                    </div><br/>
+                                    <div class="form-group" >
+                                        <label class="control-label">证书编码</label>
+                                        <select name="cert_format" id="s2" class="form-control host-input" >
+                                            <option value="0">BESE-64编码 </option>
+                                            <option value="1">DER二进制编码</option>
+                                        </select>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                        <button type="submit" class="btn btn-primary">修改</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="div-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">删除密码机</h4>
+                            </div>
+                            <form method="POST" action="'/equipment/delete'" enctype="multipart/form-data">
+                                <div class="panel-body">
+                                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                                    <div class="form-group">
+                                        <label class="control-label">你确定要删除以下密码机吗？</label>
+                                        <input type="hidden" name="choosemachinenumber" class="form-control host-input">
+                                        <textarea type="text" id="showip" class="form-control host-input" readonly></textarea>
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button id="div-btn-delete" type="button" class="btn btn-primary">删除</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                   <table class="table table-bordered" id="table1">
+                        <thead>
+                        <tr>
+                            <th><input onclick="selectAll()" type="checkbox" name="controlAll" style="controlAll" id="controlAll"/></th>
+                            <!-- <th>选择</th> -->
+                            <th>序号</th>
+                            <th>是否在线</th>
+                            <th>IP地址</th>
+                            <th>名称</th>
+                            <th>第一级</th>
+                            <th>第二级</th>
+                            <th>第三级</th>
+                            <th>第四级</th>
+                            <th>厂家</th>
+                            <!-- <th>证书</th> -->
+                            <th>备注</th>
+                            <th>类型</th>
+                            <th>修改</th>
+                        </tr>
+                       </thead>
+                            {% for machine in cipermachines %}
+                            <tr style="overflow-x: auto;" onClick="change({{ machine.id }})">
+                            <td>
+                            <input type="checkbox" name="selectmachine" class="checkboxes" value="{{machine.id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>
+                            <td class="mid">{{ loop.index}}
+                            <input type="hidden" name="id" value="{{ machine.id }}"></td>
+                            {% if machine.isonline == True %}
+                            <td><img src="/static/img/green.png"></td>
+                            {% elif machine.isonline == False %}
+                            <td><img src="/static/img/red.png"></td>
+                            {% endif %}
+                            {% if machine.manufacture == "兴唐" %}
+                            <td class="ip"><a href="javascript:void(0)" class="change">
+                            {{machine.ip}}</a></td>
+                            {% else %}
+                            <td class="ip"><a href="javascript:void(0)" class="change2">{{machine.ip}}</a></td>
+                            {% endif %}
+                            <td style="display:none;">{{machine.ip}}</td>
+                            <td class="machinenumber">{{machine.machinenumber}}</td>
+                            <td class="province">{{machine.province}}</td>
+                            <td class="city">{{machine.city}}</td>
+                            <td class="part">{{machine.part}}</td>
+                            <td class="fourth">{{machine.fourth}}</td>
+                            <td class="manufacture">{{machine.manufacture}}</td>
+                            <!-- {%if machine.certsign == true%}
+                            <td class="cert">存在</td>
+                            {% else %}
+                            <td class="cert">无</td>
+                            {% endif %} -->
+                            <td class="discription">{{machine.discription}}</td>
+                            {% if machine.encrypttype == 1 %}
+                            <td class="encrypttype">ECC</td>
+                            {% else %}
+                            <td class="encrypttype">RSA</td>
+                            {% endif %}
+
+
+                            <td>
+                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                <span class="glyphicon glyphicon-open" aria-hidden="true"></span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                   </table>
+                {% if pagination %}
+                    {% if viewfunc==".user2" %}
+                    <div calss="pagination" align="center">
+                        {{ macros.pagination_widget(pagination, viewfunc) }}
+                    </div>
+                    {% elif viewfunc==".checkciper" %}
+                    <div calss="pagination" align="center">
+                        {{ macroselect.pagination_widget(pagination, viewfunc,ip,province,city,part,fourth,name,manufacturer) }}
+                    </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<body onload="AlertFunc()">
+    <input id="AlertInfo" value="{{AlertInfo}}" type="hidden">
+</body>
+
+<form id="formdata" action="/equipment/deletetree" method="POST" enctype="multipart/form-data">
+    <input name='nonce' type='hidden' value="{{ nonce }}">
+    <input type="hidden" name="firstnode" id="node" >
+    <input type="hidden" name="secondenode" id="pnode">
+    <input type="hidden" name="thirdnode" id="cnode">
+    <input type="hidden" name="fourthnode" id="gnode">
+</form>
+
+<form id="formdata2" method="POST" enctype="multipart/form-data">
+    <input name='nonce' type='hidden' value="{{ nonce }}">
+    <input type="hidden" name="data" id="inputdata">
+</form>
+
+<div class="zhezhao" id="zhezhao"></div>
+<div class="login" id="login"></div>
+
+{% for machine in cipermachines %}
+<input type="hidden" value="{{ machine.ip }}" name="machinip">
+{% endfor %}
 
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/bootstrap-scrollspy.js"></script>
-<script>
-function to_change(){
-    window.location.href='/privateequipment/privatechannel/{{ machine.id }}';
+<script src="/static/js/bootstrap-treeview.js"></script>
+<script type="text/javascript">
+function AlertFunc()
+{
+    var info=document.getElementById("AlertInfo").value;
+    if(info != "")
+        alert(info);
 }
 
+function submitTest()
+{
+    var obj=document.getElementById("ip").value
+    var exp=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+    var reg = obj.match(exp);
+    if(reg==null){
+        alert("IP地址不合法！");
+        ip.focus();
+        return false;
+    }
+    var obj1=document.getElementById("second").value
+    var obj2=document.getElementById("third").value
+    var obj3=document.getElementById("fourth").value
+    if (obj3 != "" && (obj2 == "" ||  obj1 =="")){
+        alert("不允许跨级添加，请输入完整信息！");
+        return false;
+    }else if(obj1 == "" && (obj2 != "" || obj3 !=="")){
+        alert("不允许跨级添加，请输入完整信息！");
+        return false;
+    }
+}
 
+function submitcheck()
+{
+    var obj1=document.getElementById("tcity").value
+    var obj2=document.getElementById("tpart").value
+    var obj3=document.getElementById("tfourth").value
+    if (obj3 != "" && (obj2 == "" ||  obj1 =="")){
+        alert("不允许跨级添加，请输入完整信息！");
+        return false;
+    }else if(obj1 == "" && (obj2 != "" || obj3 !=="")){
+        alert("不允许跨级添加，请输入完整信息！");
+        return false;
+    }
+}
+
+//------------------limitname
+function lengthLimit(elem, showElem, max){
+    var elem = document.getElementById(elem);
+    var showElem = document.getElementById(showElem);
+    var max = max || 50;
+    function getTextLength(str){
+        return str.replace(/[^\x00-\xff]/g,"xx").length;
+    };
+    if(/msie (\d+\.\d)/i.test(navigator.userAgent) == true) {
+        elem.onpropertychange = textChange;
+    }else{
+        elem.addEventListener("input", textChange, false);
+    }
+    function textChange(){
+    var text = elem.value;
+    var count = getTextLength(text);
+    if(count > max){
+        for(var i=0; i<text.length; i++){
+            if(getTextLength(text.substr(0, i)) >= max){
+                elem.value = text.substr(0, i);
+                break;
+                };
+            }
+        }
+    };
+    textChange();// 加载时先初始化
+};
+
+lengthLimit("commentText", "dsa", 20);
+
+lengthLimit("commentText2", "dsa2", 20);
+
+$('.export').click(function(){
+    $.post('/equipment/export',{
+        'nonce' : '{{nonce}}',
+    }, function(data){
+            var data = $.parseJSON(JSON.stringify(data))
+            if (data == "0"){
+            window.location="/static/uploads/equipment.csv"
+        }
+    })
+});
+
+
+$('.change').click(function(){
+    var zhezhao=document.getElementById("zhezhao");
+    var login=document.getElementById("login");
+    zhezhao.style.display="block";
+    login.style.display="block";
+    var elem = $(this).parent().parent();
+    var id = elem.find('input[name=id]').val();
+    $.post('/operation/privateequipment/'+id, {
+        'nonce':'{{ nonce }}',
+    }, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            window.location.href='/privateequipment/'+id;
+        }else{
+            alert(data);
+            zhezhao.style.display="none";
+            login.style.display="none";
+            //window.location.href='/privateequipment/'+id;
+        }
+    });
+});
+
+$('.change2').click(function(){
+    var zhezhao=document.getElementById("zhezhao");
+    var login=document.getElementById("login");
+    zhezhao.style.display="block";
+    login.style.display="block";
+    var elem = $(this).parent().parent();
+    var id = elem.find('input[name=id]').val();
+    $.post('/operation/commonequipment/'+id, {
+        'nonce':'{{ nonce }}',
+    }, function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            window.location.href='/commonequipment/'+id;
+        }else{
+            alert(data);
+            zhezhao.style.display="none";
+            login.style.display="none";
+            //window.location.href='/commonequipment/'+id;
+        }
+    });
+});
+
+
+//------------refresh
+$('.glyphicon-refresh').click(function(e){
+    var nodeall = document.getElementById('inputdata').value
+    if(nodeall != ""){
+        $.post('/machineshow', {
+            firstnode:firstnode,
+            secondnode:secondnode,
+            thirdnode:thirdnode,
+            fourthnode:fourthnode,
+            'nonce':'{{ nonce }}',
+        }, function(data){
+            $("#imformation").html(data);
+        })
+    }else{
+        location.reload()
+    }
+});
+
+
+//----------judgeoperationresult
 function SwitchStatusCode(data){
     switch(data)
     {
-        case '1': alert('操作失败'); break;
+        case '1': alert('不存在该隧道'); break;
         case '2': alert('该隧道已存在'); break;
         case '3': alert('签名验证失败'); break;
         case "6": alert('解密出的明文数据不合法'); break;
@@ -384,630 +656,368 @@ function SwitchStatusCode(data){
         case '-2': alert('请求超时'); break;
         case '-1': alert('返回数据包错误'); break;
         case '-3': alert('输入信息有误'); break;
-        case '-4': alert('输入IP地址有误，请检查输入'); break;
-	    case '-5': alert('不能添加相同的策略，请修改策略信息！');break;
-        case '-6': alert('策略修改失败，已复原');break;
-        case '-7': alert('策略修改失败，复原时出错，策略丢失！');break;
+        case '-4': alert('该IP已存在，请重新输入！');break;
         case '0': alert('操作成功'); break;
         default: alert('操作异常');
     }
 }
 
-//---------------------------select
-(function($){
-    var input = '<div id="pre"><input id="itest" type="text">';
-    var strDiv = '<div id="dtest" style="height:100px;overflow-y:auto;">';
-    var strSpan = '';
-    var L = $('#test option').size();
-    for(var i = 0; i < L; i ++){
-        strSpan += '<span class="soption " data-val="'+ $('#test option').eq(i).attr('value') +'">' + $('#test option').eq(i).html() + '</span>';
-    }
-    strDiv += strSpan + '</div></div>';
-    $('#test').after(input + strDiv);
-    //初始化结束
-    $(document).on('focus','#itest',function(){
-        var st = $(this).val().trim();
-        if(st == ''){
-            $('#dtest').html(strSpan);
-        }
-        else{
-            var strDiv2 = '';
-            for(var i = 0; i < L; i ++){
-                var html = $('#test option').eq(i).html();
-                if(html.match(st)){
-                    strDiv2 += '<span class="soption" data-val="'+ $('#test option').eq(i).attr('value') +'">' + $('#test option').eq(i).html() + '</span>';
-                }
-            }
-            $('#dtest').html(strDiv2);
-        }
-        $('#dtest').slideDown(250);
-    });
+var arr = new Array()
 
+var machinip = document.getElementsByName("machinip");
 
-    $(document).on('keyup','#itest',function(){
-        var st = $(this).val().trim();
-        if(st == ''){
-            $('#dtest').html(strSpan);
-            return false;
-        }
-        var strDiv2 = '';
-        for(var i = 0; i < L; i ++){
-            var html = $('#test option').eq(i).html();
-            if(html.match(st)){
-                strDiv2 += '<span class="soption" data-val="'+ $('#test option').eq(i).attr('value') +'">' + $('#test option').eq(i).html() + '</span>';
-            }
-        }
-        $('#dtest').html(strDiv2);
-        $(document).on('blur','#itest',function(){//失去焦点，隐藏模拟下拉框
-        $('#dtest').slideUp(50);
-        });
-    });
-
-    $(document).on('mousedown','.soption',function(){
-        var html = $(this).html();
-        var val = $(this).data('val');
-        $('#dtest').slideUp(50);
-        $('#itest').val(html).data('val',val).blur();
-        $('#test').val(val);
-    });
-
-})(jQuery);
-
-
-function findstrategynumber(id){
-    var tab=document.getElementById("table1");
-    choosestragetynumber = tab.rows[id].cells[0].innerHTML;
-    document.getElementById("cstrnumber").value=choosestragetynumber;
-    Policy_Name = tab.rows[id].cells[14].innerHTML;
-    if(Policy_Name == "未知")
+//-------------------checkall
+function selectAll(){
+    arr = []
+    var checklist = document.getElementsByName("selectmachine");
+    if(document.getElementById("controlAll").checked)
     {
-        $.post('/privateequipment/querystrategycontent/{{machine.id}}/{{channel_number}}', {'nonce':'{{ nonce }}' ,
-        'cstragetynum':choosestragetynumber,
-        }, function(data){
-            if (data.status == "0" ){
-                Source_Begin_IP = data.Source_Begin_IP
-                Source_End_IP = data.Source_End_IP
-                Dest_Begin_IP = data.Dest_Begin_IP
-                Dest_End_IP = data.Dest_End_IP
-                Port_Source_Begin = data.Port_Source_Begin
-                Port_Source_End = data.Port_Source_End
-                Port_Dest_Begin = data.Port_Dest_Begin
-                Port_Dest_End = data.Port_Dest_End
-                Direction = data.Direction
-                Protocol = data.Protocol
-                WorkMode = data.WorkMode
-                NatMode = data.NatMode
-                Policy_Name = data.Policy_Name
-                Policy_limit = data.Policy_limit
-                Policy_level = data.Policy_level
-                show_strategy_content(Source_Begin_IP,Source_End_IP,Dest_Begin_IP,Dest_End_IP,Port_Source_Begin,Port_Source_End,Port_Dest_Begin,Port_Dest_End,Direction,Protocol,WorkMode,NatMode,Policy_Name,Policy_limit,Policy_level)
-            }else{
-                SwitchStatusCode(data.status)
-            }
-        })
-    }
-    else
-    {
-        Source_Begin_IP = tab.rows[id].cells[2].innerHTML;
-        Source_End_IP = tab.rows[id].cells[3].innerHTML;
-        Dest_Begin_IP = tab.rows[id].cells[4].innerHTML;
-        Dest_End_IP = tab.rows[id].cells[5].innerHTML;
-        Port_Source_Begin = tab.rows[id].cells[6].innerHTML;
-        Port_Source_End = tab.rows[id].cells[7].innerHTML;
-        Port_Dest_Begin = tab.rows[id].cells[8].innerHTML;
-        Port_Dest_End = tab.rows[id].cells[9].innerHTML;
-        Direction = tab.rows[id].cells[10].innerHTML;
-        Protocol = tab.rows[id].cells[11].innerHTML;
-        WorkMode = tab.rows[id].cells[12].innerHTML;
-        NatMode = tab.rows[id].cells[13].innerHTML;
-        Policy_limit = tab.rows[id].cells[15].innerHTML;
-        Policy_level = tab.rows[id].cells[16].innerHTML;
-        show_strategy_content(Source_Begin_IP,Source_End_IP,Dest_Begin_IP,Dest_End_IP,Port_Source_Begin,Port_Source_End,Port_Dest_Begin,Port_Dest_End,Direction,Protocol,WorkMode,NatMode,Policy_Name,Policy_limit,Policy_level)
+        for(var i=0;i<checklist.length;i++)
+        {
+            checklist[i].checked = 1;
+            checklist[i].parentNode.parentNode.style.background='#e5f5f5';
+            arr.splice(0,0,machinip[i].value)
+            $('#showip').val(arr)
+        }
+    }else{
+        for(var j=0;j<checklist.length;j++)
+        {
+            checklist[j].checked = 0;
+            checklist[j].parentNode.parentNode.style.background='';
+            arr = []
+            $('#showip').val(arr)
+        }
     }
 }
 
-function show_strategy_content (Source_Begin_IP,Source_End_IP,Dest_Begin_IP,Dest_End_IP,Port_Source_Begin,Port_Source_End,Port_Dest_Begin,Port_Dest_End,Direction,Protocol,WorkMode,NatMode,Policy_Name,Policy_limit,Policy_level) {
-    document.getElementById("sip").value=Source_Begin_IP;
-    document.getElementById("dip").value=Source_End_IP;
-    document.getElementById("tip").value=Dest_Begin_IP;
-    document.getElementById("tdip").value=Dest_End_IP;
-    document.getElementById("sp1").value=Port_Source_Begin;
-    document.getElementById("sp2").value=Port_Source_End;
-    document.getElementById("dp1").value=Port_Dest_Begin;
-    document.getElementById("dp2").value=Port_Dest_End;
-    document.getElementById("name").value=Policy_Name;
-    document.getElementById("limit").value=Policy_limit;
 
-    if(Direction == "1"){
-        var destinationvalue = document.getElementsByName("destination");
-        for(i=0; i<destinationvalue.length; i++){
-            if(destinationvalue[i].value==1){
-                destinationvalue[i].checked = "checked";
-            }
-        }
-    }else if(Direction == "2"){
-        var destinationvalue = document.getElementsByName("destination");
-        for(i=0; i<destinationvalue.length; i++){
-            if(destinationvalue[i].value==2){
-                destinationvalue[i].checked = "checked";
-            }
-        }
+$('.checkboxes').click(function (e){
+    var elem = $(this).parent().parent();
+
+    var id = elem.find('input[name=id]').val();
+    var ip = elem.find('.ip').text().trim();
+
+    if(this.checked){
+        arr.splice(0,0,ip)
+        $('#showip').val(arr)
     }else{
-        var destinationvalue = document.getElementsByName("destination");
-        for(i=0; i<destinationvalue.length; i++){
-            if(destinationvalue[i].value==0){
-                destinationvalue[i].checked = "checked";
-            }
-        }
+        $("#controlAll").removeAttr("checked");
+        arr.indexOf(ip)
+        arr.remove(ip)
+        $('#showip').val(arr)
     }
+})
 
-    if(Protocol == "1"){
-        var protocolvalue = document.getElementsByName("protocol");
-        for(i=0; i<protocolvalue.length; i++){
-            if(protocolvalue[i].value==1){
-                protocolvalue[i].checked = "checked";
-            }
-        }
-    }else if(Protocol == "2"){
-        var protocolvalue = document.getElementsByName("protocol");
-        for(i=0; i<protocolvalue.length; i++){
-            if(protocolvalue[i].value==2){
-                protocolvalue[i].checked = "checked";
-            }
-        }
-    }else if(Protocol == "3"){
-        var protocolvalue = document.getElementsByName("protocol");
-        for(i=0; i<protocolvalue.length; i++){
-            if(protocolvalue[i].value==3){
-                protocolvalue[i].checked = "checked";
-            }
-        }
-    }else {
-        var protocolvalue = document.getElementsByName("protocol");
-        for(i=0; i<protocolvalue.length; i++){
-            if(protocolvalue[i].value==0){
-                protocolvalue[i].checked = "checked";
-            }
-        }
-    }
-
-    if(WorkMode == "1"){
-        var workmodelvalue = document.getElementsByName("workmodel");
-        for(i=0; i<workmodelvalue.length; i++){
-            if(workmodelvalue[i].value==1){
-                workmodelvalue[i].checked = "checked";
-            }
-        }
-    }else if(WorkMode == "2"){
-        var workmodelvalue = document.getElementsByName("workmodel");
-        for(i=0; i<workmodelvalue.length; i++){
-            if(workmodelvalue[i].value==2){
-                workmodelvalue[i].checked = "checked";
-            }
-        }
-    }else{
-        var workmodelvalue = document.getElementsByName("workmodel");
-        for(i=0; i<workmodelvalue.length; i++){
-            if(workmodelvalue[i].value==0){
-                workmodelvalue[i].checked = "checked";
-            }
-        }
-    }
-    //alert(NatMode)
-    if(NatMode=="True"){
-        var nat = document.getElementById("choosenat");
-        for(i=0; i<nat.length; i++){
-            if(nat[i].value=="1"){
-                //alert(NatMode);
-                nat[i].selected = "selected";
-            }
-        }
-    }else{
-        var nat = document.getElementById("choosenat");
-        for(i=0; i<nat.length; i++){
-            if(nat[i].value=="0"){
-                nat[i].selected = "selected";
-            }
-        }
-    }
-
-    if(Policy_level == "1"){
-        var level = document.getElementById("choosepriority");
-        for(i=0; i<level.length; i++){
-            if(level[i].value==1){
-                level[i].selected = "selected";
-            }
-        }
-    }else if(Policy_level == "2"){
-        var level = document.getElementById("choosepriority");
-        for(i=0; i<level.length; i++){
-            if(level[i].value==2){
-                level[i].selected = "selected";
-            }
-        }
-    }else{
-        var level = document.getElementById("choosepriority");
-        for(i=0; i<level.length; i++){
-            if(level[i].value==0){
-                level[i].selected = "selected";
-            }
-        }
-    }
-
-}
-
- //鼠标点击选择行时候变色
 function change(change) {
     var oObj = window.event.srcElement;
     //alert(change.tagName.toLowerCase());
     if(oObj.tagName.toLowerCase() == "td"){
         var oTr = oObj.parentNode;
-        for(var i=1; i<document.all.table1.rows.length; i++){
-            document.all.table1.rows[i].style.backgroundColor = "";
-            document.all.table1.rows[i].tag = false;
-        }
-        oTr.style.backgroundColor = "#CCCCFF";
-        oTr.tag = true;
-        findstrategynumber(change);
-    }
-}
-
-//鼠标点击另外一行时关闭已选行变色
-function out() {
-    var oObj = event.srcElement;
-    if(oObj.tagName.toLowerCase() == "td"){
-        var oTr = oObj.parentNode;
-        if(!oTr.tag) oTr.style.backgroundColor = "";
-    }
-}
-
-//鼠标移动到选择行上时的行变色
-function over(){
-    var oObj = event.srcElement;
-    if(oObj.tagName.toLowerCase() == "td"){
-    var oTr = oObj.parentNode;
-    if(!oTr.tag) oTr.style.backgroundColor = "#E1E9FD";
-    }
-}
-
-//--------------query_channel_strategy
-$('#btn-query-strategy').click(function(e){
-    window.location.href='/privateequipment/querychannelstrategy/{{machine.id}}/{{ channel_number }}'
-});
-
-//---------------------find_strategy_content
-$('#btn-find-strategy').click(function(e){
-    cstrnumber=document.getElementById('cstrnumber').value
-    if (cstrnumber != ""){
-        $.post('/privateequipment/querystrategycontent/{{machine.id}}/{{channel_number}}', {'nonce':'{{ nonce }}' ,
-        'cstragetynum':cstrnumber,
-        }, function(data){
-            // var data = $.parseJSON(JSON.stringify(data))
-            if (data.status == "0" ){
-                Source_Begin_IP = data.Source_Begin_IP
-                Source_End_IP = data.Source_End_IP
-                Dest_Begin_IP = data.Dest_Begin_IP
-                Dest_End_IP = data.Dest_End_IP
-                Port_Source_Begin = data.Port_Source_Begin
-                Port_Source_End = data.Port_Source_End
-                Port_Dest_Begin = data.Port_Dest_Begin
-                Port_Dest_End = data.Port_Dest_End
-                Direction = data.Direction
-                Protocol = data.Protocol
-                WorkMode = data.WorkMode
-                NatMode = data.NatMode
-                Policy_Name = data.Policy_Name
-                Policy_limit = data.Policy_limit
-                Policy_level = data.Policy_level
-                show_strategy_content(Source_Begin_IP,Source_End_IP,Dest_Begin_IP,Dest_End_IP,Port_Source_Begin,Port_Source_End,Port_Dest_Begin,Port_Dest_End,Direction,Protocol,WorkMode,NatMode,Policy_Name,Policy_limit,Policy_level)
-            }else{
-                SwitchStatusCode(data.status)
-            }
-        })
-    }else{
-       alert("请先选择要查找的策略！");
-    }
-});
-
-//---------------add_strategy
-$('#btn-create-stragety').click(function(e){
-    var nat = document.getElementById('choosenat').options[document.getElementById('choosenat').selectedIndex].value
-    var priority = document.getElementById('choosepriority').options[document.getElementById('choosepriority').selectedIndex].value
-    var obj1 = document.getElementsByName("workmodel");
-    var obj2 = document.getElementsByName("destination");
-    var obj3 = document.getElementsByName("protocol");
-    for(var i=0; i<obj1.length; i++){
-        if(obj1[i].checked){
-            workmode = obj1[i].value;
-            }
-        }
-    for(var j=0;j<obj2.length;j++){
-        if(obj2[j].checked){
-        destination = obj2[j].value;
-        }
-    }
-    for(var k=0;k<obj3.length;k++){
-        if(obj3[k].checked){
-        protocol = obj3[k].value;
-        }
-    }
-    var elem = $(this).parent().parent();
-    sip = elem.find('input[name=sip]').val()
-    dip = elem.find('input[name=dip]').val()
-    tip = elem.find('input[name=tip]').val()
-    tdip = elem.find('input[name=tdip]').val()
-    sport1 = elem.find('input[name=sport1]').val()
-    sport2 = elem.find('input[name=sport2]').val()
-    dport1 = elem.find('input[name=dport1]').val()
-    dport2 = elem.find('input[name=dport2]').val()
-    name = elem.find('input[name=name]').val()
-    limit = elem.find('input[name=limit]').val()
-    if (sip != "" && dip !="" && tip !="" && tdip !="" && sport1 != "" && sport2 !="" && dport2 != "" && dport1 !="" && limit != ""){
-        $("#btn-create-stragety").attr("disabled", "true");
-        $.post('/privateequipment/addchannelstrategy/{{machine.id}}/{{channel_number}}',{
-        sip:elem.find('input[name=sip]').val(),
-        dip:elem.find('input[name=dip]').val(),
-        tip:elem.find('input[name=tip]').val(),
-        tdip:elem.find('input[name=tdip]').val(),
-
-        workmodel:workmode,
-        destination:destination,
-        protocol:protocol,
-        sport1:elem.find('input[name=sport1]').val(),
-        sport2:elem.find('input[name=sport2]').val(),
-        dport1:elem.find('input[name=dport1]').val(),
-        dport2:elem.find('input[name=dport2]').val(),
-        name:elem.find('input[name=name]').val(),
-        limit:elem.find('input[name=limit]').val(),
-        nat:nat,
-        priority:priority,
-       'nonce':'{{ nonce }}',
-      },function(data){
-       var data = $.parseJSON(JSON.stringify(data))
-            if (data == "0"){
-                //location.reload();
-                alert('操作成功');
-                //window.location = "/privateequipment/privatestrategy/{{machine.id}}/{{channel_number}}"
-                location.reload()
-            }else{
-                //$("#btn-create-stragety").attr("disabled", "true");
-                SwitchStatusCode(data)
-                $("#btn-create-stragety").attr("disabled", "false");
-            }
-        })
-    }else{
-        alert("请输入完整信息！");
-    }
-});
-
-//------------------------edit_strategy
-$('#btn-edit-stragety').click(function(e){
-    zhezhao.style.display="block";
-    login.style.display="block";
-    cstrnumber=document.getElementById('cstrnumber').value
-    if (cstrnumber != "")
-    {
-        var nat = document.getElementById('choosenat').options[document.getElementById('choosenat').selectedIndex].value
-        var priority = document.getElementById('choosepriority').options[document.getElementById('choosepriority').selectedIndex].value
-        var obj1 = document.getElementsByName("workmodel");
-        var obj2 = document.getElementsByName("destination");
-        var obj3 = document.getElementsByName("protocol");
-        for(var i=0; i<obj1.length; i++){
-            if(obj1[i].checked){
-                workmode = obj1[i].value;
-                }
-            }
-        for(var j=0;j<obj2.length;j++){
-            if(obj2[j].checked){
-            destination = obj2[j].value;
-            }
-        }
-        for(var k=0;k<obj3.length;k++){
-            if(obj3[k].checked){
-            protocol = obj3[k].value;
-            }
-        }
-        var elem = $(this).parent().parent();
-        sip = elem.find('input[name=sip]').val()
-        dip = elem.find('input[name=dip]').val()
-        tip = elem.find('input[name=tip]').val()
-        tdip = elem.find('input[name=tdip]').val()
-        sport1 = elem.find('input[name=sport1]').val()
-        sport2 = elem.find('input[name=sport2]').val()
-        dport1 = elem.find('input[name=dport1]').val()
-        dport2 = elem.find('input[name=dport2]').val()
-        name = elem.find('input[name=name]').val()
-        limit = elem.find('input[name=limit]').val()
-        if (sip != "" && dip !="" && tip !="" && tdip !="" && sport1 != "" && sport2 !="" && dport2 != "" && dport1 !="" && limit != ""){
-            $.post('/privateequipment/editstrategy/{{machine.id}}/{{channel_number}}',{
-            cstrnumber:elem.find('input[name=cstrnumber]').val(),
-            sip:elem.find('input[name=sip]').val(),
-            dip:elem.find('input[name=dip]').val(),
-            tip:elem.find('input[name=tip]').val(),
-            tdip:elem.find('input[name=tdip]').val(),
-            workmodel:workmode,
-            destination:destination,
-            protocol:protocol,
-            sport1:elem.find('input[name=sport1]').val(),
-            sport2:elem.find('input[name=sport2]').val(),
-            dport1:elem.find('input[name=dport1]').val(),
-            dport2:elem.find('input[name=dport2]').val(),
-            name:elem.find('input[name=name]').val(),
-            limit:elem.find('input[name=limit]').val(),
-            nat:nat,
-            priority:priority,
-        /*  choosestragetynumber:{{strnumber}},*/
-           'nonce':'{{ nonce }}',
-          },function(data){
-           var data = $.parseJSON(JSON.stringify(data))
-                    SwitchStatusCode(data);
-
-                    window.location='/privateequipment/privatestrategy/{{machine.id}}/{{channel_number}}'
-/*                if ((data == "0")){
-                    alert("操作成功！");
-                    window.location='/privateequipment/privatestrategy/{{machine.id}}/{{channel_number}}'
-                    //location.reload();
-                }
-                else if((data == "-6") || (data == "-7"))
-                {
-                    SwcithStatusCode(data);
-
-                    window.location='/privateequipment/privatestrategy/{{machine.id}}/{{channel_number}}'
-                    //location.reload();
-                }
-                else{
-                    SwcithStatusCode(data)
-                    window.location='/privateequipment/privatestrategy/{{machine.id}}/{{channel_number}}'
-
-	                //location.reload();
-                    zhezhao.style.display="none";
-                    login.style.display="none";
-                }*/
-            })
+        if(oTr.style.backgroundColor == ''){
+           oTr.style.backgroundColor = '#e5f5f5';
+           oTr.tag = true;
+           var tr = event.srcElement.parentElement;
+           tr.cells[0].children[0].checked=true;
+           var ip = tr.cells[4].innerHTML;
+           arr.splice(change,0,ip)
+           $('#showip').val(arr)
         }else{
-            alert("请先选择要修改的策略！");
+           oTr.style.backgroundColor = '';
+           oTr.tag = true;
+           var tr = event.srcElement.parentElement;
+           tr.cells[0].children[0].checked=false;
+           var ip = tr.cells[4].innerHTML;
+           arr.indexOf(ip)
+           arr.remove(ip)
+           $('#showip').val(arr)
         }
-    }else{
-        alert("请输入完整信息！");
+
     }
+}
+
+Array.prototype.indexOf = function(val) {
+    for (var i = 0; i < this.length; i++) {
+        if (this[i] == val) return i;
+    }
+    return -1;
+};
+
+Array.prototype.remove = function(val) {
+    var index = this.indexOf(val);
+    if (index > -1) {
+        this.splice(index, 1);
+    }
+};
+
+//------------addmachine
+$('.btn-create').click(function (e) {
+    $('#div-create').modal("toggle")
 });
 
-//-------------------delete_strategy
-$('#btn-delete-stragety').click(function(e){
-    cstrnumber=document.getElementById('cstrnumber').value
-    if (cstrnumber != "")
-    {
-        if(confirm("确定要删除这个策略吗？")){
-            $.post('/privateequipment/deletechannelstrategy/{{machine.id}}/{{channel_number}}', {
-                cstrnumber:cstrnumber,
-                'nonce':'{{ nonce }}' ,
-            }, function(data){
-                var data = $.parseJSON(JSON.stringify(data))
-                if (data == "0"){
-                 alert("操作成功！");
-                    //location.reload()
-                    window.location='/privateequipment/privatestrategy/{{machine.id}}/{{channel_number}}'
-                }else{
-                    SwitchStatusCode(data)
-                }
-            })
-        }
-    }else{
-        alert("请先选择要删除的策略！");
-    }
+//-------------query
+$('.btn-query').click(function (e) {
+    $('#div-query').modal("toggle")
 });
 
-//-------------------copy_strategy
-$('#btn-copy-stragety').click(function (e){
-    cstrnumber=document.getElementById('cstrnumber').value
-    if (cstrnumber != ""){
-	$('#test').val()
-        $('#div-copy-strategy').modal("toggle")
-    }else{
-        alert("请先选择要复制的策略！");
-    }
+//----------------------change_cert
+$('.glyphicon-open').click(function(){
+    var elem = $(this).parent().parent();
+    var ip = elem.find('.ip').text().trim();
+    var id = elem.find('.id').text().trim();
+    $('#peer_ip').val(ip)
+    //$('#id').val(id)
+    $('#div-edit-cert').modal("toggle")
 })
 
-$('#div-btn-copy-stragety').click(function(e){
-    var choosechannelnumber = document.getElementById('test').value
-    var nat = document.getElementById('choosenat').options[document.getElementById('choosenat').selectedIndex].value
-    var priority = document.getElementById('choosepriority').options[document.getElementById('choosepriority').selectedIndex].value
-    var obj1 = document.getElementsByName("workmodel");
-    var obj2 = document.getElementsByName("destination");
-    var obj3 = document.getElementsByName("protocol");
-    for(var i=0; i<obj1.length; i++){
-        if(obj1[i].checked){
-            workmode = obj1[i].value;
-            }
-        }
-    for(var j=0;j<obj2.length;j++){
-        if(obj2[j].checked){
-        destination = obj2[j].value;
-        }
-    }
-    for(var k=0;k<obj3.length;k++){
-        if(obj3[k].checked){
-        protocol = obj3[k].value;
-        }
-    }
-    $.post('/privateequipment/copychannelstrategy/{{machine.id}}',{
-    choosechannelnumber:choosechannelnumber,
-    sip:document.getElementById('sip').value,
-    dip:document.getElementById('dip').value,
-    tip:document.getElementById('tip').value,
-    tdip:document.getElementById('tdip').value,
 
-    workmodel:workmode,
-    destination:destination,
-    protocol:protocol,
-    sport1:document.getElementById('sp1').value,
-    sport2:document.getElementById('sp2').value,
-    dport1:document.getElementById('dp1').value,
-    dport2:document.getElementById('dp2').value,
-    name:document.getElementById('name').value,
-    limit:document.getElementById('limit').value,
-    nat:nat,
-    priority:priority,
-   'nonce':'{{ nonce }}',
-  },function(data){
-   var data = $.parseJSON(JSON.stringify(data))
-        if (data == "0"){
-            //location.reload();
-            alert('操作成功');
-            $('#div-copy-strategy').modal("hide")
+//-------------addtree
+$('.btn-add').click(function(e){
+    $('#div-add').modal("toggle")
+});
+
+//-------------deletetree
+$('.btn-delete').click(function(e){
+    $('#div-delete-tree').modal("toggle")
+});
+
+//------------edit
+$('#div-btn-edit').click(function(e){
+    e.preventDefault();
+    $.post($('#div-edit form').attr('action'), $('#div-edit form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "1"){
+            location.reload()
         }else{
             SwitchStatusCode(data)
         }
     })
 });
 
-//------------------batch_delete
-$('#btn-batch-delete').click(function(e){
-    if(confirm("确定要批量删除策略吗？")){
-        var zhezhao=document.getElementById("zhezhao");
-        var login=document.getElementById("login");
-        zhezhao.style.display="block";
-        login.style.display="block";
-        $.post('/privateequipment/batchdeletestrategy/{{machine.id}}/{{channel_number}}',{'nonce':'{{ nonce }}'}, function(data){
-            // var data = $.parseJSON(JSON.stringify(data))
-            if (data.status == "0"){
-                alert("操作成功！");
-                //location.reload()
-                window.location='/privateequipment/privatestrategy/{{machine.id}}/{{channel_number}}'
-            }else{
-                zhezhao.style.display="none";
-                login.style.display="none";
-                alert(data.AlertInfo)
-            }
-         })
+function load_edit_modal(id, ip, machinenumber, province, city, part, fourth, manufacture,discription){
+    var modal_form = $('#div-edit form');
+
+    modal_form.find('input[name=id]').val(id)
+    modal_form.find('input[name=ip]').val(ip)
+    /*modal_form.find('input[name=machinenumber]').val(machinenumber)*/
+    $('#commentText2').val(machinenumber)
+    modal_form.find('input[name=province]').val(province)
+    modal_form.find('input[name=city]').val(city)
+    modal_form.find('input[name=part]').val(part)
+    modal_form.find('input[name=fourth]').val(fourth)
+
+    if (manufacture == "南瑞"){
+        modal_form.find('select[name=manufacture]').find("option[value='南瑞']").attr("selected","selected")
+    }else if(manufacture == "科东"){
+        modal_form.find('select[name=manufacture]').find("option[value='科东']").attr("selected","selected")
+    }else if(manufacture == "卫士通"){
+        modal_form.find('select[name=manufacture]').find("option[value='卫士通']").attr("selected","selected")
+    }else if(manufacture == "江南所"){
+        modal_form.find('select[name=manufacture]').find("option[value='江南所']").attr("selected","selected")
+    }else if(manufacture == "兴唐"){
+        modal_form.find('select[name=manufacture]').find("option[value='兴唐']").attr("selected","selected")
+    }
+
+    modal_form.find('input[name=manufacture]').val(manufacture)
+    modal_form.find('input[name=discription]').val(discription)
+
+    $('#div-edit form').attr('action', '/equipment/'+id+'/edit')
+    $('#div-edit').modal('toggle');
+}
+
+$('.glyphicon-pencil').click(function(){
+    var elem = $(this).parent().parent();
+
+    var id = elem.find('input[name=id]').val();
+    var ip = elem.find('.ip').text().trim();
+    var machinenumber = elem.find('.machinenumber').text().trim();
+    var province = elem.find('.province').text().trim();
+    var city = elem.find('.city').text().trim();
+    var part = elem.find('.part').text().trim();
+    var fourth = elem.find('.fourth').text().trim();
+    var manufacture = elem.find('.manufacture').text().trim();
+    var discription = elem.find('.discription').text().trim();
+    load_edit_modal(id, ip, machinenumber, province, city, part, fourth, manufacture,discription);
+})
+
+//--------------delete_machine
+$('#btn-delete-machine').click(function () {
+    var elem = $(this).parent().parent();
+    var id = elem.find('input[name=id]').val();
+    var obj=document.getElementsByName('selectmachine');
+    var machinenumber='';
+    var j=0;
+    for(var i=0; i<obj.length; i++)
+    {
+        if(obj[i].checked)
+        {
+            machinenumber+=obj[i].value+',';
+            j++;
+        }
+    }
+    if (j == "")
+    {
+         alert("请先选择删除的密码机!");
+    }
+    else
+    {
+        load_delete_machine(machinenumber);
     }
 });
 
 
-$('#btn-batch-edit').click(function(e){
-    $('#div-batch-edit-strategy').modal("toggle")
-})
+function load_delete_machine(machinenumber){
+    //alert("load_delete_machine");
+    var modal_form = $('#div-delete form');
 
-$('#div-btn-batch-edit-stragety').click(function(e){
-    var zhezhao=document.getElementById("zhezhao");
-    var login=document.getElementById("login");
-    zhezhao.style.display="block";
-    login.style.display="block";
+    modal_form.find('input[name=choosemachinenumber]').val(machinenumber)
+
+    $('#div-delete form').attr('action','/equipment/delete')
+    $('#div-delete').modal('toggle');
+}
+
+
+$('#div-btn-delete').click(function(e){
     e.preventDefault();
-    $.post($('#div-batch-edit-strategy form').attr('action'), $('#div-batch-edit-strategy form').serialize(), function(data){
-        if (data.status == "0"){
-            alert("操作成功！");
-            //location.reload()
-            window.location='/privateequipment/privatestrategy/{{machine.id}}/{{channel_number}}'
-        }else{
-            zhezhao.style.display="none";
-            login.style.display="none";
-            alert(data.AlertInfo);
-            location.reload()
+    //alert("#div-btn-delete");
+    $.post($('#div-delete form').attr('action'), $('#div-delete form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            window.location="/equipment"
+        }
+        else
+        {
+             if(data == "-2")
+                alert("网络连接超时！")
+            else
+            {
+                alert("证书删除失败！");
+            }
         }
     })
 });
 
+
+//-----------------------deletetree
+$('#btn-delete-tree').click(function(e){
+    var nodeall = document.getElementById('inputdata').value
+    if(nodeall != ""){
+        node = nodeall.substring(nodeall.indexOf("(")+1,nodeall.indexOf(")"))
+        if(node != "0"){
+            alert("此节点下还有密码机，不可删除！");
+        }else{
+            if(confirm("确定要删除这个节点吗？")){
+                $('#formdata').submit()
+            }
+        }
+    }else{
+        alert("请先选择要删除的节点！");
+    }
+})
+
+
+//---------------------------------tree
+$.post('/tree', {
+        'nonce':'{{ nonce }}',
+    }, function(data1){
+        var da = []
+        node = data1.tree
+
+    $('#tree').treeview({data: node});
+
+    $('#tree').on('nodeSelected', function(event, data) {
+        var txts=document.getElementsByTagName("input");
+        for(var i=0;i<txts.length;i++)
+        {
+            if(txts[i].type=="text")
+            {
+              txts[i].value ="";
+            }
+        }
+        choosedata = data.text;
+        var parent = $('#tree').treeview('getParent',data);
+        var grandparent = $('#tree').treeview('getParent',parent);
+        var mainparent = $('#tree').treeview('getParent',grandparent);
+        cdata = choosedata.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
+        $('#inputdata').val(choosedata);
+        if (parent.text.length == 1){
+            firstnode = cdata
+            secondnode = ""
+            thirdnode = ""
+            fourthnode = ""
+            $('#node').val(cdata)
+            $('#pnode').val()
+            $('#cnode').val()
+            $('#gnode').val()
+            $('#first').val(cdata)
+            $('#second').val()
+            $('#third').val()
+            $('#fourth').val()
+            $('#tprovince').val(cdata)
+            $('#tcity').val()
+            $('#tpart').val()
+            $('#tfourth').val()
+        }else if(parent.text.length > 1 && grandparent.text.length == 1){
+            firstnode = parent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
+            secondnode = cdata
+            thirdnode = ""
+            fourthnode = ""
+            $('#node').val(firstnode)
+            $('#pnode').val(secondnode)
+            $('#cnode').val()
+            $('#gnode').val()
+            $('#first').val(firstnode)
+            $('#second').val(secondnode)
+            $('#third').val()
+            $('#fourth').val()
+            $('#tprovince').val(firstnode)
+            $('#tcity').val(secondnode)
+            $('#tpart').val()
+            $('#tfourth').val()
+        }else if(parent.text.length > 1 && grandparent.text.length > 1 && mainparent.text.length == 1){
+            firstnode = grandparent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
+            secondnode = parent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
+            thirdnode = cdata
+            fourthnode = ""
+            $('#node').val(firstnode)
+            $('#pnode').val(secondnode)
+            $('#cnode').val(thirdnode)
+            $('#gnode').val()
+            $('#first').val(firstnode)
+            $('#second').val(secondnode)
+            $('#third').val(thirdnode)
+            $('#fourth').val()
+            $('#tprovince').val(firstnode)
+            $('#tcity').val(secondnode)
+            $('#tpart').val(thirdnode)
+            $('#tfourth').val()
+        }else if(parent.text.length > 1 && grandparent.text.length > 1 && mainparent.text.length > 1){
+            firstnode = mainparent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
+            secondnode = grandparent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
+            thirdnode = parent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
+            fourthnode = cdata
+            $('#node').val(firstnode)
+            $('#pnode').val(secondnode)
+            $('#cnode').val(thirdnode)
+            $('#gnode').val(fourthnode)
+            $('#first').val(firstnode)
+            $('#second').val(secondnode)
+            $('#third').val(thirdnode)
+            $('#fourth').val(fourthnode)
+            $('#tprovince').val(firstnode)
+            $('#tcity').val(secondnode)
+            $('#tpart').val(thirdnode)
+            $('#tfourth').val(fourthnode)
+        }
+        $.post('/machineshow', {
+            firstnode:firstnode,
+            secondnode:secondnode,
+            thirdnode:thirdnode,
+            fourthnode:fourthnode,
+            'nonce':'{{ nonce }}',
+        }, function(data){
+            $("#imformation").html(data);
+        })
+    });
+});
 </script>
 {% endblock %}
-
