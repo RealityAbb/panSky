@@ -25,7 +25,7 @@ def init_utils(app):
     app.jinja_env.filters['long2ip'] = long2ip
 
 def authed():
-    return True
+    return bool(session.get('uid', False))
 
 def is_admin():
     if authed():

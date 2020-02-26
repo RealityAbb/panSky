@@ -34,14 +34,15 @@ sys.setdefaultencoding('utf-8')
 def init_views(app):
     @app.before_request
     def csrf():
-        if authed() and request.method == "POST":
-            if session['nonce'] != request.form.get('nonce'):
-                # abort(403)
-                session.clear()
-                return redirect('/login')
-        if request.method == "GET" and request.path[0:15] == "/static/uploads":
-            if not authed():
-                return redirect('/home')
+        pass
+        # if authed() and request.method == "POST":
+        #     if session['nonce'] != request.form.get('nonce'):
+        #         # abort(403)
+        #         session.clear()
+        #         return redirect('/login')
+        # if request.method == "GET" and request.path[0:15] == "/static/uploads":
+        #     if not authed():
+        #         return redirect('/home')
 
     def DeleteData(sql):
         db = MySQLdb.connect("localhost",authority,password,name,charset='utf8' )
@@ -50,6 +51,7 @@ def init_views(app):
         cursor.close()
         db.commit()
         db.close()
+
 
     @app.route('/setup', methods=['GET', 'POST'])
     def setup():

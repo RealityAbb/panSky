@@ -32,6 +32,8 @@ def create_app():
         init_errors(app)
         from CTFd import auth
         auth.init_auth(app)
+        from CTFd import panSky
+        panSky.init_views(app)
         #from CTFd.auth import init_auth
         #init_auth(app)
         from CTFd.utils import init_utils
