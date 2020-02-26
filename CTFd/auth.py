@@ -54,8 +54,14 @@ def init_auth(app):
             errors = []
             epassword = request.form['epassword']
             password = base64.decodestring(epassword)
+            name = request.form['username']
             # if
             # errors.append("登录失败")
+            session.paramanent = False
+            session['username'] = name
+            session['uid'] = 1
+            session['admin'] = "admin"
+            session['nonce'] = sha512(os.urandom(10))
             return redirect('/base')
         else:
             db.session.close()
