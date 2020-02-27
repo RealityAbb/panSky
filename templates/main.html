@@ -246,57 +246,36 @@
                             <th><input onclick="selectAll()" type="checkbox" name="controlAll" style="controlAll" id="controlAll"/></th>
                             <!-- <th>选择</th> -->
                             <th>序号</th>
-                            <th>是否在线</th>
-                            <th>IP地址</th>
+                            <th>预览图</th>
                             <th>名称</th>
-                            <th>第一级</th>
-                            <th>第二级</th>
-                            <th>第三级</th>
-                            <th>第四级</th>
-                            <th>厂家</th>
+                            <th>代发链接</th>
+                            <th>店铺链接</th>
+                            <th>成本</th>
+                            <th>售价</th>
+                            <th>快递</th>
+                            <th>邮费</th>
                             <!-- <th>证书</th> -->
                             <th>备注</th>
                             <th>类型</th>
                             <th>修改</th>
+                            <th>修改</th>
                         </tr>
                        </thead>
-                            {% for machine in cipermachines %}
-                            <tr style="overflow-x: auto;" onClick="change({{ machine.id }})">
+                            {% for good in goods %}
+                            <tr style="overflow-x: auto;" onClick="change({{ good.id }})">
                             <td>
-                            <input type="checkbox" name="selectmachine" class="checkboxes" value="{{machine.id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>
+{#                            <input type="checkbox" name="selectmachine" class="checkboxes" value="{{machine.id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>#}
                             <td class="mid">{{ loop.index}}
-                            <input type="hidden" name="id" value="{{ machine.id }}"></td>
-                            {% if machine.isonline == True %}
-                            <td><img src="/static/img/green.png"></td>
-                            {% elif machine.isonline == False %}
-                            <td><img src="/static/img/red.png"></td>
-                            {% endif %}
-                            {% if machine.manufacture == "兴唐" %}
-                            <td class="ip"><a href="javascript:void(0)" class="change">
-                            {{machine.ip}}</a></td>
-                            {% else %}
-                            <td class="ip"><a href="javascript:void(0)" class="change2">{{machine.ip}}</a></td>
-                            {% endif %}
-                            <td style="display:none;">{{machine.ip}}</td>
-                            <td class="machinenumber">{{machine.machinenumber}}</td>
-                            <td class="province">{{machine.province}}</td>
-                            <td class="city">{{machine.city}}</td>
-                            <td class="part">{{machine.part}}</td>
-                            <td class="fourth">{{machine.fourth}}</td>
-                            <td class="manufacture">{{machine.manufacture}}</td>
-                            <!-- {%if machine.certsign == true%}
-                            <td class="cert">存在</td>
-                            {% else %}
-                            <td class="cert">无</td>
-                            {% endif %} -->
-                            <td class="discription">{{machine.discription}}</td>
-                            {% if machine.encrypttype == 1 %}
-                            <td class="encrypttype">ECC</td>
-                            {% else %}
-                            <td class="encrypttype">RSA</td>
-                            {% endif %}
-
-
+                            <input type="hidden" name="id" value="{{ good.id }}"></td>
+                            <td><img src="{{good.goodImgUrl}}"></td>
+                            <td class="srcUrl"><a href="{{good.goodSrcUrl}}" target="_blank">代发链接</a></td>
+                            <td class="goodUrl"><a href="{{good.goodSrcUrl}}" target="_blank">店铺链接</a></td>
+                            <td style="display:none;">{{good.id}}</td>
+                            <td class="cost">{{good.goodCost}}</td>
+                            <td class="price">{{good.goodPrice}}</td>
+                            <td class="express">{{good.goodExpress}}</td>
+                            <td class="postage">{{good.goodPostage}}</td>
+                            <td class="extra">{{good.goodExtra}}</td>
                             <td>
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 <span class="glyphicon glyphicon-open" aria-hidden="true"></span>
@@ -340,10 +319,6 @@
 
 <div class="zhezhao" id="zhezhao"></div>
 <div class="login" id="login"></div>
-
-{% for machine in cipermachines %}
-<input type="hidden" value="{{ machine.ip }}" name="machinip">
-{% endfor %}
 
 {% endblock %}
 

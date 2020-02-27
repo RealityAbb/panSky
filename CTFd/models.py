@@ -895,3 +895,29 @@ class DLeadMachineCert(db.Model):
     def __init__(self,certname, certpath):
         self.certname = certname
         self.certpath = certpath
+
+class Good(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    goodId = db.Column(db.String(32))
+    goodTitle = db.Column(db.String(128))
+    goodDescription = db.Column(db.String(128))
+    goodUrl = db.Column(db.String(128))
+    goodSrcUrl = db.Column(db.String(128))
+    goodImgUrl = db.Column(db.String(64))
+    goodCost = db.Column(db.Float)
+    goodPrice = db.Column(db.Float)
+    goodExpress = db.Column(db.String(128))
+    goodPostage = db.Column(db.Float)
+    goodExtra = db.Column(db.String(256))
+    def __init__(self):
+        self.goodId = "6147245"
+        self.goodTitle = "吸尘器"
+        self.goodDescription = "小型"
+        self.goodUrl = "https://detail.tmall.com/item.htm?id=612947314674"
+        self.goodSrcUrl = "http://mobile.yangkeduo.com/goods.html?goods_id=2823236263"
+        self.ImagUrl = "/static/img/green.png"
+        self.goodCost = 6.6
+        self.goodPrice = 18.8
+        self.goodExpress = "韵达 顺丰"
+        self.goodPostage = 10
+        self.goodExtra = ""

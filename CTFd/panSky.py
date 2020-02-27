@@ -2,7 +2,7 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, flash, send_from_directory
 from CTFd.utils import sha512, authed, judge_result, check_ip, check_mac, allowed_file, AddCommonStatus, AddPrivateStatus
 from CTFd import initial, ukey, Transport
-from CTFd.models import db, Users, SysIPAddress, SystemRoutes, LeadMachine, Cipermachine, Terminallogs, LeadMachinelogs, EquipmentsStatus, Certificates, CertDetail, ChannelStatus, ChannelNumber,DSecurityStrategy,Tree,DRouteTable,DPrivateCertInfo,LMRoute,DPrivateChannelInfo,DStandarCertificate,UploadCertificates
+from CTFd.models import db, Users, SysIPAddress, SystemRoutes, LeadMachine, Cipermachine, Terminallogs, LeadMachinelogs, EquipmentsStatus, Certificates, CertDetail, ChannelStatus, ChannelNumber,DSecurityStrategy,Tree,DRouteTable,DPrivateCertInfo,LMRoute,DPrivateChannelInfo,DStandarCertificate,UploadCertificates,Good
 from CTFd import operationequipment, models,privatesystem,privatechannel, privatestrategy,privatenetwork,privatevlan,privatelog,privatesecurity,privatesundry,privatecert
 from itsdangerous import TimedSerializer, BadTimeSignature
 from passlib.hash import bcrypt_sha256
@@ -36,8 +36,13 @@ def init_views(app):
     @app.route('/main', methods=['GET', 'POST'])
     def mainPage():
         page = request.args.get('page',1, type=int)
-        pagination=Cipermachine.query.paginate(page,per_page=15,error_out=False)
-        cipermachine = pagination.items
-        total_count = db.session.query(db.func.count(Cipermachine.id)).first()[0]
+        pagination=Good.query.paginate(page,per_page=15,error_out=False)
+        goods = pagination.items
+        total_count = db.session.query(db.func.count(goods.id)).first()[0]
+        if total_count == 0:
+            for i in range(20):
+                record = Good()
+                db.session.add(record)
+        db.session.commit()
         viewfunc = ".user2"
-        return render_template('main.html',viewfunc=viewfunc,pagination=pagination,cipermachines=cipermachine, lm_total=total_count)
+        return render_template('main.html',viewfunc=viewfunc,pagination=pagination,goods=goods, lm_total=total_count)
