@@ -38,7 +38,7 @@ def init_views(app):
         page = request.args.get('page',1, type=int)
         pagination=Good.query.paginate(page,per_page=15,error_out=False)
         goods = pagination.items
-        total_count = db.session.query(db.func.count(goods.id)).first()[0]
+        total_count = db.session.query(db.func.count(Good.id)).first()[0]
         if total_count == 0:
             for i in range(20):
                 record = Good()
