@@ -267,7 +267,8 @@
 {#                            <input type="checkbox" name="selectmachine" class="checkboxes" value="{{machine.id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>#}
                             <td class="mid">{{ loop.index}}
                             <input type="hidden" name="id" value="{{ good.id }}"></td>
-                            <td><img src="{{good.goodImgUrl}}"></td>
+                            <td><img src="{{good.ImagUrl}}"></td>
+                            <td class="title">{{good.googTitle }}</td>
                             <td class="srcUrl"><a href="{{good.goodSrcUrl}}" target="_blank">代发链接</a></td>
                             <td class="goodUrl"><a href="{{good.goodSrcUrl}}" target="_blank">店铺链接</a></td>
                             <td style="display:none;">{{good.id}}</td>
