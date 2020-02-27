@@ -915,7 +915,7 @@ class Good(db.Model):
         self.goodDescription = "小型"
         self.goodUrl = "https://detail.tmall.com/item.htm?id=612947314674"
         self.goodSrcUrl = "http://mobile.yangkeduo.com/goods.html?goods_id=2823236263"
-        self.ImagUrl = "/static/img/green.png"
+        self.goodImgUrl = "/static/img/green.png"
         self.goodCost = 6.6
         self.goodPrice = 18.8
         self.goodExpress = "韵达 顺丰"
