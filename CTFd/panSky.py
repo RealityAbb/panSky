@@ -41,17 +41,17 @@ def init_views(app):
         goods = pagination.items
         total_count = db.session.query(db.func.count(SkuProxyInfo.proxy_id)).first()[0]
         for good in goods:
-            good_base_info = GoodBaseInfo.query.first()
-            good_sku_info = GoodSkuInfo.query.first()
+            good_base_info = GoodBaseInfo.query.filter_by(good_id=good.good_id).first()
+            good_sku_info = GoodSkuInfo.query.filter_by(good_id=good.good_id, sku_id=good.sku_id).first()
             good.set_parent_info(good_base_info, good_sku_info)
         if total_count == 0:
             good_id = "6147245"
-            good = GoodBaseInfo(good_id, "吸尘器", "", "/static/img/green.png")
+            good = GoodBaseInfo(good_id, "吸尘器", "简介", "/static/img/green.png")
             db.session.add(good)
             for i in range(5):
                 _sku_url = "https://detail.tmall.com/item.htm?id=612947314674"
                 sku_id = create_id(good_id, _sku_url + str(i))
-                sku = GoodSkuInfo(good_id, sku_id, _sku_url, 8.8, 0)
+                sku = GoodSkuInfo(good_id, sku_id, _sku_url, 8.8, 1.1)
                 db.session.add(sku)
                 for i in range(5):
                     good_proxy_url = "http://mobile.yangkeduo.com/goods.html?goods_id=2823236263"
