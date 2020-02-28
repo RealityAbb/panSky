@@ -87,7 +87,7 @@ def init_views(app):
         viewfunc = ".user2"
         return render_template('main.html',viewfunc=viewfunc,pagination=pagination,goods=goods, lm_total=total_count)
     @app.route('/good/new', methods=['POST'])
-    def add_equipment():
+    def add_good():
         good_id = request.form['good_id']
         record = GoodBaseInfo.query.filter_by(good_id=good_id).first()
         if record is not None:
