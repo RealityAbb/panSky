@@ -185,7 +185,7 @@
         </div>
         <div class="panel-body">
             <div class="button-bar" style="float:left;">
-                <button type="button" class="btn btn-sm btn-primary btn-create" onclick="alert('添加')">添加商品</button>&nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-primary btn-create" onclick="create()">添加商品</button>&nbsp;&nbsp;&nbsp;
                 <button type="button" class="btn btn-sm btn-danger" id="btn-delete-machine">删除密码机</button>&nbsp;&nbsp;&nbsp;
                <!--  <button type="button" class="btn btn-sm btn-warning" id="btn-import-machine">导入密码机</button>&nbsp;&nbsp;&nbsp; -->
                 <button type="button" class="btn btn-sm btn-primary btn-query" >查找密码机</button>
@@ -676,11 +676,10 @@ Array.prototype.remove = function(val) {
     }
 };
 
-//------------addmachine
-$('.btn-create').click(function (e) {
-    alert("添加")
-    $('#div-create').modal("toggle")
-});
+function create() {
+        alert("添加")
+        $('#div-create').modal("toggle")
+}
 
 //-------------query
 $('.btn-query').click(function (e) {
