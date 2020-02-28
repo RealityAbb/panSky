@@ -37,7 +37,7 @@ def init_views(app):
     @app.route('/main', methods=['GET', 'POST'])
     def mainPage():
         page = request.args.get('page',1, type=int)
-        pagination= SkuProxyInfo.query.order_by(SkuProxyInfo.goodId).paginate(page,per_page=20,error_out=False)
+        pagination= SkuProxyInfo.query.order_by(SkuProxyInfo.good_id).paginate(page,per_page=20,error_out=False)
         goods = pagination.items
         total_count = db.session.query(db.func.count(SkuProxyInfo.id)).first()[0]
         for good in goods:
