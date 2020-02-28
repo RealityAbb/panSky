@@ -18,8 +18,7 @@ import json
 import sys
 import re
 
-ALLOWED_EXTENSIONS = set(['der'])
-
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'JPG', 'PNG', 'bmp'])
 
 def init_utils(app):
     app.jinja_env.filters['long2ip'] = long2ip
@@ -53,6 +52,8 @@ def sha512(string):
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.',1)[1] in ALLOWED_EXTENSIONS
+def get_file_suffix(filename):
+    return "" if '.' not in filename else filename.rsplit('.',1)[1]
 
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)

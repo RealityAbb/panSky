@@ -57,37 +57,39 @@
                 <div class="panel-body">
                     <div class="form-group">
                         <label for="host" class="control-label">商品ID</label>
-                        <input type="text" class="form-control host-input"  name="ip" id="id" placeholder="ID">
+                        <input type="text" class="form-control host-input"  name="good_id" id="good_id" placeholder="商品ID" required>
                     </div>
                     <div class="form-group">
                         <label class="control-label">商品名称</label>
-                        <!-- <input type="text" class="form-control host-input" name="machinenumber"  placeholder="Name" maxlength="20"> -->
-                        <textarea name="goodname" class="form-control host-input" placeholder="Name" style="height:35px;"></textarea>
-                        <div id="dsa"></div>
+                        <input type="text" name="good_name" class="form-control host-input" placeholder="商品名称"></input>
                     </div>
                     <div class="form-group">
                       <strong>预览图</strong>
-                      <input type="file" name="files[]" multiple="multiple" required>
-                    </div><br/>
+                      <input type="file" name="file">
+                    </div>
                     <div class="form-group">
                         <label class="control-label">商品简介</label>
                         <input type="text" class="form-control host-input" name="description" id="description" placeholder="简介">
                     </div>
                     <div class="form-group" >
                         <label class="control-label">sku链接</label>
-                        <input type="text" class="form-control host-input" name="second" id="second"  placeholder="sku详情页链接">
+                        <input type="url" class="form-control host-input" name="sku" id="sku"  placeholder="sku详情页链接">
                     </div>
                     <div class="form-group">
                         <label class="control-label">售价</label>
-                        <input type="text" class="form-control host-input" name="price" id="price"  placeholder="0.0">
+                        <input type="number" class="form-control host-input" name="price" id="price"  placeholder="0.0">
+                    </div>
+                    <div class="form-group" >
+                        <label class="control-label">代发链接</label>
+                        <input type="url" class="form-control host-input" name="proxy_url" id="proxy_url"  placeholder="代发链接">
                     </div>
                     <div class="form-group">
                         <label class="control-label">成本</label>
-                        <input type="text" class="form-control host-input" name="cost" id="cost" placeholder="0.0">
+                        <input type="number" class="form-control host-input" name="cost" id="cost" placeholder="0.0">
                     </div>
                     <div class="form-group">
                         <label class="control-label">优惠劵</label>
-                        <input type="text" class="form-control host-input" name="coupon" id="coupon" placeholder="0.0">
+                        <input type="number" class="form-control host-input" name="coupon" id="coupon" placeholder="0.0">
                     </div>
                     <div class="form-group">
                         <label class="control-label">快递</label>
@@ -95,15 +97,15 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label">邮费</label>
-                        <input type="text" class="form-control host-input" name="postage" id="postage" placeholder="0.0">
+                        <input type="number" class="form-control host-input" name="postage" id="postage" placeholder="0.0">
                     </div>
                     <div class="form-group">
                         <label class="control-label">发货地址</label>
-                        <input type="text" class="form-control host-input" name="address" id="address" placeholder="0.0">
+                        <input type="text" class="form-control host-input" name="address" id="address">
                     </div>
                     <div class="form-group">
-                        <label class="control-label">赠品</label>
-                        <input type="text" class="form-control host-input" name="prize" id="prize" placeholder="0.0">
+                        <label class="control-label">赠品价值</label>
+                        <input type="number" class="form-control host-input" name="prize" id="prize" placeholder="0.0">
                     </div>
                     <div class="form-group">
                         <label class="control-label">需要的资质文件</label>

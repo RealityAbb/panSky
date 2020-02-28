@@ -8,6 +8,7 @@ from passlib.hash import bcrypt_sha256
 
 import datetime
 import hashlib
+import time
 
 def sha512(string):
     return hashlib.sha512(string).hexdigest()
@@ -935,12 +936,14 @@ class GoodBaseInfo(db.Model):
     good_title = db.Column(db.String(64))
     good_description = db.Column(db.String(128))
     good_image_url = db.Column(db.String(128))
+    create_time = db.Column(db.Float)
 
     def __init__(self, _good_id = "", _good_title = "", _good_description = "", _good_image_url =  ""):
         self.good_id = _good_id
         self.good_title = _good_title
         self.good_description = _good_description
         self.good_image_url = _good_image_url
+        self.create_time = time.time()
 
 class GoodSkuInfo(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -949,12 +952,15 @@ class GoodSkuInfo(db.Model):
     sku_url = db.Column(db.String(128)) ##店铺链接
     sku_price = db.Column(db.Float)
     coupon = db.Column(db.Float) ## 优惠券
+    create_time = db.Column(db.Float)
     def __init__(self, _good_id = "", _sku_id = "", _sku_url =  "",  _good_price  = 0, _coupon =  0):
         self.good_id = _good_id
         self.sku_url = _sku_url
         self.sku_id = _sku_id
         self.sku_price = _good_price
         self.coupon = _coupon
+        self.create_time = time.time()
+
 
 
 class SkuProxyInfo(db.Model):
@@ -969,7 +975,7 @@ class SkuProxyInfo(db.Model):
     good_cost = db.Column(db.Float) ## 成本价
     good_prize = db.Column(db.Float) ## 赠品
     good_extra = db.Column(db.String(256)) ## 备注
-
+    create_time = db.Column(db.Float)
     def __init__(self, _good_id, _sku_id, _good_proxy_url, _good_express, _good_postage, _postage_address, _good_cost, _good_prize, _good_extra = ""):
         self.good_id = _good_id
         self.sku_id = _sku_id
@@ -983,6 +989,7 @@ class SkuProxyInfo(db.Model):
         self.good_extra = _good_extra
         self.sku_info = GoodSkuInfo()
         self.good_base_info = GoodBaseInfo()
+        self.create_time = time.time()
     def set_parent_info(self, _good_base_info, _sku_info):
         if _good_base_info is not None:
             self.good_base_info = _good_base_info
