@@ -39,7 +39,7 @@ def init_views(app):
         page = request.args.get('page',1, type=int)
         pagination= SkuProxyInfo.query.order_by(SkuProxyInfo.good_id).paginate(page,per_page=20,error_out=False)
         goods = pagination.items
-        total_count = db.session.query(db.func.count(SkuProxyInfo.id)).first()[0]
+        total_count = db.session.query(db.func.count(SkuProxyInfo.proxy_id)).first()[0]
         for good in goods:
             good_base_info = GoodBaseInfo.query.first()
             good_sku_info = GoodSkuInfo.query.first()
