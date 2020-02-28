@@ -895,6 +895,14 @@ class DLeadMachineCert(db.Model):
     def __init__(self,certname, certpath):
         self.certname = certname
         self.certpath = certpath
+def getPlatform(url):
+    if "taobao.com" in url:
+        return "淘宝"
+    if "tmall.com" in url:
+        return "天猫"
+    if "pinduoduo.com" in url or  "yangkeduo.com" in url:
+        return "拼多多"
+    return "未知"
 
 class Good(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -921,3 +929,64 @@ class Good(db.Model):
         self.goodExpress = "韵达 顺丰"
         self.goodPostage = 10
         self.goodExtra = ""
+class GoodBaseInfo(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    good_id = db.Column(db.String(32))
+    goodImgUrl = db.Column(db.String(64))
+    goodTitle = db.Column(db.String(128))
+    goodDescription = db.Column(db.String(128))
+
+    def __init__(self, _good_id = "", _good_title = "", _good_description = "", _good_image_url =  ""):
+        self.good_id = _good_id
+        self.good_title = _good_title
+        self.good_description = _good_description
+        self.good_image_url = _good_image_url
+
+class GoodSkuInfo(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    good_id = db.Column(db.String(32))
+    sku_id = db.Column(db.String(32))
+    sku_url = db.Column(db.String(128)) ##店铺链接
+    sku_price = db.Column(db.Float)
+    coupon = db.Column(db.Float) ## 优惠券
+    def __init__(self, _good_id = "", _sku_id = "", _sku_url =  "",  _good_price  = 0, _coupon =  0):
+        self.good_d = _good_id
+        self.sku_url = _sku_url
+        self.sku_id = _sku_id
+        self.sku_price = _good_price
+        self.coupon = _coupon
+
+
+class SkuProxyInfo(db.Model):
+    proxy_id = db.Column(db.Integer, primary_key = True)
+    good_id = db.Column(db.String(32))
+    sku_id = db.Column(db.Integer)
+    good_proxy_url = db.Column(db.String(128)) ## 代发链接
+    good_proxy_platform = db.Column(db.String(32)) ## 代发平台
+    good_express = db.Column(db.String(128)) ## 快递
+    good_postage = db.Column(db.Float) ## 快递费
+    postage_address = db.Column(db.String(32)) ## 发货地址
+    good_cost = db.Column(db.Float) ## 成本价
+    good_prize = db.Column(db.Float) ## 赠品
+    good_extra = db.Column(db.String(256)) ## 备注
+
+    def __init__(self, _good_id, _sku_id, _good_proxy_url, _good_express, _good_postage, _postage_address, _good_cost, _good_prize, _good_extra = ""):
+        self.good_id = _good_id
+        self.sku_id = _sku_id
+        self.good_proxy_url = _good_proxy_url
+        self.good_proxy_platform = getPlatform(_good_proxy_url)
+        self.good_express = _good_express
+        self.good_cost = _good_cost
+        self.postage_address = _postage_address
+        self.good_postage = _good_postage
+        self.good_prize = _good_prize
+        self.good_extra = _good_extra
+        self.sku_info = GoodSkuInfo()
+        self.good_base_info = GoodBaseInfo()
+    def set_parent_info(self, _good_base_info, _sku_info):
+        if _good_base_info is not None:
+            self.good_base_info = _good_base_info
+        if _sku_info is not None:
+            self.sku_info = _sku_info
+
+
