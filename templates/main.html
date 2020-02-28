@@ -44,6 +44,85 @@
       z-index:1500;
      }
 </style>
+<!--添加商品--->
+<div class="modal fade" id="div-create" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">添加商品</h4>
+            </div>
+            <form method="POST" action="/good/new" enctype="multipart/form-data" onsubmit="return submitTest();">
+                <input name='nonce' type='hidden' value="{{ nonce }}">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="host" class="control-label">商品ID</label>
+                        <input type="text" class="form-control host-input"  name="ip" id="id" placeholder="ID">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">商品名称</label>
+                        <!-- <input type="text" class="form-control host-input" name="machinenumber"  placeholder="Name" maxlength="20"> -->
+                        <textarea name="goodname" class="form-control host-input" placeholder="Name" style="height:35px;"></textarea>
+                        <div id="dsa"></div>
+                    </div>
+                    <div class="form-group">
+                      <strong>预览图</strong>
+                      <input type="file" name="files[]" multiple="multiple" required>
+                    </div><br/>
+                    <div class="form-group">
+                        <label class="control-label">商品简介</label>
+                        <input type="text" class="form-control host-input" name="description" id="description" placeholder="简介">
+                    </div>
+                    <div class="form-group" >
+                        <label class="control-label">sku链接</label>
+                        <input type="text" class="form-control host-input" name="second" id="second"  placeholder="sku详情页链接">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">售价</label>
+                        <input type="text" class="form-control host-input" name="price" id="price"  placeholder="0.0">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">成本</label>
+                        <input type="text" class="form-control host-input" name="cost" id="cost" placeholder="0.0">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">优惠劵</label>
+                        <input type="text" class="form-control host-input" name="coupon" id="coupon" placeholder="0.0">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">快递</label>
+                        <input type="text" class="form-control host-input" name="express" id="express" placeholder="快递">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">邮费</label>
+                        <input type="text" class="form-control host-input" name="postage" id="postage" placeholder="0.0">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">发货地址</label>
+                        <input type="text" class="form-control host-input" name="address" id="address" placeholder="0.0">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">赠品</label>
+                        <input type="text" class="form-control host-input" name="prize" id="prize" placeholder="0.0">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">需要的资质文件</label>
+                        <input type="text" class="form-control host-input" name="qualification" id="qualification" placeholder="资质文件">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">备注</label>
+                        <input type="text" class="form-control host-input" name="extra" id="extra" placeholder="备注" maxlength="8">
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">创建</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 
 <div class="modal fade" id="div-query" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -106,7 +185,7 @@
         </div>
         <div class="panel-body">
             <div class="button-bar" style="float:left;">
-                <button type="button" class="btn btn-sm btn-primary btn-create" >添加密码机</button>&nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-primary btn-create" >添加商品</button>&nbsp;&nbsp;&nbsp;
                 <button type="button" class="btn btn-sm btn-danger" id="btn-delete-machine">删除密码机</button>&nbsp;&nbsp;&nbsp;
                <!--  <button type="button" class="btn btn-sm btn-warning" id="btn-import-machine">导入密码机</button>&nbsp;&nbsp;&nbsp; -->
                 <button type="button" class="btn btn-sm btn-primary btn-query" >查找密码机</button>
