@@ -960,7 +960,7 @@ class GoodSkuInfo(db.Model):
 class SkuProxyInfo(db.Model):
     proxy_id = db.Column(db.Integer, primary_key = True)
     good_id = db.Column(db.String(32))
-    sku_id = db.Column(db.Integer)
+    sku_id = db.Column(db.String(64))
     good_proxy_url = db.Column(db.String(128)) ## 代发链接
     good_proxy_platform = db.Column(db.String(32)) ## 代发平台
     good_express = db.Column(db.String(128)) ## 快递
