@@ -45,7 +45,7 @@ def init_views(app):
             good_sku_info = GoodSkuInfo.query.filter_by(good_id=good.good_id, sku_id=good.sku_id).first()
             good.set_parent_info(good_base_info, good_sku_info)
         if total_count == 0:
-            good_id = "6147245"
+            good_id = "612947314674"
             good = GoodBaseInfo(good_id, "吸尘器", "简介", "/static/img/green.png")
             db.session.add(good)
             for i in range(5):

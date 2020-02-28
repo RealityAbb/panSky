@@ -268,6 +268,7 @@
 {#                            <td> <input type="checkbox" name="selectmachine" class="checkboxes" value="{{machine.id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>#}
                             <td class="mid">{{ loop.index}}
                             <input type="hidden" name="id" value="{{ good.good_id }}"></td>
+                            <td class="goodId">{{ good.good_id}}</td>
                             <td><img src="{{good.good_base_info.good_image_url}}"></td>
                             <td class="title">{{good.good_base_info.good_title}}</td>
                             <td class="description">{{ good.good_base_info.good_description}}</td>

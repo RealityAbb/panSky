@@ -932,9 +932,9 @@ class Good(db.Model):
 class GoodBaseInfo(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     good_id = db.Column(db.String(32))
-    goodImgUrl = db.Column(db.String(64))
-    goodTitle = db.Column(db.String(128))
-    goodDescription = db.Column(db.String(128))
+    good_title = db.Column(db.String(64))
+    good_description = db.Column(db.String(128))
+    good_image_url = db.Column(db.String(128))
 
     def __init__(self, _good_id = "", _good_title = "", _good_description = "", _good_image_url =  ""):
         self.good_id = _good_id
