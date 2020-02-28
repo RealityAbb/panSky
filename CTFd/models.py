@@ -945,12 +945,12 @@ class GoodBaseInfo(db.Model):
 class GoodSkuInfo(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     good_id = db.Column(db.String(32))
-    sku_id = db.Column(db.String(32))
+    sku_id = db.Column(db.String(64))
     sku_url = db.Column(db.String(128)) ##店铺链接
     sku_price = db.Column(db.Float)
     coupon = db.Column(db.Float) ## 优惠券
     def __init__(self, _good_id = "", _sku_id = "", _sku_url =  "",  _good_price  = 0, _coupon =  0):
-        self.good_d = _good_id
+        self.good_id = _good_id
         self.sku_url = _sku_url
         self.sku_id = _sku_id
         self.sku_price = _good_price
