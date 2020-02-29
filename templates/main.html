@@ -344,6 +344,10 @@
 <div class="zhezhao" id="zhezhao"></div>
 <div class="login" id="login"></div>
 
+    {% for good in goods %}
+    <input type="hidden" value="{{ good.good_id }}" name="global_good_id">
+    {% endfor %}
+
 {% endblock %}
 
 {% block scripts %}
@@ -389,8 +393,7 @@ function SwitchStatusCode(data){
 
 var arr = new Array()
 
-var goods_id = document.getElementsByName("goodId");
-alert(goods_id[0].value)
+const goods_id = document.getElementsByName("global_good_id");
 
 //-------------------checkall
 function selectAll(){
