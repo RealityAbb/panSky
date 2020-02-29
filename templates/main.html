@@ -395,6 +395,7 @@ var goods_id = document.getElementsByName("goodId");
 function selectAll(){
     arr = []
     var checklist = document.getElementsByName("select_goods");
+    alert(checklist.length)
     if(document.getElementById("controlAll").checked)
     {
         for(var i=0;i<checklist.length;i++)
@@ -432,7 +433,7 @@ $('.checkboxes').click(function (e){
 
 function select_change(change) {
     var oObj = window.event.srcElement;
-    const id_index = 2
+    const id_index = 1
     //alert(change.tagName.toLowerCase());
     if(oObj.tagName.toLowerCase() == "td"){
         var oTr = oObj.parentNode;
