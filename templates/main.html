@@ -390,12 +390,12 @@ function SwitchStatusCode(data){
 var arr = new Array()
 
 var goods_id = document.getElementsByName("goodId");
-alert(goods_id)
+alert(goods_id[0].value)
 
 //-------------------checkall
 function selectAll(){
     arr = [];
-    var checklist = document.getElementsByName("select_goods");
+    const checklist = document.getElementsByName("select_goods");
     alert(document.getElementById("controlAll").checked);
     if(document.getElementById("controlAll").checked) {
         let i = 0;
