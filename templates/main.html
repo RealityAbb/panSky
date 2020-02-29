@@ -159,16 +159,13 @@
             </div>
             </br></br>
             <div id="search">
-                <form method="POST" action="/search" enctype="multipart/form-data" onsubmit="return submitTest();">
+                <form method="POST" action="/search" enctype="multipart/form-data">
                     <input name='nonce' type='hidden' value="{{ nonce }}">
                     <div id="wrap" class="form-group" style="float: left">
-                        <label for="host" class="control-label">标题</label>
                         <input type="text" class="form-control host-input"  name="search_good_title" id="search_good_title" placeholder="商品ID" required>
-                        <label for="host" class="control-label">商品ID/店铺链接</label>
                         <input type="text" class="form-control host-input"  name="search_good_id" id="search_good_id" placeholder="商品ID或商品链接" required>
-                        <label for="host" class="control-label">代发ID/代发链接</label>
                         <input type="text" class="form-control host-input"  name="search_good_proxy" id="search_good_proxy" placeholder="代发ID或代发链接" required>
-                        <button type="button" class="btn btn-sm btn-primary btn-query" >查找</button>
+                        <button type="submit" class="btn btn-sm btn-primary btn-query" >查找</button>
                     </div>
                 </form>
             </div>
@@ -502,10 +499,6 @@ function create() {
     $('#div-create').modal("toggle")
 };
 
-//-------------query
-$('.btn-query').click(function (e) {
-    $('#div-query').modal("toggle")
-});
 //--------------delete good
 $('#btn-delete-good').click(function () {
     var elem = $(this).parent().parent();
