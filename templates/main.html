@@ -43,6 +43,9 @@
       display:none;
       z-index:1500;
      }
+    #wrap {
+        display: flex;
+    }
 </style>
 <!--添加商品--->
 <div class="modal fade" id="div-create" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -154,10 +157,11 @@
                 <a href="/main"><button type="button" class="btn btn-sm btn-primary">显示全部商品</button></a>&nbsp;&nbsp;&nbsp;
                 <button type="button" class="btn btn-sm glyphicon glyphicon-refresh"></button>
             </div>
+            </br></br>
             <div id="search">
                 <form method="POST" action="/search" enctype="multipart/form-data" onsubmit="return submitTest();">
                     <input name='nonce' type='hidden' value="{{ nonce }}">
-                    <div class="form-group" style="float: left">
+                    <div id="wrap" class="form-group" style="float: left">
                         <label for="host" class="control-label">标题</label>
                         <input type="text" class="form-control host-input"  name="search_good_title" id="search_good_title" placeholder="商品ID" required>
                         <label for="host" class="control-label">商品ID/店铺链接</label>
@@ -166,10 +170,9 @@
                         <input type="text" class="form-control host-input"  name="search_good_proxy" id="search_good_proxy" placeholder="代发ID或代发链接" required>
                         <button type="button" class="btn btn-sm btn-primary btn-query" >查找</button>
                     </div>
-                    <button type="button" class="btn btn-sm btn-primary btn-query" >查找</button>
                 </form>
             </div>
-            </br></br>
+
             <div id="imformation">
 
                 <div class="modal fade" id="div-edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
