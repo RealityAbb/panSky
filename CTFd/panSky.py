@@ -71,6 +71,9 @@ def init_views(app):
             good.set_parent_info(good_base_info, good_sku_info)
         viewfunc = ".user2"
         return render_template('main.html',viewfunc=viewfunc,pagination=pagination,goods=goods, lm_total=total_count)
+    @app.route('/test', methods=['GET', 'POST'])
+    def main_test():
+        return render_template('main.html')
     @app.route('/good/new', methods=['POST'])
     def add_good():
         good_id = request.form['good_id']
