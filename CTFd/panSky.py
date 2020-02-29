@@ -76,6 +76,7 @@ def init_views(app):
         return render_template('maintest.html')
     @app.route('/good/new', methods=['POST'])
     def add_good():
+        add_test_data()
         good_id = request.form['good_id']
         record = GoodBaseInfo.query.filter_by(good_id=good_id).first()
         if record is not None:
