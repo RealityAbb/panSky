@@ -114,8 +114,8 @@ def init_views(app):
         goods_ids= request.form['choose_goods_ids'].encode('utf-8').strip(',').split(',')
         for id in goods_ids:
             GoodBaseInfo.query.filter_by(good_id=id).delete()
-            GoodSkuInfo.query.filter_by(goods_id=id).delete()
-            SkuProxyInfo.query.filter_by(goods_id=id).delete()
+            GoodSkuInfo.query.filter_by(good_id=id).delete()
+            SkuProxyInfo.query.filter_by(good_id=id).delete()
         db.session.commit()
         db.session.close()
         return "0"
