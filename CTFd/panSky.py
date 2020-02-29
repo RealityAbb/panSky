@@ -78,6 +78,7 @@ def init_views(app):
         good_id = get_id(request.form['search_good_id'])
         good_title = request.form['search_good_title']
         good_proxy_id = get_id(request.form['search_proxy_id'])
+        print good_id, good_title, good_proxy_id
         if good_id != "" and good_proxy_id != "":
             query = SkuProxyInfo.query.filter_by(good_id=good_id, good_proxy_id=good_proxy_id)
         elif good_id != "":
@@ -89,7 +90,7 @@ def init_views(app):
             ids = []
             for good in goods:
                 ids.append(good.good_id)
-            query = SkuProxyInfo.query.filter(SkuProxyInfo.good_id.in_(ids)).paginate(page,per_page=PER_PAGE_COUNT,error_out=False)
+            query = SkuProxyInfo.query.filter(SkuProxyInfo.good_id.in_(ids))
         else:
             return redirect('/main')
         pagination = query.paginate(page, per_page=PER_PAGE_COUNT,error_out=False)
