@@ -996,7 +996,7 @@ class SkuProxyInfo(db.Model):
     good_extra = db.Column(db.String(256)) ## 备注
     create_time = db.Column(db.Float)
     qualification = db.Column(db.String(32)) ## 资质
-    def __init__(self, _good_id, _sku_id, _good_proxy_url, _good_express, _good_postage, _postage_address, _produce_address, _good_cost, _good_prize, _qualification, _good_extra = ""):
+    def __init__(self, _good_id, _sku_id, _good_proxy_url, _good_express, _good_postage, _postage_address, _produce_address, _good_cost, _good_prize, _qualification="", _good_extra = ""):
         self.good_id = _good_id
         self.sku_id = _sku_id
         self.good_proxy_url = _good_proxy_url
