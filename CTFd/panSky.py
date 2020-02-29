@@ -77,9 +77,9 @@ def init_views(app):
         if request.method == 'GET':
             redirect("/main")
         page = request.args.get('page', 1, type=int)
-        good_id = get_id(request.form['search_good_id'])
+        good_id = get_id(str(request.form['search_good_id']))
         good_title = request.form['search_good_title']
-        good_proxy_id = get_id(request.form['search_proxy_id'])
+        good_proxy_id = get_id(str(request.form['search_proxy_id']))
         print request.form['search_good_id'], good_id, good_title, good_proxy_id
         if good_id != "" and good_proxy_id != "":
             query = SkuProxyInfo.query.filter_by(good_id=good_id, good_proxy_id=good_proxy_id)
