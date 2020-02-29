@@ -396,13 +396,13 @@ alert(goods_id)
 function selectAll(){
     arr = [];
     var checklist = document.getElementsByName("select_goods");
-    alert(checklist.length);
+    alert(document.getElementById("controlAll").checked);
     if(document.getElementById("controlAll").checked) {
-        let i = 0
+        let i = 0;
         for(; i<checklist.length; i++) {
             checklist[i].checked = 1;
             checklist[i].parentNode.parentNode.style.background='#e5f5f5';
-            arr.splice(0,0,goods_id[i].value);
+            arr.splice(0,0, goods_id[i].value);
             $('#show_goods_id').val(arr)
         }
     } else {
