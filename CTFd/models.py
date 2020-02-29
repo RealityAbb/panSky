@@ -919,6 +919,8 @@ def get_id(src):
                 return query["id"][0]
             elif query.has_key("item_id"):
                 return query["item_id"][0]
+            elif query.has_key("goods_id"):
+                return query['goods_id']
     return src
 class Good(db.Model):
     id = db.Column(db.Integer, primary_key = True)
