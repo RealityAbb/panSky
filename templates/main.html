@@ -393,13 +393,6 @@
     <input id="AlertInfo" value="{{AlertInfo}}" type="hidden">
 </body>
 
-<form id="formdata" action="/equipment/deletetree" method="POST" enctype="multipart/form-data">
-    <input name='nonce' type='hidden' value="{{ nonce }}">
-    <input type="hidden" name="firstnode" id="node" >
-    <input type="hidden" name="secondenode" id="pnode">
-    <input type="hidden" name="thirdnode" id="cnode">
-    <input type="hidden" name="fourthnode" id="gnode">
-</form>
 
 <form id="formdata2" method="POST" enctype="multipart/form-data">
     <input name='nonce' type='hidden' value="{{ nonce }}">
@@ -417,30 +410,12 @@
 function AlertFunc()
 {
     var info=document.getElementById("AlertInfo").value;
-    if(info != "")
-        alert(info);
+    if(info !== "") {
+       alert(info);
+    }
 }
 
-function submitTest()
-{
-    var obj=document.getElementById("ip").value
-    var exp=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
-    var reg = obj.match(exp);
-    if(reg==null){
-        alert("IP地址不合法！");
-        ip.focus();
-        return false;
-    }
-    var obj1=document.getElementById("second").value
-    var obj2=document.getElementById("third").value
-    var obj3=document.getElementById("fourth").value
-    if (obj3 != "" && (obj2 == "" ||  obj1 =="")){
-        alert("不允许跨级添加，请输入完整信息！");
-        return false;
-    }else if(obj1 == "" && (obj2 != "" || obj3 !=="")){
-        alert("不允许跨级添加，请输入完整信息！");
-        return false;
-    }
+function submitTest() {
 }
 
 function submitcheck()
@@ -484,7 +459,7 @@ function lengthLimit(elem, showElem, max){
     };
     textChange();// 加载时先初始化
 };
-
+alert("load");
 lengthLimit("commentText", "dsa", 20);
 
 lengthLimit("commentText2", "dsa2", 20);
@@ -680,9 +655,9 @@ Array.prototype.remove = function(val) {
 };
 
 function create() {
-        alert("添加")
-        $('#div-create').modal("toggle")
-}
+    alert("添加")
+    $('#div-create').modal("toggle")
+};
 
 //-------------query
 $('.btn-query').click(function (e) {
@@ -698,17 +673,6 @@ $('.glyphicon-open').click(function(){
     //$('#id').val(id)
     $('#div-edit-cert').modal("toggle")
 })
-
-
-//-------------addtree
-$('.btn-add').click(function(e){
-    $('#div-add').modal("toggle")
-});
-
-//-------------deletetree
-$('.btn-delete').click(function(e){
-    $('#div-delete-tree').modal("toggle")
-});
 
 //------------edit
 $('#div-btn-edit').click(function(e){
@@ -767,11 +731,11 @@ $('.glyphicon-pencil').click(function(){
     var manufacture = elem.find('.manufacture').text().trim();
     var discription = elem.find('.discription').text().trim();
     load_edit_modal(id, ip, machinenumber, province, city, part, fourth, manufacture,discription);
-})
+});
 
 //--------------delete good
 $('#btn-delete-good').click(function () {
-    alert("删除")
+    alert("删除");
     var elem = $(this).parent().parent();
     var id = elem.find('input[name=id]').val();
     var obj=document.getElementsByName('select_goods');
@@ -828,130 +792,6 @@ $('#div-btn-delete').click(function(e){
             }
         }
     })
-});
-
-
-//-----------------------deletetree
-$('#btn-delete-tree').click(function(e){
-    var nodeall = document.getElementById('inputdata').value
-    if(nodeall != ""){
-        node = nodeall.substring(nodeall.indexOf("(")+1,nodeall.indexOf(")"))
-        if(node != "0"){
-            alert("此节点下还有密码机，不可删除！");
-        }else{
-            if(confirm("确定要删除这个节点吗？")){
-                $('#formdata').submit()
-            }
-        }
-    }else{
-        alert("请先选择要删除的节点！");
-    }
 })
-
-
-//---------------------------------tree
-$.post('/tree', {
-        'nonce':'{{ nonce }}',
-    }, function(data1){
-        var da = []
-        node = data1.tree
-
-    $('#tree').treeview({data: node});
-
-    $('#tree').on('nodeSelected', function(event, data) {
-        var txts=document.getElementsByTagName("input");
-        for(var i=0;i<txts.length;i++)
-        {
-            if(txts[i].type=="text")
-            {
-              txts[i].value ="";
-            }
-        }
-        choosedata = data.text;
-        var parent = $('#tree').treeview('getParent',data);
-        var grandparent = $('#tree').treeview('getParent',parent);
-        var mainparent = $('#tree').treeview('getParent',grandparent);
-        cdata = choosedata.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
-        $('#inputdata').val(choosedata);
-        if (parent.text.length == 1){
-            firstnode = cdata
-            secondnode = ""
-            thirdnode = ""
-            fourthnode = ""
-            $('#node').val(cdata)
-            $('#pnode').val()
-            $('#cnode').val()
-            $('#gnode').val()
-            $('#first').val(cdata)
-            $('#second').val()
-            $('#third').val()
-            $('#fourth').val()
-            $('#tprovince').val(cdata)
-            $('#tcity').val()
-            $('#tpart').val()
-            $('#tfourth').val()
-        }else if(parent.text.length > 1 && grandparent.text.length == 1){
-            firstnode = parent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
-            secondnode = cdata
-            thirdnode = ""
-            fourthnode = ""
-            $('#node').val(firstnode)
-            $('#pnode').val(secondnode)
-            $('#cnode').val()
-            $('#gnode').val()
-            $('#first').val(firstnode)
-            $('#second').val(secondnode)
-            $('#third').val()
-            $('#fourth').val()
-            $('#tprovince').val(firstnode)
-            $('#tcity').val(secondnode)
-            $('#tpart').val()
-            $('#tfourth').val()
-        }else if(parent.text.length > 1 && grandparent.text.length > 1 && mainparent.text.length == 1){
-            firstnode = grandparent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
-            secondnode = parent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
-            thirdnode = cdata
-            fourthnode = ""
-            $('#node').val(firstnode)
-            $('#pnode').val(secondnode)
-            $('#cnode').val(thirdnode)
-            $('#gnode').val()
-            $('#first').val(firstnode)
-            $('#second').val(secondnode)
-            $('#third').val(thirdnode)
-            $('#fourth').val()
-            $('#tprovince').val(firstnode)
-            $('#tcity').val(secondnode)
-            $('#tpart').val(thirdnode)
-            $('#tfourth').val()
-        }else if(parent.text.length > 1 && grandparent.text.length > 1 && mainparent.text.length > 1){
-            firstnode = mainparent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
-            secondnode = grandparent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
-            thirdnode = parent.text.replace(/\s+/g,"").replace(/\(.*?\)/g,"");
-            fourthnode = cdata
-            $('#node').val(firstnode)
-            $('#pnode').val(secondnode)
-            $('#cnode').val(thirdnode)
-            $('#gnode').val(fourthnode)
-            $('#first').val(firstnode)
-            $('#second').val(secondnode)
-            $('#third').val(thirdnode)
-            $('#fourth').val(fourthnode)
-            $('#tprovince').val(firstnode)
-            $('#tcity').val(secondnode)
-            $('#tpart').val(thirdnode)
-            $('#tfourth').val(fourthnode)
-        }
-        $.post('/machineshow', {
-            firstnode:firstnode,
-            secondnode:secondnode,
-            thirdnode:thirdnode,
-            fourthnode:fourthnode,
-            'nonce':'{{ nonce }}',
-        }, function(data){
-            $("#imformation").html(data);
-        })
-    });
-});
 </script>
 {% endblock %}
