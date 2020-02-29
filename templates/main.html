@@ -126,61 +126,10 @@
     </div>
 </div>
 
-
-<div class="modal fade" id="div-query" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    查询条件
-                </h4>
-            </div>
-            <div class="panel-body">
-                <form action ="/checkciper" method ="POST" enctype="multipart/form-data">
-                <input name="nonce" type="hidden" value="{{ nonce }}">
-                    <table class="table table-bordered">
-                        <tr>
-                            <td>IP</td>
-                            <td><input type="text" name="sip" maxlength="15" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"></td>
-                        </tr>
-                        <tr>
-                            <td>第一级</td>
-                            <td><input type="text" name="sheng" maxlength="8"></td>
-                        </tr>
-                        <tr>
-                            <td>第二级</td>
-                            <td><input type="text" name="shi" maxlength="8"></td>
-                        </tr>
-                        <tr>
-                            <td>第三级</td>
-                            <td><input type="text" name="fenqu" maxlength="8"></td>
-                        </tr>
-                        <tr>
-                            <td>第四级</td>
-                            <td><input type="text" name="four" maxlength="8"></td>
-                        </tr>
-                        <tr>
-                            <td>名称</td>
-                            <td><input type="text" name="name" maxlength="8"></td>
-                        </tr>
-                        <tr>
-                            <td>厂家</td>
-                            <td><input type="text" name="manufacture" maxlength="5"></td>
-                        </tr>
-                    </table>
-                    <div align="center">
-                        <button type="submit" class="btn btn-primary div-btn-query">查询</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
     <button type="button" class="btn btn-sm btn-primary btn-test" id="btn-test">测试按钮</button>&nbsp;&nbsp;&nbsp;
 
 <div class="col-md-9" style="padding-right: 1em;">
-    <div class="panel panel-primary" style="height:835px;">
+    <div class="panel panel-primary" style="height:85%; width: 85%">
         <div class="panel-heading">
             <h4 class="panel-title">
                   密码机基本信息
@@ -346,7 +295,7 @@
                         </tr>
                        </thead>
                             {% for good in goods %}
-                            <tr style="overflow-x: auto;" onClick="change({{ good.good_id }})">
+                            <tr style="overflow-x: auto;" onClick="select_change({{ good.good_id }})">
                             <td> <input type="checkbox" name="select_goods" class="checkboxes" value="{{good.good_id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>
 {#                            <td class="mid">{{ loop.index}}#}
                             <input type="hidden" name="id" value="{{ good.good_id }}"></td>
@@ -394,12 +343,6 @@
     <input id="AlertInfo" value="{{AlertInfo}}" type="hidden">
 </body>
 
-
-<form id="formdata2" method="POST" enctype="multipart/form-data">
-    <input name='nonce' type='hidden' value="{{ nonce }}">
-    <input type="hidden" name="data" id="inputdata">
-</form>
-
 <div class="zhezhao" id="zhezhao"></div>
 <div class="login" id="login"></div>
 
@@ -408,121 +351,16 @@
 {% block scripts %}
 <script src="/static/js/bootstrap-treeview.js"></script>
 <script type="text/javascript">
-function AlertFunc()
-{
+function AlertFunc() {
     var info=document.getElementById("AlertInfo").value;
     if(info !== "") {
        alert(info);
     }
 }
 
-function submitTest() {
-}
-
-function submitcheck()
-{
-    var obj1=document.getElementById("tcity").value
-    var obj2=document.getElementById("tpart").value
-    var obj3=document.getElementById("tfourth").value
-    if (obj3 != "" && (obj2 == "" ||  obj1 =="")){
-        alert("不允许跨级添加，请输入完整信息！");
-        return false;
-    }else if(obj1 == "" && (obj2 != "" || obj3 !=="")){
-        alert("不允许跨级添加，请输入完整信息！");
-        return false;
-    }
-}
-
-//------------------limitname
-function lengthLimit(elem, showElem, max){
-    var elem = document.getElementById(elem);
-    var showElem = document.getElementById(showElem);
-    var max = max || 50;
-    function getTextLength(str){
-        return str.replace(/[^\x00-\xff]/g,"xx").length;
-    };
-    if(/msie (\d+\.\d)/i.test(navigator.userAgent) == true) {
-        elem.onpropertychange = textChange;
-    }else{
-        elem.addEventListener("input", textChange, false);
-    }
-    function textChange(){
-    var text = elem.value;
-    var count = getTextLength(text);
-    if(count > max){
-        for(var i=0; i<text.length; i++){
-            if(getTextLength(text.substr(0, i)) >= max){
-                elem.value = text.substr(0, i);
-                break;
-                };
-            }
-        }
-    };
-    textChange();// 加载时先初始化
-};
-lengthLimit("commentText", "dsa", 20);
-
-lengthLimit("commentText2", "dsa2", 20);
 $('#btn-test').click(function () {
     alert("btn-test")
 })
-
-$('.export').click(function(){
-    $.post('/equipment/export',{
-        'nonce' : '{{nonce}}',
-    }, function(data){
-            var data = $.parseJSON(JSON.stringify(data))
-            if (data == "0"){
-            window.location="/static/uploads/equipment.csv"
-        }
-    })
-});
-
-
-$('.change').click(function(){
-    var zhezhao=document.getElementById("zhezhao");
-    var login=document.getElementById("login");
-    zhezhao.style.display="block";
-    login.style.display="block";
-    var elem = $(this).parent().parent();
-    var id = elem.find('input[name=id]').val();
-    $.post('/operation/privateequipment/'+id, {
-        'nonce':'{{ nonce }}',
-    }, function(data){
-        var data = $.parseJSON(JSON.stringify(data))
-        if (data == "0"){
-            window.location.href='/privateequipment/'+id;
-        }else{
-            alert(data);
-            zhezhao.style.display="none";
-            login.style.display="none";
-            //window.location.href='/privateequipment/'+id;
-        }
-    });
-});
-
-$('.change2').click(function(){
-    var zhezhao=document.getElementById("zhezhao");
-    var login=document.getElementById("login");
-    zhezhao.style.display="block";
-    login.style.display="block";
-    var elem = $(this).parent().parent();
-    var id = elem.find('input[name=id]').val();
-    $.post('/operation/commonequipment/'+id, {
-        'nonce':'{{ nonce }}',
-    }, function(data){
-        var data = $.parseJSON(JSON.stringify(data))
-        if (data == "0"){
-            window.location.href='/commonequipment/'+id;
-        }else{
-            alert(data);
-            zhezhao.style.display="none";
-            login.style.display="none";
-            //window.location.href='/commonequipment/'+id;
-        }
-    });
-});
-
 
 //------------refresh
 $('.glyphicon-refresh').click(function(e){
@@ -547,24 +385,6 @@ $('.glyphicon-refresh').click(function(e){
 function SwitchStatusCode(data){
     switch(data)
     {
-        case '1': alert('不存在该隧道'); break;
-        case '2': alert('该隧道已存在'); break;
-        case '3': alert('签名验证失败'); break;
-        case "6": alert('解密出的明文数据不合法'); break;
-        case '7': alert('该项操作当前被禁止'); break;
-        case '8': alert('获取加密统计数据失败'); break;
-        case '10': alert('添加隧道安全策略时失败'); break;
-        case '11': alert('删除隧道安全策略时失败'); break;
-        case '12': alert('重置装置失败'); break;
-        case '13': alert('重置隧道失败'); break;
-        case '14': alert('获取日志文件长度失败'); break;
-        case '15': alert('读取日志文件失败'); break;
-        case '17': alert('操作冲突'); break;
-        case '-2': alert('请求超时'); break;
-        case '-1': alert('返回数据包错误'); break;
-        case '-3': alert('输入信息有误'); break;
-        case '-4': alert('该IP已存在，请重新输入！');break;
-        case '0': alert('操作成功'); break;
         default: alert('操作异常');
     }
 }
@@ -616,7 +436,7 @@ $('.checkboxes').click(function (e){
     }
 })
 
-function change(change) {
+function select_change(change) {
     var oObj = window.event.srcElement;
     //alert(change.tagName.toLowerCase());
     if(oObj.tagName.toLowerCase() == "td"){
@@ -666,78 +486,7 @@ function create() {
 $('.btn-query').click(function (e) {
     $('#div-query').modal("toggle")
 });
-
-//----------------------change_cert
-$('.glyphicon-open').click(function(){
-    var elem = $(this).parent().parent();
-    var ip = elem.find('.ip').text().trim();
-    var id = elem.find('.id').text().trim();
-    $('#peer_ip').val(ip)
-    //$('#id').val(id)
-    $('#div-edit-cert').modal("toggle")
-})
-
-//------------edit
-$('#div-btn-edit').click(function(e){
-    e.preventDefault();
-    $.post($('#div-edit form').attr('action'), $('#div-edit form').serialize(), function(data){
-        var data = $.parseJSON(JSON.stringify(data))
-        if (data == "1"){
-            location.reload()
-        }else{
-            SwitchStatusCode(data)
-        }
-    })
-});
-
-function load_edit_modal(id, ip, machinenumber, province, city, part, fourth, manufacture,discription){
-    var modal_form = $('#div-edit form');
-
-    modal_form.find('input[name=id]').val(id)
-    modal_form.find('input[name=ip]').val(ip)
-    /*modal_form.find('input[name=machinenumber]').val(machinenumber)*/
-    $('#commentText2').val(machinenumber)
-    modal_form.find('input[name=province]').val(province)
-    modal_form.find('input[name=city]').val(city)
-    modal_form.find('input[name=part]').val(part)
-    modal_form.find('input[name=fourth]').val(fourth)
-
-    if (manufacture == "南瑞"){
-        modal_form.find('select[name=manufacture]').find("option[value='南瑞']").attr("selected","selected")
-    }else if(manufacture == "科东"){
-        modal_form.find('select[name=manufacture]').find("option[value='科东']").attr("selected","selected")
-    }else if(manufacture == "卫士通"){
-        modal_form.find('select[name=manufacture]').find("option[value='卫士通']").attr("selected","selected")
-    }else if(manufacture == "江南所"){
-        modal_form.find('select[name=manufacture]').find("option[value='江南所']").attr("selected","selected")
-    }else if(manufacture == "兴唐"){
-        modal_form.find('select[name=manufacture]').find("option[value='兴唐']").attr("selected","selected")
-    }
-
-    modal_form.find('input[name=manufacture]').val(manufacture)
-    modal_form.find('input[name=discription]').val(discription)
-
-    $('#div-edit form').attr('action', '/equipment/'+id+'/edit')
-    $('#div-edit').modal('toggle');
-}
-
-$('.glyphicon-pencil').click(function(){
-    var elem = $(this).parent().parent();
-
-    var id = elem.find('input[name=id]').val();
-    var ip = elem.find('.ip').text().trim();
-    var machinenumber = elem.find('.machinenumber').text().trim();
-    var province = elem.find('.province').text().trim();
-    var city = elem.find('.city').text().trim();
-    var part = elem.find('.part').text().trim();
-    var fourth = elem.find('.fourth').text().trim();
-    var manufacture = elem.find('.manufacture').text().trim();
-    var discription = elem.find('.discription').text().trim();
-    load_edit_modal(id, ip, machinenumber, province, city, part, fourth, manufacture,discription);
-});
-
 //--------------delete good
-$('#btn-delete-good')
 $('#btn-delete-good').click(function () {
     alert("删除");
     var elem = $(this).parent().parent();
@@ -762,40 +511,5 @@ $('#btn-delete-good').click(function () {
         load_delete_machine(machinenumber);
     }
 });
-
-function  delete_good() {
-
-}
-
-
-function load_delete_machine(machinenumber){
-    //alert("load_delete_machine");
-    var modal_form = $('#div-delete form');
-    modal_form.find('input[name=choose_goods_number]').val(machinenumber)
-
-    $('#div-delete form').attr('action','/good/delete')
-    $('#div-delete').modal('toggle');
-}
-
-
-$('#div-btn-delete').click(function(e){
-    e.preventDefault();
-    //alert("#div-btn-delete");
-    $.post($('#div-delete form').attr('action'), $('#div-delete form').serialize(), function(data){
-        var data = $.parseJSON(JSON.stringify(data))
-        if (data == "0"){
-            window.location="/equipment"
-        }
-        else
-        {
-             if(data == "-2")
-                alert("网络连接超时！")
-            else
-            {
-                alert("证书删除失败！");
-            }
-        }
-    })
-})
 </script>
 {% endblock %}
