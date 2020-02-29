@@ -1,30 +1,15 @@
 # coding=utf-8
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, flash, send_from_directory
 from CTFd.utils import authed, judge_result, allowed_file, get_file_suffix
-from CTFd import initial, ukey, Transport
 from CTFd.models import db, GoodBaseInfo, GoodSkuInfo, SkuProxyInfo
-from CTFd import operationequipment, models,privatesystem,privatechannel, privatestrategy,privatenetwork,privatevlan,privatelog,privatesecurity,privatesundry,privatecert
-from itsdangerous import TimedSerializer, BadTimeSignature
-from passlib.hash import bcrypt_sha256
 from flask import current_app as app
 from werkzeug.utils import secure_filename
-from CTFd.Transport import lock1
 
-from struct import *
-from generalfunction import SwitchErrorCode
-import base64
-import logging
 import time
-import datetime
-import socket
 import hashlib
 import re
 import os
 import sys
-import socket
-import struct
-import ctypes
-import MySQLdb
 authority = app.config['MYSQL_USER']
 password = app.config['MYSQL_PASSWORD']
 name = app.config['DATEBASE_NAME']
@@ -43,7 +28,7 @@ def get_float(src):
     return result
 def main_result(request, alert_info = None):
     page = request.args.get('page', 1, type=int)
-    pagination = SkuProxyInfo.query.order_by(SkuProxyInfo.good_id).paginate(page, per_page=20, error_out=False)
+    pagination = SkuProxyInfo.query.order_by(SkuProxyInfo.good_id).paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
     goods = pagination.items
     total_count = db.session.query(db.func.count(SkuProxyInfo.proxy_id)).first()[0]
     for good in goods:
@@ -77,7 +62,7 @@ def init_views(app):
     @app.route('/main', methods=['GET', 'POST'])
     def mainPage():
         page = request.args.get('page',1, type=int)
-        pagination= SkuProxyInfo.query.order_by(SkuProxyInfo.good_id).paginate(page,per_page=20,error_out=False)
+        pagination= SkuProxyInfo.query.order_by(SkuProxyInfo.good_id).paginate(page,per_page=PER_PAGE_COUNT,error_out=False)
         goods = pagination.items
         total_count = db.session.query(db.func.count(SkuProxyInfo.proxy_id)).first()[0]
         for good in goods:
@@ -109,10 +94,10 @@ def init_views(app):
         upload_file = request.files['file']
         image_path = ""
         if upload_file and allowed_file(upload_file.filename):
-            filename = good_id + get_file_suffix(upload_file.filename)
+            filename = good_id + "." + get_file_suffix(upload_file.filename)
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             upload_file.save(image_path)
-        base_info = GoodBaseInfo(good_id, good_name, description, upload_file)
+        base_info = GoodBaseInfo(good_id, good_name, description, image_path)
         db.session.add(base_info)
         sku_info = GoodSkuInfo(good_id, sku_id, sku_url, price, coupon)
         db.session.add(sku_info)

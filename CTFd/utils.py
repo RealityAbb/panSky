@@ -18,7 +18,7 @@ import json
 import sys
 import re
 
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'JPG', 'PNG', 'bmp'])
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'JPG', 'PNG', 'bmp', 'jepg'])
 
 def init_utils(app):
     app.jinja_env.filters['long2ip'] = long2ip
