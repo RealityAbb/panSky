@@ -109,3 +109,18 @@ def init_views(app):
         db.session.commit()
         db.session.close()
         return redirect('/main')
+    @app.route('/goods/delete', methods=['POST'])
+    def delete_goods():
+        goods_ids= request.form['choose_goods_ids'].encode('utf-8').strip(',').split(',')
+        for id in goods_ids:
+            goods = GoodBaseInfo.query.filter_by(good_id=id).all()
+            db.session.delete(goods)
+            sku = GoodSkuInfo.query.filter_by(goods_id=id).all()
+            db.session.delete(sku)
+            proxy = SkuProxyInfo.query.filter_by(goods_id=id).all()
+            db.session.delete(proxy)
+            db.session.commit()
+            db.session.close()
+        return "0"
+
+

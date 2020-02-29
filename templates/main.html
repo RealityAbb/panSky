@@ -251,7 +251,7 @@
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                 <h4 class="modal-title" id="exampleModalLabel">删除商品</h4>
                             </div>
-                            <form method="POST" action="/good/delete" enctype="multipart/form-data">
+                            <form method="POST" action="/goods/delete" enctype="multipart/form-data">
                                 <div class="panel-body">
                                     <input name='nonce' type='hidden' value="{{ nonce }}">
                                     <div class="form-group">
@@ -418,21 +418,21 @@ function selectAll(){
 
 $('.checkboxes').click(function (e){
     var elem = $(this).parent().parent();
-    var id = elem.find('input[name=id]').val();
-    var ip = elem.find('.ip').text().trim();
+    var id = elem.find('.goodId').text().trim();
     if(this.checked){
-        arr.splice(0,0,ip)
+        arr.splice(0, 0, id)
         $('#show_goods_id').val(arr)
     }else{
         $("#controlAll").removeAttr("checked");
-        arr.indexOf(ip)
-        arr.remove(ip)
+        arr.indexOf(id)
+        arr.remove(id)
         $('#show_goods_id').val(arr)
     }
-})
+});
 
 function select_change(change) {
     var oObj = window.event.srcElement;
+    const id_index = 2
     //alert(change.tagName.toLowerCase());
     if(oObj.tagName.toLowerCase() == "td"){
         var oTr = oObj.parentNode;
@@ -441,20 +441,19 @@ function select_change(change) {
            oTr.tag = true;
            var tr = event.srcElement.parentElement;
            tr.cells[0].children[0].checked=true;
-           var ip = tr.cells[4].innerHTML;
-           arr.splice(change,0,ip)
+           var id = tr.cells[id_index].innerHTML;
+           arr.splice(change,0,id)
            $('#show_goods_id').val(arr)
         }else{
            oTr.style.backgroundColor = '';
            oTr.tag = true;
            var tr = event.srcElement.parentElement;
            tr.cells[0].children[0].checked=false;
-           var ip = tr.cells[4].innerHTML;
-           arr.indexOf(ip)
-           arr.remove(ip)
+           var id = tr.cells[id_index].innerHTML;
+           arr.indexOf(id)
+           arr.remove(id)
            $('#show_goods_id').val(arr)
         }
-
     }
 }
 
@@ -506,5 +505,17 @@ function load_delete_machine(goods_ids){
     modal_form.attr('action','/goods/delete')
     $('#div-delete').modal('toggle');
 }
+
+$('#div-btn-delete').click(function(e){
+    e.preventDefault();
+    $.post($('#div-delete form').attr('action'), $('#div-delete form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        } else {
+            alert("删除失败")
+        }
+    })
+});
 </script>
 {% endblock %}
