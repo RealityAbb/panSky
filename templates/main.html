@@ -394,24 +394,23 @@ alert(goods_id)
 
 //-------------------checkall
 function selectAll(){
-    arr = []
+    arr = [];
     var checklist = document.getElementsByName("select_goods");
-    alert(checklist.length)
-    if(document.getElementById("controlAll").checked)
-    {
-        for(var i=0;i<checklist.length;i++)
-        {
+    alert(checklist.length);
+    if(document.getElementById("controlAll").checked) {
+        let i = 0
+        for(; i<checklist.length; i++) {
             checklist[i].checked = 1;
             checklist[i].parentNode.parentNode.style.background='#e5f5f5';
-            arr.splice(0,0,goods_id[i].value)
+            arr.splice(0,0,goods_id[i].value);
             $('#show_goods_id').val(arr)
         }
-    }else{
-        for(var j=0;j<checklist.length;j++)
-        {
+    } else {
+        let j;
+        for(;j<checklist.length; j++) {
             checklist[j].checked = 0;
             checklist[j].parentNode.parentNode.style.background='';
-            arr = []
+            arr = [];
             $('#show_goods_id').val(arr)
         }
     }
