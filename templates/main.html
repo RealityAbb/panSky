@@ -308,7 +308,7 @@
                                     <input name='nonce' type='hidden' value="{{ nonce }}">
                                     <div class="form-group">
                                         <label class="control-label">你确定要删除以下商品吗？</label>
-                                        <input type="hidden" name="choosemachinenumber" class="form-control host-input">
+                                        <input type="hidden" name="choose_goods_number" class="form-control host-input">
                                         <textarea type="text" id="show_goods_id" class="form-control host-input" readonly></textarea>
                                     </div>
                                 </div>
@@ -346,7 +346,7 @@
                        </thead>
                             {% for good in goods %}
                             <tr style="overflow-x: auto;" onClick="change({{ good.good_id }})">
-                            <td> <input type="checkbox" name="select_goods" class="checkboxes" value="{{good.id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>
+                            <td> <input type="checkbox" name="select_goods" class="checkboxes" value="{{good.good_id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>
 {#                            <td class="mid">{{ loop.index}}#}
                             <input type="hidden" name="id" value="{{ good.good_id }}"></td>
                             <td class="goodId">{{ good.good_id}}</td>
@@ -803,10 +803,9 @@ function  delete_good() {
 function load_delete_machine(machinenumber){
     //alert("load_delete_machine");
     var modal_form = $('#div-delete form');
+    modal_form.find('input[name=choose_goods_number]').val(machinenumber)
 
-    modal_form.find('input[name=choosemachinenumber]').val(machinenumber)
-
-    $('#div-delete form').attr('action','/equipment/delete')
+    $('#div-delete form').attr('action','/good/delete')
     $('#div-delete').modal('toggle');
 }
 
