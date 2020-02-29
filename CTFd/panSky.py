@@ -35,7 +35,7 @@ def main_result(request, alert_info = None):
         good_base_info = GoodBaseInfo.query.filter_by(good_id=good.good_id).first()
         good_sku_info = GoodSkuInfo.query.filter_by(good_id=good.good_id, sku_id=good.sku_id).first()
         good.set_parent_info(good_base_info, good_sku_info)
-    viewfunc = ".user2"
+    viewfunc = ".main"
     return render_template('main.html', viewfunc=viewfunc, pagination=pagination, goods=goods, lm_total=total_count, AlertInfo = alert_info)
 def add_test_data():
     good_id = "612947314674"
@@ -69,8 +69,33 @@ def init_views(app):
             good_base_info = GoodBaseInfo.query.filter_by(good_id=good.good_id).first()
             good_sku_info = GoodSkuInfo.query.filter_by(good_id=good.good_id, sku_id=good.sku_id).first()
             good.set_parent_info(good_base_info, good_sku_info)
-        viewfunc = ".user2"
+        viewfunc = ".main"
         return render_template('main.html',viewfunc=viewfunc,pagination=pagination,goods=goods, lm_total=total_count)
+    @app.route('/search', methods=['GET', 'POST'])
+    def search():
+        # if request . method == "POST" :
+        sheng = request.form['sheng']
+        shi = request.form['shi']
+        fenqu = request.form['fenqu']
+        name = request.form['name']
+        sip = request.form['sip']
+        four = request.form['four']
+        manufacture = request.form['manufacture']
+        pagination = Cipermachine.query.filter(Cipermachine.province.like("%" + sheng + '%'),\
+            Cipermachine.city.like('%' + shi  + '%'), \
+            Cipermachine.part.like('%' + fenqu  + '%'), \
+            Cipermachine.machinenumber.like('%' + name + '%'),\
+            Cipermachine.ip.like('%' + sip + '%'), \
+            Cipermachine.manufacture.like('%' + manufacture+ '%'),\
+            Cipermachine.fourth.like('%'+four+'%')).paginate(1,per_page=15,error_out=False)
+        finalreault = pagination.items
+        cipermachine = Cipermachine.query.all()
+        total_count = db.session.query(db.func.count(Cipermachine.id)).first()[0]
+        viewfunc = ".checkciper"
+        return render_template('equipment.html', viewfunc=viewfunc,pagination=pagination,cipermachines=finalreault, machines=finalreault, lm_total=total_count, \
+            ip=sip,province=sheng,city=shi,part=fenqu,fourth=four,name=name,manufacturer=manufacture)
+
+
     @app.route('/test', methods=['GET', 'POST'])
     def main_test():
         return render_template('maintest.html')

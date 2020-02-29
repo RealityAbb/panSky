@@ -138,11 +138,25 @@
                 <button type="button" class="btn btn-sm btn-primary btn-create" onclick="create()">添加商品</button>&nbsp;&nbsp;&nbsp;
                 <button type="button" class="btn btn-sm btn-danger" id="btn-delete-good">删除商品</button>&nbsp;&nbsp;&nbsp;
                <!--  <button type="button" class="btn btn-sm btn-warning" id="btn-import-machine">导入密码机</button>&nbsp;&nbsp;&nbsp; -->
-                <button type="button" class="btn btn-sm btn-primary btn-query" >查找密码机</button>
             </div>
             <div class="button-bar" style="float:right">
                 <a href="/main"><button type="button" class="btn btn-sm btn-primary">显示全部商品</button></a>&nbsp;&nbsp;&nbsp;
                 <button type="button" class="btn btn-sm glyphicon glyphicon-refresh"></button>
+            </div>
+            <div id="search">
+                <form method="POST" action="/search" enctype="multipart/form-data" onsubmit="return submitTest();">
+                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                    <div class="form-group" style="float: left">
+                        <label for="host" class="control-label">标题</label>
+                        <input type="text" class="form-control host-input"  name="search_good_title" id="search_good_title" placeholder="商品ID" required>
+                        <label for="host" class="control-label">商品ID/店铺链接</label>
+                        <input type="text" class="form-control host-input"  name="search_good_id" id="search_good_id" placeholder="商品ID或商品链接" required>
+                        <label for="host" class="control-label">代发ID/代发链接</label>
+                        <input type="text" class="form-control host-input"  name="search_good_proxy" id="search_good_proxy" placeholder="代发ID或代发链接" required>
+                        <button type="button" class="btn btn-sm btn-primary btn-query" >查找</button>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary btn-query" >查找</button>
+                </form>
             </div>
             </br></br>
             <div id="imformation">
@@ -322,7 +336,7 @@
                         </tbody>
                    </table>
                 {% if pagination %}
-                    {% if viewfunc==".user2" %}
+                    {% if viewfunc==".main" %}
                     <div calss="pagination" align="center">
                         {{ macros.pagination_widget(pagination, viewfunc) }}
                     </div>
