@@ -73,7 +73,7 @@ def init_views(app):
         return render_template('main.html',viewfunc=viewfunc,pagination=pagination,goods=goods, lm_total=total_count)
     @app.route('/test', methods=['GET', 'POST'])
     def main_test():
-        return render_template('main.html')
+        return render_template('maintest.html')
     @app.route('/good/new', methods=['POST'])
     def add_good():
         good_id = request.form['good_id']
