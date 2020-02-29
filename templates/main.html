@@ -416,9 +416,6 @@ function AlertFunc()
     }
 }
 
-$().ready(function(){
-    alert("welcome to the ping pong battle.");
-});
 function submitTest() {
 }
 
@@ -466,6 +463,9 @@ function lengthLimit(elem, showElem, max){
 lengthLimit("commentText", "dsa", 20);
 
 lengthLimit("commentText2", "dsa2", 20);
+$('#btn-test').click(function () {
+    alert("btn-test")
+})
 
 $('.export').click(function(){
     $.post('/equipment/export',{
