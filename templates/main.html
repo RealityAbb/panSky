@@ -126,8 +126,6 @@
     </div>
 </div>
 
-    <button type="button" class="btn btn-sm btn-primary btn-test" id="btn-test">测试按钮</button>&nbsp;&nbsp;&nbsp;
-
 <div class="col-md-9" style="padding-right: 1em;">
     <div class="panel panel-primary" style="height:85%; width: 85%">
         <div class="panel-heading">
@@ -258,7 +256,7 @@
                                     <input name='nonce' type='hidden' value="{{ nonce }}">
                                     <div class="form-group">
                                         <label class="control-label">你确定要删除以下商品吗？</label>
-                                        <input type="hidden" name="choose_goods_number" class="form-control host-input">
+                                        <input type="hidden" name="choose_goods_ids" class="form-control host-input">
                                         <textarea type="text" id="show_goods_id" class="form-control host-input" readonly></textarea>
                                     </div>
                                 </div>
@@ -419,12 +417,9 @@ function selectAll(){
 
 
 $('.checkboxes').click(function (e){
-    alert("check box click")
     var elem = $(this).parent().parent();
-
     var id = elem.find('input[name=id]').val();
     var ip = elem.find('.ip').text().trim();
-
     if(this.checked){
         arr.splice(0,0,ip)
         $('#show_goods_id').val(arr)
@@ -478,7 +473,6 @@ Array.prototype.remove = function(val) {
 };
 
 function create() {
-    alert("添加")
     $('#div-create').modal("toggle")
 };
 
@@ -488,28 +482,29 @@ $('.btn-query').click(function (e) {
 });
 //--------------delete good
 $('#btn-delete-good').click(function () {
-    alert("删除");
     var elem = $(this).parent().parent();
     var id = elem.find('input[name=id]').val();
-    var obj=document.getElementsByName('select_goods');
-    var machinenumber='';
-    var j=0;
-    for(var i=0; i<obj.length; i++)
-    {
-        if(obj[i].checked)
-        {
-            machinenumber+=obj[i].value+',';
+    var obj= document.getElementsByName('select_goods');
+    var goods_ids = '';
+    var j = 0;
+    for(var i=0; i < obj.length; i++) {
+        if(obj[i].checked) {
+            goods_ids += obj[i].value+',';
             j++;
         }
     }
-    if (j == "")
-    {
-         alert("请先选择删除的密码机!");
-    }
-    else
-    {
-        load_delete_machine(machinenumber);
+    if (j <= 0) {
+        alert("请选择要删除的商品");
+    } else {
+        load_delete_machine(goods_ids);
     }
 });
+
+function load_delete_machine(goods_ids){
+    var modal_form = $('#div-delete form');
+    modal_form.find('input[name=choose_goods_ids]').val(goods_ids)
+    modal_form.attr('action','/goods/delete')
+    $('#div-delete').modal('toggle');
+}
 </script>
 {% endblock %}
