@@ -405,9 +405,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="/static/js/jquery.min-1.11.2.js"></script>
 <script src="/static/js/bootstrap-treeview.js"></script>
-
 <script type="text/javascript">
 function AlertFunc()
 {
@@ -417,6 +415,9 @@ function AlertFunc()
     }
 }
 
+$().ready(function(){
+    alert("welcome to the ping pong battle.");
+});
 function submitTest() {
 }
 
