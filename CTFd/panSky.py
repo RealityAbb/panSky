@@ -74,6 +74,8 @@ def init_views(app):
         return render_template('main.html',viewfunc=viewfunc,pagination=pagination,goods=goods, lm_total=total_count)
     @app.route('/search', methods=['GET', 'POST'])
     def search():
+        if request.method == 'GET':
+            redirect("/main")
         page = request.args.get('page', 1, type=int)
         good_id = get_id(request.form['search_good_id'])
         good_title = request.form['search_good_title']
