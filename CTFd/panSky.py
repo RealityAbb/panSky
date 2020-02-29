@@ -79,11 +79,11 @@ def init_views(app):
         good_title = request.form['search_good_title']
         good_proxy_id = get_id(request.form['search_proxy_id'])
         if good_id != "" and good_proxy_id != "":
-            query = SkuProxyInfo.query.filter_by(good_id=good_id, good_proxy_id=good_proxy_id).paginate(page,per_page=PER_PAGE_COUNT,error_out=False)
+            query = SkuProxyInfo.query.filter_by(good_id=good_id, good_proxy_id=good_proxy_id)
         elif good_id != "":
-            query = SkuProxyInfo.query.filter_by(good_id=good_id).paginate(page,per_page=PER_PAGE_COUNT,error_out=False)
+            query = SkuProxyInfo.query.filter_by(good_id=good_id)
         elif good_proxy_id != "":
-            query = SkuProxyInfo.query.filter_by(good_id=good_id, good_proxy_id=good_proxy_id).paginate(page,per_page=PER_PAGE_COUNT,error_out=False)
+            query = SkuProxyInfo.query.filter_by(good_id=good_id, good_proxy_id=good_proxy_id)
         elif good_title != "":
             goods = GoodBaseInfo.query.filter(GoodBaseInfo.good_title.like("%" + good_title + '%')).all()
             ids = []
