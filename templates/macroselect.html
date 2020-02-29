@@ -1,12 +1,12 @@
-{% macro pagination_widget(pagination, endpoint,ip,province,city,part,fourth,name,manufacturer) %}  
+{% macro pagination_widget(pagination, endpoint,search_good_id, search_good_title, search_proxy_id) %}
 <ul class="pagination">
     <li>  
-        <a href="{{ url_for(endpoint, page=1,ip=ip,province=province,city=city,part=part,fourth=fourth,name=name,manufacturer=manufacturer, **kwargs)}}">  
+        <a href="{{ url_for(endpoint, page=1,search_good_id=search_good_id, search_good_title=search_good_title, search_proxy_id=search_proxy_id, **kwargs)}}">
             «  
         </a>  
     </li> 
     <li{% if not pagination.has_prev %} class="disabled"{% endif %}>  
-        <a href="{% if pagination.has_prev %}{{ url_for(endpoint, page=pagination.prev_num,ip=ip,province=province,city=city,part=part,fourth=fourth,name=name,manufacturer=manufacturer, **kwargs) }}{% else %}#{% endif %}">  
+        <a href="{% if pagination.has_prev %}{{ url_for(endpoint, page=pagination.prev_num,search_good_id=search_good_id, search_good_title=search_good_title, search_proxy_id=search_proxy_id, **kwargs) }}{% else %}#{% endif %}">
             ‹
         </a>  
     </li>  
@@ -14,11 +14,11 @@
         {% if p %}  
             {% if p == pagination.page %}  
             <li class="active">  
-                <a href="{{ url_for(endpoint, page = p,ip=ip,province=province,city=city,part=part,fourth=fourth,name=name,manufacturer=manufacturer, **kwargs) }}">{{ p }}</a>  
+                <a href="{{ url_for(endpoint, page = p,search_good_id=search_good_id, search_good_title=search_good_title, search_proxy_id=search_proxy_id, **kwargs) }}">{{ p }}</a>
             </li>  
             {% else %}  
             <li>  
-                <a href="{{ url_for(endpoint, page = p,ip=ip,province=province,city=city,part=part,fourth=fourth,name=name,manufacturer=manufacturer, **kwargs) }}">{{ p }}</a>  
+                <a href="{{ url_for(endpoint, page = p,search_good_id=search_good_id, search_good_title=search_good_title, search_proxy_id=search_proxy_id, **kwargs) }}">{{ p }}</a>
             </li>  
             {% endif %}  
         {% else %}  
@@ -26,12 +26,12 @@
         {% endif %}  
     {% endfor %}  
     <li{% if not pagination.has_next %} class="disabled"{% endif %}>  
-        <a href="{% if pagination.has_next %}{{ url_for(endpoint, page=pagination.next_num,ip=ip,province=province,city=city,part=part,foutrh=fourth,name=name,manufacturer=manufacturer, **kwargs) }}{% else %}#{% endif %}">  
+        <a href="{% if pagination.has_next %}{{ url_for(endpoint, page=pagination.next_num,search_good_id=search_good_id, search_good_title=search_good_title, search_proxy_id=search_proxy_id, **kwargs) }}{% else %}#{% endif %}">
             ›  
         </a>  
     </li>
     <li{% if not pagination.has_next %} class="disabled"{% endif %}>  
-        <a href="{% if pagination.has_next %}{{ url_for(endpoint, page=pagination.pages,ip=ip,province=province,city=city,part=part,fourth=fourth,name=name,manufacturer=manufacturer, **kwargs)}}{% else %}#{% endif %}">  
+        <a href="{% if pagination.has_next %}{{ url_for(endpoint, page=pagination.pages,search_good_id=search_good_id, search_good_title=search_good_title, search_proxy_id=search_proxy_id, **kwargs)}}{% else %}#{% endif %}">
             »
         </a>  
     </li>       

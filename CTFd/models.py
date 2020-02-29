@@ -9,6 +9,7 @@ from passlib.hash import bcrypt_sha256
 import datetime
 import hashlib
 import time
+import urlparse
 
 def sha512(string):
     return hashlib.sha512(string).hexdigest()
@@ -904,7 +905,21 @@ def getPlatform(url):
     if "pinduoduo.com" in url or  "yangkeduo.com" in url:
         return "拼多多"
     return "未知"
-
+def get_id(src):
+    if "http" in src or "https" in src:
+        parse = urlparse.urlparse(src)
+        if "detail.1688.com" in parse.netloc:
+            try:
+                return parse.path.split(".")[0].split("/")[-1]
+            except:
+                return src
+        else:
+            query = urlparse.parse_qs(parse.query)
+            if query.has_key("id"):
+                return query["id"][0]
+            elif query.has_key("item_id"):
+                return query["item_id"][0]
+    return src
 class Good(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     goodId = db.Column(db.String(32))
@@ -936,13 +951,15 @@ class GoodBaseInfo(db.Model):
     good_title = db.Column(db.String(64))
     good_description = db.Column(db.String(128))
     good_image_url = db.Column(db.String(128))
+    good_has_video = db.Column(db.Boolean)
     create_time = db.Column(db.Float)
 
-    def __init__(self, _good_id = "", _good_title = "", _good_description = "", _good_image_url =  ""):
+    def __init__(self, _good_id = "", _good_title = "", _good_description = "", _good_image_url =  "", _good_has_video = False):
         self.good_id = _good_id
         self.good_title = _good_title
         self.good_description = _good_description
         self.good_image_url = _good_image_url
+        self.good_has_video = _good_has_video
         self.create_time = time.time()
 
 class GoodSkuInfo(db.Model):
@@ -969,21 +986,26 @@ class SkuProxyInfo(db.Model):
     sku_id = db.Column(db.String(64))
     good_proxy_url = db.Column(db.String(128)) ## 代发链接
     good_proxy_platform = db.Column(db.String(32)) ## 代发平台
+    good_proxy_id = db.Column(db.String(32)) ## 代发ID
     good_express = db.Column(db.String(128)) ## 快递
     good_postage = db.Column(db.Float) ## 快递费
     postage_address = db.Column(db.String(32)) ## 发货地址
+    produce_address = db.Column(db.String(32)) ##  产地
     good_cost = db.Column(db.Float) ## 成本价
     good_prize = db.Column(db.Float) ## 赠品
     good_extra = db.Column(db.String(256)) ## 备注
     create_time = db.Column(db.Float)
-    def __init__(self, _good_id, _sku_id, _good_proxy_url, _good_express, _good_postage, _postage_address, _good_cost, _good_prize, _good_extra = ""):
+    qualification = db.Column(db.String(32)) ## 资质
+    def __init__(self, _good_id, _sku_id, _good_proxy_url, _good_express, _good_postage, _postage_address, _produce_address, _good_cost, _good_prize, _qualification, _good_extra = ""):
         self.good_id = _good_id
         self.sku_id = _sku_id
         self.good_proxy_url = _good_proxy_url
         self.good_proxy_platform = getPlatform(_good_proxy_url)
+        self.good_proxy_id = get_id(_good_proxy_url)
         self.good_express = _good_express
         self.good_cost = _good_cost
         self.postage_address = _postage_address
+        self.produce_address = _produce_address
         self.good_postage = _good_postage
         self.good_prize = _good_prize
         self.good_extra = _good_extra

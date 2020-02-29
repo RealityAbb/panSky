@@ -1,7 +1,7 @@
 # coding=utf-8
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, flash, send_from_directory
 from CTFd.utils import authed, judge_result, allowed_file, get_file_suffix
-from CTFd.models import db, GoodBaseInfo, GoodSkuInfo, SkuProxyInfo
+from CTFd.models import db, GoodBaseInfo, GoodSkuInfo, SkuProxyInfo, get_id
 from flask import current_app as app
 from werkzeug.utils import secure_filename
 
@@ -35,7 +35,7 @@ def main_result(request, alert_info = None):
         good_base_info = GoodBaseInfo.query.filter_by(good_id=good.good_id).first()
         good_sku_info = GoodSkuInfo.query.filter_by(good_id=good.good_id, sku_id=good.sku_id).first()
         good.set_parent_info(good_base_info, good_sku_info)
-    viewfunc = ".main"
+    viewfunc = ".main_page"
     return render_template('main.html', viewfunc=viewfunc, pagination=pagination, goods=goods, lm_total=total_count, AlertInfo = alert_info)
 def add_test_data():
     good_id = "612947314674"
@@ -54,13 +54,14 @@ def add_test_data():
                                   "韵达 顺丰",
                                   3,
                                   "安徽",
+                                  "浙江",
                                   6.6,
                                   0)
             db.session.add(record)
     db.session.commit()
 def init_views(app):
     @app.route('/main', methods=['GET', 'POST'])
-    def mainPage():
+    def main_page():
         page = request.args.get('page',1, type=int)
         pagination= SkuProxyInfo.query.order_by(SkuProxyInfo.good_id).paginate(page,per_page=PER_PAGE_COUNT,error_out=False)
         goods = pagination.items
@@ -69,32 +70,33 @@ def init_views(app):
             good_base_info = GoodBaseInfo.query.filter_by(good_id=good.good_id).first()
             good_sku_info = GoodSkuInfo.query.filter_by(good_id=good.good_id, sku_id=good.sku_id).first()
             good.set_parent_info(good_base_info, good_sku_info)
-        viewfunc = ".main"
+        viewfunc = ".main_page"
         return render_template('main.html',viewfunc=viewfunc,pagination=pagination,goods=goods, lm_total=total_count)
     @app.route('/search', methods=['GET', 'POST'])
     def search():
-        # if request . method == "POST" :
-        sheng = request.form['sheng']
-        shi = request.form['shi']
-        fenqu = request.form['fenqu']
-        name = request.form['name']
-        sip = request.form['sip']
-        four = request.form['four']
-        manufacture = request.form['manufacture']
-        pagination = Cipermachine.query.filter(Cipermachine.province.like("%" + sheng + '%'),\
-            Cipermachine.city.like('%' + shi  + '%'), \
-            Cipermachine.part.like('%' + fenqu  + '%'), \
-            Cipermachine.machinenumber.like('%' + name + '%'),\
-            Cipermachine.ip.like('%' + sip + '%'), \
-            Cipermachine.manufacture.like('%' + manufacture+ '%'),\
-            Cipermachine.fourth.like('%'+four+'%')).paginate(1,per_page=15,error_out=False)
-        finalreault = pagination.items
-        cipermachine = Cipermachine.query.all()
-        total_count = db.session.query(db.func.count(Cipermachine.id)).first()[0]
-        viewfunc = ".checkciper"
-        return render_template('equipment.html', viewfunc=viewfunc,pagination=pagination,cipermachines=finalreault, machines=finalreault, lm_total=total_count, \
-            ip=sip,province=sheng,city=shi,part=fenqu,fourth=four,name=name,manufacturer=manufacture)
-
+        page = request.args.get('page', 1, type=int)
+        good_id = get_id(request.form['search_good_id'])
+        good_title = request.form['search_good_title']
+        good_proxy_id = get_id(request.form['search_proxy_id'])
+        if good_id != "" and good_proxy_id != "":
+            query = SkuProxyInfo.query.filter_by(good_id=good_id, good_proxy_id=good_proxy_id).paginate(page,per_page=PER_PAGE_COUNT,error_out=False)
+        elif good_id != "":
+            query = SkuProxyInfo.query.filter_by(good_id=good_id).paginate(page,per_page=PER_PAGE_COUNT,error_out=False)
+        elif good_proxy_id != "":
+            query = SkuProxyInfo.query.filter_by(good_id=good_id, good_proxy_id=good_proxy_id).paginate(page,per_page=PER_PAGE_COUNT,error_out=False)
+        elif good_title != "":
+            goods = GoodBaseInfo.query.filter(GoodBaseInfo.good_title.like("%" + good_title + '%')).all()
+            ids = []
+            for good in goods:
+                ids.append(good.good_id)
+            query = SkuProxyInfo.query.filter(SkuProxyInfo.good_id.in_(ids)).paginate(page,per_page=PER_PAGE_COUNT,error_out=False)
+        else:
+            return redirect('/main')
+        pagination = query.paginate(page, per_page=PER_PAGE_COUNT,error_out=False)
+        goods = pagination.items
+        total_count = len(query.all())
+        viewfunc = ".search"
+        return render_template('main.html',viewfunc=viewfunc,pagination=pagination,goods=goods, lm_total=total_count, search_good_id=good_id, search_good_title=good_title, search_proxy_id=good_proxy_id)
 
     @app.route('/test', methods=['GET', 'POST'])
     def main_test():
@@ -117,20 +119,22 @@ def init_views(app):
         express = request.form['express']
         postage = get_float(request.form['postage'])
         address = request.form['address']
+        produce_address = request.form['produce']
         prize = get_float(request.form['prize'])
         qualification = request.form['qualification']
         extra = request.form['extra']
+        has_video = int(request.form["has_video"])
         upload_file = request.files['file']
         image_path = ""
         if upload_file and allowed_file(upload_file.filename):
             filename = good_id + "." + get_file_suffix(upload_file.filename)
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             upload_file.save(image_path)
-        base_info = GoodBaseInfo(good_id, good_name, description, image_path)
+        base_info = GoodBaseInfo(good_id, good_name, description, image_path, has_video)
         db.session.add(base_info)
         sku_info = GoodSkuInfo(good_id, sku_id, sku_url, price, coupon)
         db.session.add(sku_info)
-        proxy_info = SkuProxyInfo(good_id, sku_id, proxy_url, express, postage, address, cost,prize, extra)
+        proxy_info = SkuProxyInfo(good_id, sku_id, proxy_url, express, postage, address, produce_address, cost,prize, qualification, extra)
         db.session.add(proxy_info)
         db.session.commit()
         db.session.close()
