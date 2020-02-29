@@ -405,7 +405,9 @@
 {% endblock %}
 
 {% block scripts %}
+    <script src="/static/js/jquery.min-1.11.2.js"></script>
 <script src="/static/js/bootstrap-treeview.js"></script>
+
 <script type="text/javascript">
 function AlertFunc()
 {
@@ -459,7 +461,6 @@ function lengthLimit(elem, showElem, max){
     };
     textChange();// 加载时先初始化
 };
-alert("load");
 lengthLimit("commentText", "dsa", 20);
 
 lengthLimit("commentText2", "dsa2", 20);
@@ -734,6 +735,7 @@ $('.glyphicon-pencil').click(function(){
 });
 
 //--------------delete good
+$('#btn-delete-good')
 $('#btn-delete-good').click(function () {
     alert("删除");
     var elem = $(this).parent().parent();
