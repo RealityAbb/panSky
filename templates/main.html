@@ -188,7 +188,7 @@
         <div class="panel-body">
             <div class="button-bar" style="float:left;">
                 <button type="button" class="btn btn-sm btn-primary btn-create" onclick="create()">添加商品</button>&nbsp;&nbsp;&nbsp;
-                <button type="button" class="btn btn-sm btn-danger" id="btn-delete-machine">删除密码机</button>&nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-danger" id="btn-delete-good">删除商品</button>&nbsp;&nbsp;&nbsp;
                <!--  <button type="button" class="btn btn-sm btn-warning" id="btn-import-machine">导入密码机</button>&nbsp;&nbsp;&nbsp; -->
                 <button type="button" class="btn btn-sm btn-primary btn-query" >查找密码机</button>
             </div>
@@ -301,15 +301,15 @@
                         <div class="panel panel-primary">
                             <div class="panel-heading">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" id="exampleModalLabel">删除密码机</h4>
+                                <h4 class="modal-title" id="exampleModalLabel">删除商品</h4>
                             </div>
-                            <form method="POST" action="'/equipment/delete'" enctype="multipart/form-data">
+                            <form method="POST" action="'/good/delete'" enctype="multipart/form-data">
                                 <div class="panel-body">
                                     <input name='nonce' type='hidden' value="{{ nonce }}">
                                     <div class="form-group">
-                                        <label class="control-label">你确定要删除以下密码机吗？</label>
+                                        <label class="control-label">你确定要删除以下商品吗？</label>
                                         <input type="hidden" name="choosemachinenumber" class="form-control host-input">
-                                        <textarea type="text" id="showip" class="form-control host-input" readonly></textarea>
+                                        <textarea type="text" id="show_goods_id" class="form-control host-input" readonly></textarea>
                                     </div>
                                 </div>
                                 <div class="panel-footer">
@@ -346,8 +346,8 @@
                        </thead>
                             {% for good in goods %}
                             <tr style="overflow-x: auto;" onClick="change({{ good.good_id }})">
-{#                            <td> <input type="checkbox" name="selectmachine" class="checkboxes" value="{{machine.id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>#}
-                            <td class="mid">{{ loop.index}}
+                            <td> <input type="checkbox" name="select_goods" class="checkboxes" value="{{good.id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>
+{#                            <td class="mid">{{ loop.index}}#}
                             <input type="hidden" name="id" value="{{ good.good_id }}"></td>
                             <td class="goodId">{{ good.good_id}}</td>
                             <td><img src="{{good.good_base_info.good_image_url}}" width="100px" height="100px"></td>
@@ -593,20 +593,20 @@ function SwitchStatusCode(data){
 
 var arr = new Array()
 
-var machinip = document.getElementsByName("machinip");
+var goods_id = document.getElementsByName("goodId");
 
 //-------------------checkall
 function selectAll(){
     arr = []
-    var checklist = document.getElementsByName("selectmachine");
+    var checklist = document.getElementsByName("select_goods");
     if(document.getElementById("controlAll").checked)
     {
         for(var i=0;i<checklist.length;i++)
         {
             checklist[i].checked = 1;
             checklist[i].parentNode.parentNode.style.background='#e5f5f5';
-            arr.splice(0,0,machinip[i].value)
-            $('#showip').val(arr)
+            arr.splice(0,0,goods_id[i].value)
+            $('#show_goods_id').val(arr)
         }
     }else{
         for(var j=0;j<checklist.length;j++)
@@ -614,13 +614,14 @@ function selectAll(){
             checklist[j].checked = 0;
             checklist[j].parentNode.parentNode.style.background='';
             arr = []
-            $('#showip').val(arr)
+            $('#show_goods_id').val(arr)
         }
     }
 }
 
 
 $('.checkboxes').click(function (e){
+    alert("check box click")
     var elem = $(this).parent().parent();
 
     var id = elem.find('input[name=id]').val();
@@ -628,12 +629,12 @@ $('.checkboxes').click(function (e){
 
     if(this.checked){
         arr.splice(0,0,ip)
-        $('#showip').val(arr)
+        $('#show_goods_id').val(arr)
     }else{
         $("#controlAll").removeAttr("checked");
         arr.indexOf(ip)
         arr.remove(ip)
-        $('#showip').val(arr)
+        $('#show_goods_id').val(arr)
     }
 })
 
@@ -649,7 +650,7 @@ function change(change) {
            tr.cells[0].children[0].checked=true;
            var ip = tr.cells[4].innerHTML;
            arr.splice(change,0,ip)
-           $('#showip').val(arr)
+           $('#show_goods_id').val(arr)
         }else{
            oTr.style.backgroundColor = '';
            oTr.tag = true;
@@ -658,7 +659,7 @@ function change(change) {
            var ip = tr.cells[4].innerHTML;
            arr.indexOf(ip)
            arr.remove(ip)
-           $('#showip').val(arr)
+           $('#show_goods_id').val(arr)
         }
 
     }
@@ -768,11 +769,12 @@ $('.glyphicon-pencil').click(function(){
     load_edit_modal(id, ip, machinenumber, province, city, part, fourth, manufacture,discription);
 })
 
-//--------------delete_machine
-$('#btn-delete-machine').click(function () {
+//--------------delete good
+$('#btn-delete-good').click(function () {
+    alert("删除")
     var elem = $(this).parent().parent();
     var id = elem.find('input[name=id]').val();
-    var obj=document.getElementsByName('selectmachine');
+    var obj=document.getElementsByName('select_goods');
     var machinenumber='';
     var j=0;
     for(var i=0; i<obj.length; i++)
@@ -792,6 +794,10 @@ $('#btn-delete-machine').click(function () {
         load_delete_machine(machinenumber);
     }
 });
+
+function  delete_good() {
+
+}
 
 
 function load_delete_machine(machinenumber){
