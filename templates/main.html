@@ -360,10 +360,6 @@ function AlertFunc() {
     }
 }
 
-$('#btn-test').click(function () {
-    alert("btn-test")
-})
-
 //------------refresh
 $('.glyphicon-refresh').click(function(e){
     var nodeall = document.getElementById('inputdata').value
@@ -399,7 +395,6 @@ const goods_id = document.getElementsByName("global_good_id");
 function selectAll(){
     arr = [];
     const checklist = document.getElementsByName("select_goods");
-    alert(document.getElementById("controlAll").checked);
     if(document.getElementById("controlAll").checked) {
         let i = 0;
         for(; i<checklist.length; i++) {
@@ -409,7 +404,7 @@ function selectAll(){
             $('#show_goods_id').val(arr)
         }
     } else {
-        let j;
+        let j = 0;
         for(;j<checklist.length; j++) {
             checklist[j].checked = 0;
             checklist[j].parentNode.parentNode.style.background='';
