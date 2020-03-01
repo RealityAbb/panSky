@@ -338,7 +338,7 @@
                         </tr>
                        </thead>
                             {% for good in goods %}
-                            <td style="overflow-x: auto;" onClick="select_change({{ good.good_id }})">
+                            <tr style="overflow-x: auto;" onClick="select_change({{ good.good_id }})">
                             <td> <input type="checkbox" name="select_goods" class="checkboxes" value="{{good.good_id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>
                             <input type="hidden" name="id" value="{{ good.good_id }}"></td>
                             <td class="goodId">{{ good.good_id}}</td>
