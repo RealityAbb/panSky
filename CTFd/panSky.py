@@ -59,6 +59,11 @@ def add_test_data():
                                   0)
             db.session.add(record)
     db.session.commit()
+def set_sku_base_info(sku_info):
+    good_base_info = GoodBaseInfo.query.filter_by(good_id=sku_info.good_id).first()
+    good_sku_info = GoodSkuInfo.query.filter_by(good_id=sku_info.good_id, sku_id=sku_info.sku_id).first()
+    sku_info.set_parent_info(good_base_info, good_sku_info)
+
 def init_views(app):
     @app.route('/main', methods=['GET', 'POST'])
     def main_page():
@@ -83,22 +88,38 @@ def init_views(app):
         print request.form['search_good_id'] + "good_id = " + good_id + "good_title = " + good_title + "proxy_id = " + good_proxy_id
         if good_id != "" and good_proxy_id != "":
             query = SkuProxyInfo.query.filter_by(good_id=good_id, good_proxy_id=good_proxy_id)
+            pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
+            goods = pagination.items
+            total_count = len(query.all())
+            for good in goods:
+                set_sku_base_info(good)
         elif good_id != "":
             query = SkuProxyInfo.query.filter_by(good_id=good_id)
-            print("go")
+            pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
+            goods = pagination.items
+            total_count = len(query.all())
+            for good in goods:
+                set_sku_base_info(good)
         elif good_proxy_id != "":
             query = SkuProxyInfo.query.filter_by(good_id=good_id, good_proxy_id=good_proxy_id)
+            pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
+            goods = pagination.items
+            total_count = len(query.all())
+            for good in goods:
+                set_sku_base_info(good)
         elif good_title != "":
             goods = GoodBaseInfo.query.filter(GoodBaseInfo.good_title.like("%" + good_title + '%')).all()
             ids = []
             for good in goods:
                 ids.append(good.good_id)
             query = SkuProxyInfo.query.filter(SkuProxyInfo.good_id.in_(ids))
+            pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
+            goods = pagination.items
+            for good in goods:
+                set_sku_base_info(good)
+            total_count = len(query.all())
         else:
             return redirect('/main')
-        pagination = query.paginate(page, per_page=PER_PAGE_COUNT,error_out=False)
-        goods = pagination.items
-        total_count = len(query.all())
         viewfunc = ".search"
         return render_template('main.html',viewfunc=viewfunc,pagination=pagination,goods=goods, lm_total=total_count, search_good_id=good_id, search_good_title=good_title, search_proxy_id=good_proxy_id)
 
