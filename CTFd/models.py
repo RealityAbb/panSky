@@ -1054,6 +1054,7 @@ class SkuProxyInfo(db.Model):
             self.sku_info = _sku_info
         self.calculate_price()
     def calculate_price(self):
+        self.profit = Profit()
         if self.sku_info.sku_price <= 0:
             return
         ## 真实成本 = 基础成本 + 赠品价值 + 代发邮费
