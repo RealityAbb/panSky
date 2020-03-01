@@ -10,7 +10,6 @@ import datetime
 import hashlib
 import time
 import urlparse
-import round
 
 def sha512(string):
     return hashlib.sha512(string).hexdigest()
