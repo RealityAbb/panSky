@@ -7,9 +7,11 @@
 
 {% block content %}
 <style type="text/css">
-    .scrollspy {
-        height:680px;
-        overflow: auto;
+    .scroll-spy {
+        width:1080px;
+        height: 680px;
+        overflow-x: auto;
+        overflow-y: auto;
         position: relative;
     }
     *
@@ -50,6 +52,7 @@
     .input_box {
         margin-right: 20px;
     }
+
 </style>
 <!--添加商品--->
 <div class="modal fade" id="div-create" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -144,8 +147,8 @@
     </div>
 </div>
 
-<div class="col-md-9" style="padding-right: 1em;">
-    <div class="panel panel-primary" style="height:85%; width: 85%">
+<div class="col-md-9" style="padding-right: 1em; width: 100% " align="center">
+    <div class="panel panel-primary scroll-spy">
         <div class="panel-heading">
             <h4 class="panel-title">
                   密码机基本信息
