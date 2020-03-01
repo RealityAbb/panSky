@@ -954,33 +954,61 @@ class GoodBaseInfo(db.Model):
     good_description = db.Column(db.String(128))
     good_image_url = db.Column(db.String(128))
     good_has_video = db.Column(db.Boolean)
+    coupon = db.Column(db.Float) ## 优惠券
     create_time = db.Column(db.Float)
+    good_prize = db.Column(db.Float) ## 赠品
 
-    def __init__(self, _good_id = "", _good_title = "", _good_description = "", _good_image_url =  "", _good_has_video = False):
+    def __init__(self, _good_id = "", _good_title = "", _good_description = "", _good_image_url =  "", _good_has_video = False, _coupon = 0, _good_prize = 0):
         self.good_id = _good_id
         self.good_title = _good_title
         self.good_description = _good_description
         self.good_image_url = _good_image_url
         self.good_has_video = _good_has_video
         self.create_time = time.time()
+        self.coupon = _coupon
+        self.good_prize = _good_prize
 
 class GoodSkuInfo(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     good_id = db.Column(db.String(32))
     sku_id = db.Column(db.String(64))
-    sku_url = db.Column(db.String(128)) ##店铺链接
+    sku_url = db.Column(db.String(128)) ## 店铺链接
     sku_price = db.Column(db.Float)
-    coupon = db.Column(db.Float) ## 优惠券
     create_time = db.Column(db.Float)
-    def __init__(self, _good_id = "", _sku_id = "", _sku_url =  "",  _good_price  = 0, _coupon =  0):
+    def __init__(self, _good_id = "", _sku_id = "", _sku_url =  "",  _good_price  = 0):
         self.good_id = _good_id
         self.sku_url = _sku_url
         self.sku_id = _sku_id
         self.sku_price = _good_price
-        self.coupon = _coupon
         self.create_time = time.time()
+        self.sku_price_90 = _good_price * 0.9
+        self.sku_price_80 = _good_price * 0.8
 
 
+MALL_REBATE = 0.05 ## 天猫扣点
+class Profit:
+    def __init__(self):
+        ##正常的利润
+        self.profit = ""
+        self.profit_rate = ""
+        ## 30%佣金 服务费0 加劵
+        self.profit_1 = ""
+        self.profit_1_rate = ""
+        ## 20%佣金 服务费0 加劵
+        self.profit_2 = ""
+        self.profit_2_rate = ""
+        ## 30%佣金 服务费0 不加劵
+        self.profit_3 = ""
+        self.profit_3_rate = ""
+        ## 20%佣金 服务费0 不加劵
+        self.profit_4 = ""
+        self.profit_4_rate = ""
+        ## 20%佣金 服务费5% 加劵
+        self.profit_5 = ""
+        self.profit_5_rate = ""
+        ## 20%佣金 服务费5% 不加劵
+        self.profit_6 = ""
+        self.profit_6_rate = ""
 
 class SkuProxyInfo(db.Model):
     proxy_id = db.Column(db.Integer, primary_key = True)
@@ -994,11 +1022,12 @@ class SkuProxyInfo(db.Model):
     postage_address = db.Column(db.String(32)) ## 发货地址
     produce_address = db.Column(db.String(32)) ##  产地
     good_cost = db.Column(db.Float) ## 成本价
-    good_prize = db.Column(db.Float) ## 赠品
     good_extra = db.Column(db.String(256)) ## 备注
     create_time = db.Column(db.Float)
     qualification = db.Column(db.String(32)) ## 资质
-    def __init__(self, _good_id, _sku_id, _good_proxy_url, _good_express, _good_postage, _postage_address, _produce_address, _good_cost, _good_prize, _qualification="", _good_extra = ""):
+    day_limit = db.Column(db.Float) ## 日常限价
+    activity_limit = db.Column(db.Float) ## 活动限价
+    def __init__(self, _good_id, _sku_id, _good_proxy_url, _good_express, _good_postage, _postage_address, _produce_address, _good_cost, _qualification="", _day_limit = 0, _activity_limit = 0, _good_extra = ""):
         self.good_id = _good_id
         self.sku_id = _sku_id
         self.good_proxy_url = _good_proxy_url
@@ -1009,15 +1038,48 @@ class SkuProxyInfo(db.Model):
         self.postage_address = _postage_address
         self.produce_address = _produce_address
         self.good_postage = _good_postage
-        self.good_prize = _good_prize
         self.good_extra = _good_extra
+        self.day_limit = _day_limit
+        self.activity_limit = _activity_limit
         self.sku_info = GoodSkuInfo()
         self.good_base_info = GoodBaseInfo()
+        self.profit = Profit()
         self.create_time = time.time()
     def set_parent_info(self, _good_base_info, _sku_info):
         if _good_base_info is not None:
             self.good_base_info = _good_base_info
         if _sku_info is not None:
             self.sku_info = _sku_info
+        self.calculate_price()
+    def calculate_price(self):
+        if self.sku_info.sku_price <= 0:
+            return
+        ## 真实成本 = 基础成本 + 赠品价值 + 代发邮费
+        real_cost = self.good_cost + self.good_base_info.good_prize + self.good_postage
+        ## 用劵销售价格
+        real_price = self.sku_info.sku_price - self.good_base_info.coupon
+        ## 不用劵销售价格
+        real_price_no = self.sku_info.sku_price
 
+        ##正常的利润
+        self.profit.profit = str(self.sku_info.sku_price * (1 - MALL_REBATE) - real_cost)
+        self.profit.profit_rate = str(self.profit.profit / real_price)
+        ## 30%佣金 服务费0 加劵
+        self.profit.profit_1 = str(real_price - real_price * (0.3 + MALL_REBATE) - real_cost)
+        self.profit.profit_rate_1 = str(self.profit.profit_1 / real_price)
+        ## 20%佣金 服务费0 加劵
+        self.profit.profit_2 = str(real_price - real_price * (0.2 + MALL_REBATE) - real_cost)
+        self.profit.profit_rate_2 = str(self.profit.profit_2 / real_price)
+        ## 30%佣金 服务费0 不加劵
+        self.profit.profit_3 = str(real_price_no - real_price_no * (0.3 + MALL_REBATE) - real_cost)
+        self.profit.profit_rate_3 = str(self.profit.profit_3 / real_price_no)
+        ## 20%佣金 服务费0 不加劵
+        self.profit.profit_4 = str(real_price_no - real_price_no * (0.2 + MALL_REBATE) - real_cost)
+        self.profit.profit_rate_4 = str(self.profit.profit_4 / real_price_no)
+        ## 20%佣金 服务费5% 加劵
+        self.profit.profit_5 = str(real_price - real_price * (0.2 + 0.05 + MALL_REBATE) - real_cost)
+        self.profit.profit_rate_5 = str(self.profit.profit_5 / real_price)
+        ## 20%佣金 服务费5% 不加劵
+        self.profit.profit_6 = str(real_price_no - real_price_no * (0.2 + 0.05 + MALL_REBATE) - real_cost)
+        self.profit.profit_rate_6 = str(self.profit.profit_6 / real_price_no)
 

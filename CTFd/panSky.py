@@ -44,7 +44,7 @@ def add_test_data():
     for i in range(5):
         _sku_url = "https://detail.tmall.com/item.htm?id=612947314674"
         sku_id = create_id(good_id, _sku_url + str(i))
-        sku = GoodSkuInfo(good_id, sku_id, _sku_url, 8.8, 1.1)
+        sku = GoodSkuInfo(good_id, sku_id, _sku_url, 8.8)
         db.session.add(sku)
         for i in range(5):
             good_proxy_url = "http://mobile.yangkeduo.com/goods.html?goods_id=2823236263"
@@ -55,8 +55,7 @@ def add_test_data():
                                   3,
                                   "安徽",
                                   "浙江",
-                                  6.6,
-                                  0)
+                                  6.6)
             db.session.add(record)
     db.session.commit()
 def set_sku_base_info(sku_info):
@@ -79,14 +78,12 @@ def init_views(app):
         return render_template('main.html',viewfunc=viewfunc,pagination=pagination,goods=goods, lm_total=total_count)
     @app.route('/search', methods=['GET', 'POST'])
     def search():
-        print request.method
         if request.method == 'GET':
             return redirect("/main")
         page = request.args.get('page', 1, type=int)
         good_id = get_id(str(request.form['search_good_id']))
         good_title = request.form['search_good_title']
         good_proxy_id = get_id(str(request.form['search_proxy_id']))
-        print request.form['search_good_id'] + "good_id = " + good_id + "good_title = " + good_title + "proxy_id = " + good_proxy_id
         if good_id != "" and good_proxy_id != "":
             query = SkuProxyInfo.query.filter_by(good_id=good_id, good_proxy_id=good_proxy_id)
             pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
@@ -129,7 +126,6 @@ def init_views(app):
         return render_template('maintest.html')
     @app.route('/good/new', methods=['POST'])
     def add_good():
-        add_test_data()
         good_id = request.form['good_id']
         record = GoodBaseInfo.query.filter_by(good_id=good_id).first()
         if record is not None:
@@ -150,17 +146,19 @@ def init_views(app):
         qualification = request.form['qualification']
         extra = request.form['extra']
         has_video = int(request.form["has_video"])
+        day_limit = get_float(request.form["day_limit"])
+        activity_limit = get_float(request.form["activity_limit"])
         upload_file = request.files['file']
         image_path = ""
         if upload_file and allowed_file(upload_file.filename):
             filename = good_id + "." + get_file_suffix(upload_file.filename)
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             upload_file.save(image_path)
-        base_info = GoodBaseInfo(good_id, good_name, description, image_path, has_video)
+        base_info = GoodBaseInfo(good_id, good_name, description, image_path, has_video, coupon, prize)
         db.session.add(base_info)
-        sku_info = GoodSkuInfo(good_id, sku_id, sku_url, price, coupon)
+        sku_info = GoodSkuInfo(good_id, sku_id, sku_url, price)
         db.session.add(sku_info)
-        proxy_info = SkuProxyInfo(good_id, sku_id, proxy_url, express, postage, address, produce_address, cost,prize, qualification, extra)
+        proxy_info = SkuProxyInfo(good_id, sku_id, proxy_url, express, postage, address, produce_address, cost, qualification, day_limit, activity_limit, extra)
         db.session.add(proxy_info)
         db.session.commit()
         db.session.close()
