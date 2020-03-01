@@ -79,6 +79,7 @@ def init_views(app):
         return render_template('main.html',viewfunc=viewfunc,pagination=pagination,goods=goods, lm_total=total_count)
     @app.route('/search', methods=['GET', 'POST'])
     def search():
+        print request.method
         if request.method == 'GET':
             redirect("/main")
         page = request.args.get('page', 1, type=int)
