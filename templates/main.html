@@ -55,10 +55,17 @@
        /*  min-height:100%;  */
         min-width: 150%;
     }
-    .input-container {
+    .input-container-left {
         display: flex;
         width: 280px;
         align-items: center;
+        float: left;
+    }
+    .input-container-right {
+        display: flex;
+        width: 280px;
+        align-items: center;
+        float: right;
     }
     .input-label {
         width: 80px;
@@ -81,11 +88,11 @@
             <form method="POST" action="/good/new" enctype="multipart/form-data">
                 <input name='nonce' type='hidden' value="{{ nonce }}">
                 <div class="panel-body">
-                    <div class="form-group input-container" style="float:left">
+                    <div class="form-group input-container-left" style="float:left">
                         <label for="host" class="control-label input-label">商品ID</label>
                         <input type="text" class="form-control host-input input-content"  name="good_id" id="good_id" placeholder="商品ID" required>
                     </div>
-                    <div class="form-group input-container" style="float: right">
+                    <div class="form-group input-container-right" style="float: right">
                         <label class="control-label input-label">商品名称</label>
                         <input type="text" name="good_name" class="form-control host-input input-content" placeholder="商品名称"></input>
                     </div>
