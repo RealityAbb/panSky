@@ -51,13 +51,10 @@
     .input_box {
         margin-right: 20px;
     }
-    td {
-         border: 1px solid #ddd;
-         /*允许在单词内换行。*/
-         word-break: break-word;
-         /*设置宽度*/
-         width: 120px;
-     }
+    .tScroll {
+       /*  min-height:100%;  */
+        min-width: 150%;
+    }
 
 </style>
 <!--添加商品--->
@@ -326,7 +323,7 @@
                     </div>
                 </div>
 
-                   <table class="table table-bordered" id="table1" style="table-layout:fixed;">
+                   <table class="table table-bordered table-responsive tScroll" id="table1" style="table-layout:fixed;">
                         <thead>
                         <tr>
                             <th><input onclick="selectAll()" type="checkbox" name="controlAll" style="controlAll" id="controlAll"/></th>
