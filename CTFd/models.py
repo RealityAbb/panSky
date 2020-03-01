@@ -10,6 +10,7 @@ import datetime
 import hashlib
 import time
 import urlparse
+import round
 
 def sha512(string):
     return hashlib.sha512(string).hexdigest()
@@ -922,6 +923,8 @@ def get_id(src):
             elif query.has_key("goods_id"):
                 return query['goods_id']
     return src
+def format_float(f):
+    return "%0.2f" % (f * 100) +  '%'
 class Good(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     goodId = db.Column(db.String(32))
@@ -1063,23 +1066,23 @@ class SkuProxyInfo(db.Model):
 
         ##正常的利润
         self.profit.profit = str(self.sku_info.sku_price * (1 - MALL_REBATE) - real_cost)
-        self.profit.profit_rate = str(self.profit.profit / real_price)
+        self.profit.profit_rate = format_float(self.profit.profit / real_price)
         ## 30%佣金 服务费0 加劵
         self.profit.profit_1 = str(real_price - real_price * (0.3 + MALL_REBATE) - real_cost)
-        self.profit.profit_rate_1 = str(self.profit.profit_1 / real_price)
+        self.profit.profit_rate_1 = format_float(self.profit.profit_1 / real_price)
         ## 20%佣金 服务费0 加劵
         self.profit.profit_2 = str(real_price - real_price * (0.2 + MALL_REBATE) - real_cost)
-        self.profit.profit_rate_2 = str(self.profit.profit_2 / real_price)
+        self.profit.profit_rate_2 = format_float(self.profit.profit_2 / real_price)
         ## 30%佣金 服务费0 不加劵
         self.profit.profit_3 = str(real_price_no - real_price_no * (0.3 + MALL_REBATE) - real_cost)
-        self.profit.profit_rate_3 = str(self.profit.profit_3 / real_price_no)
+        self.profit.profit_rate_3 = format_float(self.profit.profit_3 / real_price_no)
         ## 20%佣金 服务费0 不加劵
         self.profit.profit_4 = str(real_price_no - real_price_no * (0.2 + MALL_REBATE) - real_cost)
-        self.profit.profit_rate_4 = str(self.profit.profit_4 / real_price_no)
+        self.profit.profit_rate_4 = format_float(self.profit.profit_4 / real_price_no)
         ## 20%佣金 服务费5% 加劵
         self.profit.profit_5 = str(real_price - real_price * (0.2 + 0.05 + MALL_REBATE) - real_cost)
-        self.profit.profit_rate_5 = str(self.profit.profit_5 / real_price)
+        self.profit.profit_rate_5 = format_float(self.profit.profit_5 / real_price)
         ## 20%佣金 服务费5% 不加劵
         self.profit.profit_6 = str(real_price_no - real_price_no * (0.2 + 0.05 + MALL_REBATE) - real_cost)
-        self.profit.profit_rate_6 = str(self.profit.profit_6 / real_price_no)
+        self.profit.profit_rate_6 = format_float(self.profit.profit_6 / real_price_no)
 
