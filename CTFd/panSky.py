@@ -82,6 +82,7 @@ def init_views(app):
         print request.method
         if request.method == 'GET':
             redirect("/main")
+            return
         page = request.args.get('page', 1, type=int)
         good_id = get_id(str(request.form['search_good_id']))
         good_title = request.form['search_good_title']
