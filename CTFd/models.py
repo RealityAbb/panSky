@@ -1065,24 +1065,24 @@ class SkuProxyInfo(db.Model):
         real_price_no = self.sku_info.sku_price
 
         ##正常的利润
-        self.profit.profit = str(self.sku_info.sku_price * (1 - MALL_REBATE) - real_cost)
+        self.profit.profit = self.sku_info.sku_price * (1 - MALL_REBATE) - real_cost
         self.profit.profit_rate = format_float(self.profit.profit / real_price)
         ## 30%佣金 服务费0 加劵
-        self.profit.profit_1 = str(real_price - real_price * (0.3 + MALL_REBATE) - real_cost)
+        self.profit.profit_1 = (real_price - real_price * (0.3 + MALL_REBATE) - real_cost)
         self.profit.profit_rate_1 = format_float(self.profit.profit_1 / real_price)
         ## 20%佣金 服务费0 加劵
-        self.profit.profit_2 = str(real_price - real_price * (0.2 + MALL_REBATE) - real_cost)
+        self.profit.profit_2 = (real_price - real_price * (0.2 + MALL_REBATE) - real_cost)
         self.profit.profit_rate_2 = format_float(self.profit.profit_2 / real_price)
         ## 30%佣金 服务费0 不加劵
-        self.profit.profit_3 = str(real_price_no - real_price_no * (0.3 + MALL_REBATE) - real_cost)
+        self.profit.profit_3 = (real_price_no - real_price_no * (0.3 + MALL_REBATE) - real_cost)
         self.profit.profit_rate_3 = format_float(self.profit.profit_3 / real_price_no)
         ## 20%佣金 服务费0 不加劵
-        self.profit.profit_4 = str(real_price_no - real_price_no * (0.2 + MALL_REBATE) - real_cost)
+        self.profit.profit_4 = (real_price_no - real_price_no * (0.2 + MALL_REBATE) - real_cost)
         self.profit.profit_rate_4 = format_float(self.profit.profit_4 / real_price_no)
         ## 20%佣金 服务费5% 加劵
-        self.profit.profit_5 = str(real_price - real_price * (0.2 + 0.05 + MALL_REBATE) - real_cost)
+        self.profit.profit_5 = (real_price - real_price * (0.2 + 0.05 + MALL_REBATE) - real_cost)
         self.profit.profit_rate_5 = format_float(self.profit.profit_5 / real_price)
         ## 20%佣金 服务费5% 不加劵
-        self.profit.profit_6 = str(real_price_no - real_price_no * (0.2 + 0.05 + MALL_REBATE) - real_cost)
+        self.profit.profit_6 = (real_price_no - real_price_no * (0.2 + 0.05 + MALL_REBATE) - real_cost)
         self.profit.profit_rate_6 = format_float(self.profit.profit_6 / real_price_no)
 
