@@ -8,8 +8,8 @@
 {% block content %}
 <style type="text/css">
     .scroll-spy {
-        width:1080px;
-        height: 680px;
+        width:1280px;
+        height: 768px;
         overflow-x: auto;
         overflow-y: auto;
         position: relative;
@@ -147,11 +147,11 @@
     </div>
 </div>
 
-<div class="col-md-9" style="padding-right: 1em; width: 100% " align="center">
-    <div class="panel panel-primary scroll-spy">
+<div class="col-md-9" style="padding-right: 1em; width: 100% ">
+    <div class="panel panel-primary">
         <div class="panel-heading">
             <h4 class="panel-title">
-                  密码机基本信息
+                  商品基本信息
             </h4>
         </div>
         <div class="panel-body">
@@ -188,7 +188,7 @@
                 </form>
             </div>
 
-            <div id="imformation">
+            <div id="imformation" class="scroll-spy" style="width: 100%" align="center">
 
                 <div class="modal fade" id="div-edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
@@ -321,6 +321,7 @@
                             <th>预览图</th>
                             <th>名称</th>
                             <th>商品简介</th>
+                            <th>包含视频</th>
                             <th>店铺链接</th>
                             <th>售价</th>
                             <th>代发链接</th>
@@ -330,20 +331,25 @@
                             <th>邮费</th>
                             <!-- <th>证书</th> -->
                             <th>发货地址</th>
+                            <th>产地</th>
                             <th>赠品</th>
                             <th>备注</th>
                             <th>修改</th>
                         </tr>
                        </thead>
                             {% for good in goods %}
-                            <tr style="overflow-x: auto;" onClick="select_change({{ good.good_id }})">
+                            <td style="overflow-x: auto;" onClick="select_change({{ good.good_id }})">
                             <td> <input type="checkbox" name="select_goods" class="checkboxes" value="{{good.good_id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>
-{#                            <td class="mid">{{ loop.index}}#}
                             <input type="hidden" name="id" value="{{ good.good_id }}"></td>
                             <td class="goodId">{{ good.good_id}}</td>
                             <td><img src="{{good.good_base_info.good_image_url}}" width="100px" height="100px"></td>
                             <td class="title">{{good.good_base_info.good_title}}</td>
                             <td class="description">{{ good.good_base_info.good_description}}</td>
+                            {% if good.good_has_video == True %}
+                                <td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+                            {% elif good.good_has_video == False %}
+                                <td><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </td>
+                            {% endif %}
                             <td class="skuUrl"><a href="{{good.sku_info.sku_url}}" target="_blank">店铺链接</a></td>
                             <td class="price">{{good.sku_info.sku_price}}</td>
                             <td class="goodUrl"><a href="{{good.good_proxy_url}}" target="_blank">{{ good.good_proxy_platform }}</a></td>
@@ -353,6 +359,7 @@
                             <td class="express">{{good.good_express}}</td>
                             <td class="postage">{{good.good_postage}}</td>
                             <td class="postageAddress">{{good.postage_address}}</td>
+                            <td class="produce_address">{{good.produce_address}}</td>
                             <td class="postagePrize">{{good.good_prize}}</td>
                             <td class="extra">{{good.good_extra}}</td>
                             <td>
