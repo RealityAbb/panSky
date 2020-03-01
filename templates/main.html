@@ -345,9 +345,9 @@
                             <td><img src="{{good.good_base_info.good_image_url}}" width="100px" height="100px"></td>
                             <td class="title">{{good.good_base_info.good_title}}</td>
                             <td class="description">{{ good.good_base_info.good_description}}</td>
-                            {% if good.good_has_video == True %}
+                            {% if good.good_base_info.good_has_video == True %}
                                 <td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
-                            {% elif good.good_has_video == False %}
+                            {% elif good.good_base_info.good_has_video == False %}
                                 <td><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </td>
                             {% endif %}
                             <td class="skuUrl"><a href="{{good.sku_info.sku_url}}" target="_blank">店铺链接</a></td>
