@@ -81,11 +81,11 @@
             <form method="POST" action="/good/new" enctype="multipart/form-data">
                 <input name='nonce' type='hidden' value="{{ nonce }}">
                 <div class="panel-body">
-                    <div class="form-group input-container">
+                    <div class="form-group input-container" style="float:left">
                         <label for="host" class="control-label input-label">商品ID</label>
                         <input type="text" class="form-control host-input input-content"  name="good_id" id="good_id" placeholder="商品ID" required>
                     </div>
-                    <div class="form-group input-container">
+                    <div class="form-group input-container" style="float: right">
                         <label class="control-label input-label">商品名称</label>
                         <input type="text" name="good_name" class="form-control host-input input-content" placeholder="商品名称"></input>
                     </div>
@@ -97,13 +97,18 @@
                         </select>
                     </div>
                     <div class="form-group input-container">
-                      <strong>预览图</strong>
-                      <input type="file" name="file">
+                        <label class="control-label input-label">预览图</label>
+                        <input class="input-content" type="file" name="file">
                     </div>
                     <div class="form-group input-container">
                         <label class="control-label input-label">商品简介</label>
                         <input type="text" class="form-control host-input input-container input-content" name="description" id="description" placeholder="简介">
                     </div>
+                    <div class="form-group input-container">
+                        <label class="control-label input-label">优惠劵</label>
+                        <input type="number" class="form-control host-input input-content" name="coupon" id="coupon" placeholder="0.0" step="0.01">
+                    </div>
+                    <HR/>
                     <div class="form-group input-container" >
                         <label class="control-label input-label">sku链接</label>
                         <input type="url" class="form-control host-input input-content" name="sku" id="sku"  placeholder="sku详情页链接">
@@ -112,6 +117,7 @@
                         <label class="control-label input-label">售价</label>
                         <input type="number" class="form-control host-input input-content" name="price" id="price"  placeholder="0.0" step="0.01">
                     </div>
+                    <HR/>
                     <div class="form-group  input-container" >
                         <label class="control-label input-label">代发链接</label>
                         <input type="url" class="form-control host-input input-content" name="proxy_url" id="proxy_url"  placeholder="代发链接">
@@ -119,10 +125,6 @@
                     <div class="form-group input-container">
                         <label class="control-label input-label">成本</label>
                         <input type="number" class="form-control host-input input-content" name="cost" id="cost" placeholder="0.0" step="0.01">
-                    </div>
-                    <div class="form-group input-container">
-                        <label class="control-label input-label">优惠劵</label>
-                        <input type="number" class="form-control host-input input-content" name="coupon" id="coupon" placeholder="0.0" step="0.01">
                     </div>
                     <div class="form-group input-container">
                         <label class="control-label input-label">快递</label>
