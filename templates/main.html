@@ -717,7 +717,7 @@ $('.btn-good-proxy-add').click(function() {
     modal_form.find("input[name=edit_coupon]").val(coupon);
     modal_form.find("input[name=edit_prize]").val(good_prize);
     modal_form.find("input[name=edit_sku_url]").val(sku_url);
-    modal_form.find("input[name=edit_sku_id]").val(sku_id)
+    modal_form.find("input[name=edit_sku_id]").val(sku_id);
 
     //base_info_read_only(modal_form, true);
     sku_info_read_only(modal_form, true);
@@ -750,8 +750,9 @@ function sku_info_read_only(modal_form, readonly) {
         modal_form.find("input[name=edit_sku_url]").attr("readonly");
         modal_form.find("input[name=edit_price]").attr("readonly");
     } else {
-        modal_form.find("input[name=edit_sku_url]").removeAttribute("readonly");
-        modal_form.find("input[name=edit_price]").removeAttribute("readonly");
+
+        modal_form.find("input[name=edit_sku_url]").attr("readonly", false);
+        modal_form.find("input[name=edit_price]").attr("readonly", false);
     }
 
 }
