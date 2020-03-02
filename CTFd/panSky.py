@@ -202,7 +202,7 @@ def init_views(app):
         extra = request.form['edit_extra']
         day_limit = get_float(request.form["edit_day_limit"])
         activity_limit = get_float(request.form["edit_activity_limit"])
-        upload_file = request.files['edit_file']
+        upload_file = request.files['file']
 
         sku_info = GoodSkuInfo.query.filter_by(good_id=good_id,sku_id=sku_id).first()
         if sku_info is None:
