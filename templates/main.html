@@ -747,8 +747,8 @@ function base_info_read_only(modal_form, readonly) {
 
 function sku_info_read_only(modal_form, readonly) {
     if (readonly == true) {
-        modal_form.find("input[name=edit_sku_url]").attr("readonly");
-        modal_form.find("input[name=edit_price]").attr("readonly");
+        modal_form.find("input[name=edit_sku_url]").attr("readonly", "true");
+        modal_form.find("input[name=edit_price]").attr("readonly", "true");
     } else {
 
         modal_form.find("input[name=edit_sku_url]").attr("readonly", false);
