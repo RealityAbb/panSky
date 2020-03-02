@@ -656,8 +656,8 @@ $('.btn-good-edit').click(function(){
     modal_form.find("input[name=edit_produce]").val(produce_address);
     modal_form.find("input[name=edit_prize]").val(good_prize);
     modal_form.find("input[name=edit_extra]").val(extra);
-    show_base_info(modal_form, "true");
-    show_sku_info(modal_form, "true")
+    base_info_read_only(modal_form, "false");
+    sku_info_read_only(modal_form, "false")
     $('#div-edit form').attr('action', '/goods/edit')
     $('#div-edit').modal('toggle');
 });
@@ -684,8 +684,8 @@ $('.btn-good-sku-add').click(function() {
     modal_form.find("input[name=edit_coupon]").val(coupon);
     modal_form.find("input[name=edit_prize]").val(good_prize);
     modal_form.find("input[name=edit_category]").val(category);
-    show_base_info(modal_form, "false");
-    show_sku_info(modal_form, "true")
+    base_info_read_only(modal_form, "true");
+    sku_info_read_only(modal_form, "false")
     $('#div-edit form').attr('action', '/goods/add/sku')
     $('#div-edit').modal('toggle');
 });
@@ -720,20 +720,21 @@ $('.btn-good-proxy-add').click(function() {
     modal_form.find("input[name=edit_sku_url]").val(sku_url);
     modal_form.find("input[name=edit_sku_id]").val(sku_id)
 
-    show_base_info(modal_form, "false");
-    show_sku_info(modal_form, "true")
+    base_info_read_only(modal_form, "true");
+    sku_info_read_only(modal_form, "true")
     $('#div-edit form').attr('action', '/goods/add/proxy')
     $('#div-edit').modal('toggle');
 });
 
 
 
-function show_base_info(modal_form, show) {
+function base_info_read_only(modal_form, show) {
     modal_form.find("input[name=edit_good_name]").attr("readOnly", show);
     modal_form.find("input[name=edit_description]").attr("readOnly", show);
     modal_form.find('select[name=edit_has_video]').attr("readOnly", show);
     modal_form.find("input[name=edit_coupon]").attr("readOnly", show);
     modal_form.find("input[name=edit_postage_prize]").attr("readOnly", show);
+    modal_form.find("input[name=edit_category]").attr("realOnly", show);
 }
 
 function show_sku_info(modal_form, show) {

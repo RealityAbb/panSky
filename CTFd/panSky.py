@@ -155,7 +155,7 @@ def init_views(app):
             filename = good_id + "." + get_file_suffix(upload_file.filename)
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             upload_file.save(image_path)
-        base_info = GoodBaseInfo(good_id, good_name, category, description, image_path, has_video, coupon, prize)
+        base_info = GoodBaseInfo(good_id, category, good_name, description, image_path, has_video, coupon, prize)
         db.session.add(base_info)
         sku_info = GoodSkuInfo(good_id, sku_id, sku_url, price)
         db.session.add(sku_info)
