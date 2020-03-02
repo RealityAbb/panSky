@@ -987,6 +987,12 @@ class GoodSkuInfo(db.Model):
         self.create_time = time.time()
         self.sku_price_90 = _good_price * 0.9
         self.sku_price_80 = _good_price * 0.8
+    def reset(self):
+        self.sku_url=""
+        self.sku_price = 0
+        self.create_time = time.time()
+        self.sku_price_90 = 0
+        self.sku_price_80 = 0
 
 
 MALL_REBATE = 0.05 ## 天猫扣点
@@ -1045,6 +1051,22 @@ class SkuProxyInfo(db.Model):
         self.good_extra = _good_extra
         self.day_limit = _day_limit
         self.activity_limit = _activity_limit
+        self.sku_info = GoodSkuInfo()
+        self.good_base_info = GoodBaseInfo()
+        self.profit = Profit()
+        self.create_time = time.time()
+    def reset(self):
+        self.good_proxy_url = ""
+        self.good_proxy_platform = ""
+        self.good_proxy_id = ""
+        self.good_express = ""
+        self.good_cost = 0
+        self.postage_address = ""
+        self.produce_address = ""
+        self.good_postage = ""
+        self.good_extra = ""
+        self.day_limit = 0
+        self.activity_limit = 0
         self.sku_info = GoodSkuInfo()
         self.good_base_info = GoodBaseInfo()
         self.profit = Profit()

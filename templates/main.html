@@ -374,43 +374,6 @@
                     </div>
                 </div>
 
-                <div class="modal fade" id="div-edit-cert" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" id="exampleModalLabel">修改证书</h4>
-                            </div>
-                            <div class="panel-body">
-                                <form method="POST" action="/equipment/replacecert" enctype="multipart/form-data">
-                                    <input name='nonce' type='hidden' value="{{ nonce }}">
-                                    <input name="peer_ip" id="peer_ip" type="hidden">
-                                    <div class="form-group">
-                                        <label class="control-label">证书文件类型</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <input type="radio" name="cerstyle" value="0"/>RSA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <input type="radio" name="cerstyle" value="1" checked />ECC
-                                    </div>
-                                    <div class="form-gruop">
-                                      <strong>证书文件</strong>
-                                      <input type="file" name="files[]" multiple="multiple" required>
-                                    </div><br/>
-                                    <div class="form-group" >
-                                        <label class="control-label">证书编码</label>
-                                        <select name="cert_format" id="s2" class="form-control host-input" >
-                                            <option value="0">BESE-64编码 </option>
-                                            <option value="1">DER二进制编码</option>
-                                        </select>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                                        <button type="submit" class="btn btn-primary">修改</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="modal fade" id="div-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="panel panel-primary">
@@ -430,6 +393,55 @@
                                 <div class="panel-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
                                     <button id="div-btn-delete" type="button" class="btn btn-primary">删除</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="div-delete-sku" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">删除SKU</h4>
+                            </div>
+                            <form method="POST" action="/goods/delete/sku" enctype="multipart/form-data">
+                                <div class="panel-body">
+                                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                                    <div class="form-group">
+                                        <label class="control-label">确定要删除SKU和对应代发链接吗？</label>
+                                        <input name="delete_sku_id" type="hidden">
+                                        <input name="delete_sku_good_id" type="hidden">
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button id="div-btn-delete-sku" type="button" class="btn btn-primary">删除</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="div-delete-proxy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">删除代发链接</h4>
+                            </div>
+                            <form method="POST" action="/goods/delete/proxy" enctype="multipart/form-data">
+                                <div class="panel-body">
+                                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                                    <div class="form-group">
+                                        <label class="control-label">确定要删除代发链接吗？</label>
+                                        <input name="delete_proxy_sku_id" type="hidden">
+                                        <input name="delete_proxy_id" type="hidden">
+                                        <input name="delete_proxy_good_id" type="hidden">
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button id="div-btn-delete-proxy" type="button" class="btn btn-primary">删除</button>
                                 </div>
                             </form>
                         </div>
@@ -718,6 +730,7 @@ $('.btn-good-proxy-add').click(function() {
     modal_form.find("input[name=edit_prize]").val(good_prize);
     modal_form.find("input[name=edit_sku_url]").val(sku_url);
     modal_form.find("input[name=edit_sku_id]").val(sku_id);
+    modal_form.find("input[name=edit_price]").val(price);
 
     base_info_read_only(modal_form, true);
     sku_info_read_only(modal_form, true);
@@ -725,6 +738,51 @@ $('.btn-good-proxy-add').click(function() {
     $('#div-edit').modal('toggle');
 });
 
+$('.btn-good-sku-delete').click(function () {
+
+    const elem = $(this).parent().parent().parent().parent().parent();
+    const good_id = elem.find('input[name=id]').val();
+    const sku_id = elem.find('input[name=sku_id]').val();
+    const modal_form = $('#div-delete-sku form');
+    modal_form.find("input[name=delete_sku_good_id]").val(good_id);
+    modal_form.find("input[name=delete_sku_id]").val(sku_id)
+    $('#div-delete-sku form').attr('action', '/goods/delete/sku');
+    $('#div-delete-sku').modal('toggle');
+});
+$('#div-btn-delete-sku').click(function(e){
+    e.preventDefault();
+    $.post($('#div-delete-sku form').attr('action'), $('#div-delete-sku form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        } else {
+            alert("删除失败")
+        }
+    })
+});
+$('.btn-good-proxy-delete').click(function () {
+    const elem = $(this).parent().parent().parent().parent().parent();
+    const good_id = elem.find('input[name=id]').val();
+    const sku_id = elem.find('input[name=sku_id]').val();
+    const proxy_id = elem.find('input[name=proxy_id]').val();
+    const modal_form = $('#div-delete-proxy form');
+    modal_form.find("input[name=delete_proxy_good_id]").val(good_id);
+    modal_form.find("input[name=delete_proxy_id]").val(proxy_id)
+    modal_form.find("input[name=delete_proxy_sku_id]").val(sku_id);
+    $('#div-delete-proxy form').attr('action', '/goods/delete/proxy');
+    $('#div-delete-proxy').modal('toggle');
+});
+$('#div-btn-delete-proxy').click(function(e){
+    e.preventDefault();
+    $.post($('#div-delete-proxy form').attr('action'), $('#div-delete-proxy form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        } else {
+            alert("删除失败")
+        }
+    })
+});
 
 
 function base_info_read_only(modal_form, readonly) {

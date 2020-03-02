@@ -304,5 +304,30 @@ def init_views(app):
         db.session.commit()
         db.session.close()
         return "1"
+    @app.route('/goods/delete/proxy', methods=["POST"])
+    def add_proxy():
+        good_id = request.form['delete_proxy_good_id']
+        sku_id = request.form['delete_proxy_sku_id']
+        proxy_id = request.form['delete_proxy_id']
+        SkuProxyInfo.query.filter_by(good_id=good_id, sku_id=sku_id, proxy_id=proxy_id).delete()
+        proxy_info = SkuProxyInfo.query.filter_by(good_id=good_id, sku_id=sku_id).first()
+        if proxy_info is None:
+            db.session.add(SkuProxyInfo(good_id, sku_id))
+        db.session.commit()
+        db.session.close()
+        return "1"
+    @app.route('/goods/delete/sku', methods=["POST"])
+    def add_proxy():
+        good_id = request.form['delete_sku_good_id']
+        sku_id = request.form['delete_sku_id']
+        GoodSkuInfo.query.filter_by(good_id=good_id, sku_id=sku_id).delete()
+        SkuProxyInfo.query.filter_by(good_id=good_id, sku_id=sku_id).delete()
+        sku_info = GoodSkuInfo.query.filter_by(good_id=good_id).first()
+        if sku_info is None:
+            db.session.add(GoodSkuInfo(good_id, sku_id))
+            db.session.add(SkuProxyInfo(good_id, sku_id))
+        db.session.commit()
+        db.session.close()
+        return "1"
 
 
