@@ -657,8 +657,8 @@ $('.btn-good-edit').click(function(){
     modal_form.find("input[name=edit_produce]").val(produce_address);
     modal_form.find("input[name=edit_prize]").val(good_prize);
     modal_form.find("input[name=edit_extra]").val(extra);
-    base_info_read_only(modal_form, "false");
-    sku_info_read_only(modal_form, "false");
+    {#base_info_read_only(modal_form, "false");#}
+    {#sku_info_read_only(modal_form, "false");#}
     $('#div-edit form').attr('action', '/goods/edit');
     $('#div-edit').modal('toggle');
 });
