@@ -729,14 +729,14 @@ $('.btn-good-proxy-add').click(function() {
 
 function base_info_read_only(modal_form, readonly) {
     if (readonly == true) {
-        modal_form.find("input[name=edit_good_name]").readonly = true;
+        modal_form.find("input[name=edit_good_name]").readonly = true
         modal_form.find("input[name=edit_description]").readonly = true;
         modal_form.find('select[name=edit_has_video]').readonly = true;
         modal_form.find("input[name=edit_coupon]").readonly = true;
         modal_form.find("input[name=edit_postage_prize]").readonly = true;
         modal_form.find("input[name=edit_category]").readonly = true;
     } else {
-        modal_form.find("input[name=edit_good_name]").readonly = false;
+        modal_form.find("input[name=edit_good_name]").removeAttribute("readonly");
         modal_form.find("input[name=edit_description]").readonly = false;
         modal_form.find('select[name=edit_has_video]').readonly = false;
         modal_form.find("input[name=edit_coupon]").readonly = false;
@@ -747,11 +747,11 @@ function base_info_read_only(modal_form, readonly) {
 
 function sku_info_read_only(modal_form, readonly) {
     if (readonly == true) {
-        modal_form.find("input[name=edit_sku_url]").readonly = true;
-        modal_form.find("input[name=edit_price]").readonly = true;
+        modal_form.find("input[name=edit_sku_url]").attr("readonly");
+        modal_form.find("input[name=edit_price]").attr("readonly");
     } else {
-        modal_form.find("input[name=edit_sku_url]").readonly = false;
-        modal_form.find("input[name=edit_price]").readonly = false;
+        modal_form.find("input[name=edit_sku_url]").removeAttribute("readonly");
+        modal_form.find("input[name=edit_price]").removeAttribute("readonly");
     }
 
 }
