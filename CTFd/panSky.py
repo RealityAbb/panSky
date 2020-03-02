@@ -305,7 +305,7 @@ def init_views(app):
         db.session.close()
         return "1"
     @app.route('/goods/delete/proxy', methods=["POST"])
-    def add_proxy():
+    def delete_proxy():
         good_id = request.form['delete_proxy_good_id']
         sku_id = request.form['delete_proxy_sku_id']
         proxy_id = request.form['delete_proxy_id']
@@ -317,7 +317,7 @@ def init_views(app):
         db.session.close()
         return "1"
     @app.route('/goods/delete/sku', methods=["POST"])
-    def add_proxy():
+    def delete_sku():
         good_id = request.form['delete_sku_good_id']
         sku_id = request.form['delete_sku_id']
         GoodSkuInfo.query.filter_by(good_id=good_id, sku_id=sku_id).delete()
