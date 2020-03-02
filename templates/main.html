@@ -612,7 +612,6 @@ $('.glyphicon-refresh').click(function(e){
     }
 });
 $('.btn-good-edit').click(function(){
-    alert("good-edit");
     const elem = $(this).parent().parent();
     const good_id = elem.find('input[name=id]').val();
     const sku_id = elem.find('input[name=sku_id]').val();
@@ -632,7 +631,7 @@ $('.btn-good-edit').click(function(){
     const produce_address = elem.find('.produce_address').text().trim();
     const good_prize = elem.find('.good_prize').text().trim();
     const extra = elem.find('.extra').text().trim();
-
+    alert("good-edit" + title)
     const modal_form = $('#div-edit form');
     modal_form.find("input[name=edit_good_id]").val(good_id);
     modal_form.find("input[name=edit_sku_id]").val(sku_id);
