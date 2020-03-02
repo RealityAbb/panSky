@@ -173,5 +173,8 @@ def init_views(app):
         db.session.commit()
         db.session.close()
         return "0"
+    @app.route('/goods/edit', methods=["POST"])
+    def edit_goods():
+        return "0"
 
 

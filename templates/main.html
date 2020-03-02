@@ -167,9 +167,9 @@
                         <input type="text" class="form-control host-input input-content" name="qualification" id="qualification" placeholder="资质文件">
                     </div>
 
-                    <div class="form-group input-container-left">
+                    <div class="form-group">
                         <label class="control-label input-label">备注</label>
-                        <input type="text" class="form-control host-input input-content" name="extra" id="extra" placeholder="备注" maxlength="8">
+                        <input type="text" class="form-control host-input" name="extra" id="extra" placeholder="备注" maxlength="8">
                     </div>
                 </div>
                 <div class="panel-footer">
@@ -229,50 +229,96 @@
                         <div class="panel panel-primary">
                             <div class="panel-heading">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" id="exampleModalLabel">编辑密码机</h4>
+                                <h4 class="modal-title" id="exampleModalLabel">编辑商品</h4>
                             </div>
                             <div class="panel-body">
                                 <form method="POST" action="" enctype="multipart/form-data">
                                     <input name='nonce' type='hidden' value="{{ nonce }}">
-                                    <div class="form-group">
-                                        <label class="control-label">IP地址</label>
-                                        <input type="text" name="ip" class="form-control host-input" placeholder="IP" maxlength="15" required onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label">名称</label>
-                                        <!-- <input type="text" class="form-control host-input" name="machinenumber" maxlength="8"  placeholder="Name" >   -->
-                                        <textarea id="commentText2" name="machinenumber" class="form-control host-input" placeholder="Name" style="height:35px;"></textarea>
-                                        <div id="dsa2"></div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label">第一级</label>
-                                        <input type="text" class="form-control host-input" name="province"  placeholder="First" maxlength="8" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label">第二级</label>
-                                        <input type="text" class="form-control host-input" name="city" maxlength="8"  placeholder="Second" >
-                                    </div>
-                                    <div class="form-gruop">
-                                        <label class="control-label">第三级</label>
-                                        <input type="text" class="form-control host-input" name="part" maxlength="8"  placeholder="Part" >
-                                    </div>
-                                    <div class="form-gruop">
-                                        <label class="control-label">第四级</label>
-                                        <input type="text" class="form-control host-input" name="fourth" maxlength="8"  placeholder="Fourth" >
-                                    </div>
-                                    <div class="form-gruop">
-                                        <label class="control-label">厂家</label>
-                                        <select name="manufacture" class="form-control host-input" >
-                                            <option value="兴唐">兴唐</option>
-                                            <option value="科东">科东</option>
-                                            <option value="南瑞">南瑞</option>
-                                            <option value="卫士通">卫士通</option>
-                                            <option value="江南所">江南所</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-gruop">
-                                        <label class=“control-label>备注</label><br/>
-                                        <input type="text" class="form-control host-input" name="discription" maxlength="8" placeholder="remark">
+                                    <div class="panel-body">
+                                        <div class="form-group input-container-left">
+                                            <label for="host" class="control-label input-label">商品ID</label>
+                                            <input type="text" class="form-control host-input input-content"  name="edit_good_id" id="edit_good_id" placeholder="商品ID" required>
+                                        </div>
+                                        <div class="form-group input-container-right">
+                                            <label class="control-label input-label">商品名称</label>
+                                            <input type="text" name="edit_good_name" class="form-control host-input input-content" placeholder="商品名称"></input>
+                                        </div>
+                                        <div class="form-group input-container-left">
+                                            <label class="control-label input-label">包含视频</label>
+                                            <select name="edit_has_video" id="edit_has_video" class="form-control host-input input-content" >
+                                                <option value="0" selected = "selected">否</option>
+                                                <option value="1">是</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group input-container-right">
+                                            <label class="control-label input-label">预览图</label>
+                                            <input class="input-content" type="file" name="edit_file">
+                                        </div>
+                                        <div class="form-group input-container-left">
+                                            <label class="control-label input-label">商品简介</label>
+                                            <input type="text" class="form-control host-input input-container input-content" name="edit_description" id="edit_description" placeholder="简介">
+                                        </div>
+                                        <div class="form-group input-container-right">
+                                            <label class="control-label input-label">优惠劵</label>
+                                            <input type="number" class="form-control host-input input-content" name="edit_coupon" id="edit_coupon" placeholder="0.0" step="0.01">
+                                        </div>
+                                        <HR/>
+                                        <div class="form-group input-container-left" >
+                                            <label class="control-label input-label">sku链接</label>
+                                            <input type="url" class="form-control host-input input-content" name="edit_sku" id="edit_sku_url"  placeholder="sku详情页链接">
+                                        </div>
+                                        <div class="form-group input-container-right" >
+                                            <label class="control-label input-label">售价</label>
+                                            <input type="number" class="form-control host-input input-content" name="edit_price" id="edit_price"  placeholder="0.0" step="0.01">
+                                        </div>
+                                        <HR/>
+                                        <div class="form-group  input-container-left">
+                                            <label class="control-label input-label">代发链接</label>
+                                            <input type="url" class="form-control host-input input-content" name="edit_proxy_url" id="edit_proxy_url"  placeholder="代发链接">
+                                        </div>
+                                        <div class="form-group input-container-right">
+                                            <label class="control-label input-label">成本</label>
+                                            <input type="number" class="form-control host-input input-content" name="edit_cost" id="edit_cost" placeholder="0.0" step="0.01">
+                                        </div>
+                                        <div class="form-group input-container-left">
+                                            <label class="control-label input-label">快递</label>
+                                            <input type="text" class="form-control host-input input-content" name="edit_express" id="edit_express" placeholder="快递">
+                                        </div>
+                                        <div class="form-group input-container-right">
+                                            <label class="control-label input-label">邮费</label>
+                                            <input type="number" class="form-control host-input input-content" name="edit_postage" id="edit_postage" placeholder="0.0" step="0.01">
+                                        </div>
+                                        <div class="form-group input-container-left">
+                                            <label class="control-label input-label">发货地址</label>
+                                            <input type="text" class="form-control host-input input-content" name="edit_address" id="edit_address">
+                                        </div>
+                                        <div class="form-group input-container-right">
+                                            <label class="control-label input-label">产地</label>
+                                            <input type="text" class="form-control host-input input-content" name="edit_produce" id="edit_produce">
+                                        </div>
+                                        <div class="form-group input-container-left">
+                                            <label class="control-label input-label">赠品价值</label>
+                                            <input type="number" class="form-control host-input input-content" name="edit_prize" id="edit_prize" placeholder="0.0" step="0.01">
+                                        </div>
+                                         <div class="form-group input-container-right">
+                                            <label class="control-label input-label">日常限价</label>
+                                            <input type="number" class="form-control host-input input-content" name="edit_day_limit" id="edit_day_limit"  placeholder="0.0" step="0.01">
+                                        </div>
+                                         <div class="form-group input-container-left">
+                                            <label class="control-label input-label">活动限价</label>
+                                            <input type="number" class="form-control host-input input-content" name="edit_activity_limit" id="edit_activity_limit"  placeholder="0.0" step="0.01">
+                                        </div>
+                                        <div class="form-group input-container-right">
+                                            <label class="control-label input-label">资质文件</label>
+                                            <input type="text" class="form-control host-input input-content" name="edit_qualification" id="edit_qualification" placeholder="资质文件">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label input-label">备注</label>
+                                            <input type="text" class="form-control host-input" name="edit_extra" id="edit_extra" placeholder="备注" maxlength="8">
+                                        </div>
+                                        <input name="edit_sku_id" type="hidden">
+                                        <input name="edit_proxy_id" type="hidden">
                                     </div>
                                     <div class="modal-footer">
                                         <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -387,50 +433,56 @@
                        </thead>
                         <tbody>
                             {% for good in goods %}
-                            <tr style="overflow-x: auto;" onClick="select_change({{ good.good_id }})">
-                            <td> <input type="checkbox" name="select_goods" class="checkboxes" value="{{good.good_id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>
-                            <input type="hidden" name="id" value="{{ good.good_id }}"></td>
-                            <td class="goodId">{{ good.good_id}}</td>
-                            <td><img src="{{good.good_base_info.good_image_url}}" width="100px" height="100px"></td>
-                            <td class="title">{{good.good_base_info.good_title}}</td>
-                            <td class="description">{{ good.good_base_info.good_description}}</td>
-                            {% if good.good_base_info.good_has_video == True %}
-                                <td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
-                            {% elif good.good_base_info.good_has_video == False %}
-                                <td><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </td>
-                            {% endif %}
-                            <td class="skuUrl"><a href="{{good.sku_info.sku_url}}" target="_blank">店铺链接</a></td>
-                            <td class="price">{{good.sku_info.sku_price}}</td>
-                            <td class="goodUrl"><a href="{{good.good_proxy_url}}" target="_blank">{{ good.good_proxy_platform }}</a></td>
+                                <td style="overflow-x: auto;" onClick="select_change({{ good.good_id }})">
+                                <td> <input type="checkbox" name="select_goods" class="checkboxes" value="{{good.good_id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>
+                                 <input type="hidden" name="id" value="{{ good.good_id }}">
+                                <input type="hidden" name="sku_id" value="{{ good.sku_id }}">
+                                <input type="hidden" name="proxy_id" value="{{ good.proxy_id }}">
+                                <input type="hidden" name="sku_url" value="{{ good.good.sku_info.sku_url }}">
+                                <input type="hidden" name="proxy_url" value="{{ good.good_proxy_url }}">
+                                <input type="hidden" name="has_video" value="{{ good.good_base_info.good_has_video }}">
 
-                            <td class="cost">{{good.good_cost}}</td>
-                            <td class="coupon">{{good.sku_info.coupon}}</td>
-                            <td class="express">{{good.good_express}}</td>
-                            <td class="postage">{{good.good_postage}}</td>
-                            <td class="postageAddress">{{good.postage_address}}</td>
-                            <td class="produce_address">{{good.produce_address}}</td>
-                            <td class="postagePrize">{{good.good_prize}}</td>
-                            <td class="profit">{{ good.profit.profit }}</td>
-                            <td class="profit_rate">{{ good.profit.profit_rate }}</td>
-                            <td class="profit">{{ good.profit.profit_1 }}</td>
-                            <td class="profit">{{ good.profit.profit_2 }}</td>
-                            <td class="profit">{{ good.profit.profit_3 }}</td>
-                            <td class="profit">{{ good.profit.profit_4 }}</td>
-                            <td class="profit">{{ good.profit.profit_5 }}</td>
-                            <td class="profit">{{ good.profit.profit_6 }}</td>
-                            <td class="profit">{{ good.profit.profit_rate_1 }}</td>
-                            <td class="profit">{{ good.profit.profit_rate_2 }}</td>
-                            <td class="profit">{{ good.profit.profit_rate_3 }}</td>
-                            <td class="profit">{{ good.profit.profit_rate_4 }}</td>
-                            <td class="profit">{{ good.profit.profit_rate_5 }}</td>
-                            <td class="profit">{{ good.profit.profit_rate_6 }}</td>
-                            <td class="extra">{{good.good_extra}}</td>
-                            <td>
-                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-open" aria-hidden="true"></span>
-                            </td>
-                                <td style="display:none;">{{good.id}}</td>
-                        </tr>
+                                <td class="goodId">{{ good.good_id}}</td>
+                                <td><img src="{{good.good_base_info.good_image_url}}" width="100px" height="100px"></td>
+                                <td class="title">{{good.good_base_info.good_title}}</td>
+                                <td class="description">{{ good.good_base_info.good_description}}</td>
+                                {% if good.good_base_info.good_has_video == True %}
+                                    <td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+                                {% elif good.good_base_info.good_has_video == False %}
+                                    <td><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </td>
+                                {% endif %}
+                                <td class="sku_ur_ref"><a href="{{good.sku_info.sku_url}}" target="_blank">店铺链接</a></td>
+                                <td class="price">{{good.sku_info.sku_price}}</td>
+                                <td class="good_url_ref"><a href="{{good.good_proxy_url}}" target="_blank">{{ good.good_proxy_platform }}</a></td>
+
+                                <td class="cost">{{good.good_cost}}</td>
+                                <td class="coupon">{{good.sku_info.coupon}}</td>
+                                <td class="express">{{good.good_express}}</td>
+                                <td class="postage">{{good.good_postage}}</td>
+                                <td class="postage_address">{{good.postage_address}}</td>
+                                <td class="produce_address">{{good.produce_address}}</td>
+                                <td class="postage_prize">{{good.good_prize}}</td>
+                                <td class="profit">{{ good.profit.profit }}</td>
+                                <td class="profit_rate">{{ good.profit.profit_rate }}</td>
+                                <td class="profit">{{ good.profit.profit_1 }}</td>
+                                <td class="profit">{{ good.profit.profit_2 }}</td>
+                                <td class="profit">{{ good.profit.profit_3 }}</td>
+                                <td class="profit">{{ good.profit.profit_4 }}</td>
+                                <td class="profit">{{ good.profit.profit_5 }}</td>
+                                <td class="profit">{{ good.profit.profit_6 }}</td>
+                                <td class="profit">{{ good.profit.profit_rate_1 }}</td>
+                                <td class="profit">{{ good.profit.profit_rate_2 }}</td>
+                                <td class="profit">{{ good.profit.profit_rate_3 }}</td>
+                                <td class="profit">{{ good.profit.profit_rate_4 }}</td>
+                                <td class="profit">{{ good.profit.profit_rate_5 }}</td>
+                                <td class="profit">{{ good.profit.profit_rate_6 }}</td>
+                                <td class="extra">{{good.good_extra}}</td>
+                                <td>
+                                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                    <span class="glyphicon glyphicon-open" aria-hidden="true"></span>
+                                </td>
+                                    <td style="display:none;">{{good.id}}</td>
+                            </tr>
                         {% endfor %}
                         </tbody>
                    </table>
@@ -489,6 +541,51 @@ $('.glyphicon-refresh').click(function(e){
     }else{
         location.reload()
     }
+});
+$('.glyphicon-pencil').click(function(){
+    const elem = $(this).parent().parent();
+    const good_id = elem.find('input[name=id]').val();
+    const sku_id = elem.find('input[name=sku_id]').val();
+    const proxy_id = elem.find('input[name=proxy_id]').val();
+    const title = elem.find('.title').text().trim();
+    const has_video = elem.find('input[name=has_video]').val();
+    const description = elem.find('.description').text().trim();
+    const sku_url = elem.find('input[name=sku_url]').val();
+    const price = elem.find('.price').text().trim();
+    const proxy_url = elem.find('input[name=proxy_url]').val();
+    const cost = elem.find('.cost').text().trim();
+    const coupon = elem.find('.coupon').text().trim();
+    const express = elem.find('.express').text().trim();
+    const postage = elem.find('.postage').text().trim();
+    const postage_address = elem.find('.postage_address').text().trim();
+    const produce_address = elem.find('.produce_address').text().trim();
+    const postage_prize = elem.find('.postage_prize').text().trim();
+    const extra = elem.find('.extra').text().trim();
+
+    const modal_form = $('#div-edit form');
+    modal_form.find("input[name=edit_good_id]").val(good_id);
+    modal_form.find("input[name=edit_sku_id]").val(sku_id);
+    modal_form.find("input[name=edit_proxy_id]").val(proxy_id);
+    modal_form.find("input[name=edit_title]").val(title);
+    if (has_video === true ) {
+        modal_form.find('select[name=edit_has_video]').find("option[value='1']").attr("selected","selected")
+    } else {
+        modal_form.find('select[name=edit_has_video]').find("option[value='0']").attr("selected","selected")
+    }
+    modal_form.find("input[name=edit_description]").val(description);
+    modal_form.find("input[name=edit_sku_url]").val(sku_url);
+    modal_form.find("input[name=edit_proxy_url]").val(proxy_url);
+    modal_form.find("input[name=edit_price]").val(price);
+    modal_form.find("input[name=edit_cost]").val(cost);
+    modal_form.find("input[name=edit_coupon]").val(coupon);
+    modal_form.find("input[name=edit_express]").val(express);
+    modal_form.find("input[name=edit_postage]").val(postage);
+    modal_form.find("input[name=edit_postage_address]").val(postage_address);
+    modal_form.find("input[name=edit_produce_address]").val(produce_address);
+    modal_form.find("input[name=edit_postage_prize]").val(postage_prize);
+    modal_form.find("input[name=edit_extra]").val(extra);
+    $('#div-edit form').attr('action', '/good/edit')
+    $('#div-edit').modal('toggle');
 });
 
 
