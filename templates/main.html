@@ -612,7 +612,7 @@ $('.glyphicon-refresh').click(function(e){
     }
 });
 $('.btn-good-edit').click(function(){
-    const elem = $(this).parent().parent();
+    const elem = $(this).parent().parent().parent().parent().parent();
     const good_id = elem.find('input[name=id]').val();
     const sku_id = elem.find('input[name=sku_id]').val();
     const proxy_id = elem.find('input[name=proxy_id]').val();
@@ -663,7 +663,7 @@ $('.btn-good-edit').click(function(){
 });
 $('.btn-good-sku-add').click(function() {
     alert("sku-add");
-    const elem = $(this).parent().parent();
+    const elem = $(this).parent().parent().parent().parent().parent();
     const good_id = elem.find('input[name=id]').val();
     const title = elem.find('.title').text().trim();
     const has_video = elem.find('input[name=has_video]').val();
@@ -692,7 +692,7 @@ $('.btn-good-sku-add').click(function() {
 });
 $('.btn-good-proxy-add').click(function() {
     alert("proxy-add");
-    const elem = $(this).parent().parent();
+    const elem = $(this).parent().parent().parent().parent().parent();
     const good_id = elem.find('input[name=id]').val();
     const title = elem.find('.title').text().trim();
     const has_video = elem.find('input[name=has_video]').val();
