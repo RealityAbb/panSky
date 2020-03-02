@@ -202,7 +202,6 @@ def init_views(app):
         extra = request.form['edit_extra']
         day_limit = get_float(request.form["edit_day_limit"])
         activity_limit = get_float(request.form["edit_activity_limit"])
-        upload_file = request.files['file']
 
         sku_info = GoodSkuInfo.query.filter_by(good_id=good_id,sku_id=sku_id).first()
         if sku_info is None:
@@ -227,13 +226,14 @@ def init_views(app):
         proxy_info.good_extra = extra
         proxy_info.day_limit = day_limit
         proxy_info.activity_limit = activity_limit
-        if upload_file and allowed_file(upload_file.filename):
-            filename = good_id + "." + get_file_suffix(upload_file.filename)
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            if os.path.exists(image_path):
-                os.remove(image_path)
-            upload_file.save(image_path)
-            base_info.good_image_url = image_path
+        # upload_file = request.files['file']
+        # if upload_file and allowed_file(upload_file.filename):
+        #     filename = good_id + "." + get_file_suffix(upload_file.filename)
+        #     image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        #     if os.path.exists(image_path):
+        #         os.remove(image_path)
+        #     upload_file.save(image_path)
+        #     base_info.good_image_url = image_path
         db.session.add(base_info)
         db.session.add(sku_info)
         db.session.add(proxy_info)
