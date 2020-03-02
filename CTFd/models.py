@@ -1037,7 +1037,7 @@ class SkuProxyInfo(db.Model):
     qualification = db.Column(db.String(32)) ## 资质
     day_limit = db.Column(db.Float) ## 日常限价
     activity_limit = db.Column(db.Float) ## 活动限价
-    def __init__(self, _good_id, _sku_id, _good_proxy_url = "", _good_express = "", _good_postage = "", _postage_address = "", _produce_address = "", _good_cost = 0, _qualification="", _day_limit = 0, _activity_limit = 0, _good_extra = ""):
+    def __init__(self, _good_id, _sku_id, _good_proxy_url = "", _good_express = "", _good_postage = 0, _postage_address = "", _produce_address = "", _good_cost = 0, _qualification="", _day_limit = 0, _activity_limit = 0, _good_extra = ""):
         self.good_id = _good_id
         self.sku_id = _sku_id
         self.good_proxy_url = _good_proxy_url
