@@ -175,6 +175,70 @@ def init_views(app):
         return "0"
     @app.route('/goods/edit', methods=["POST"])
     def edit_goods():
-        return "0"
+        good_id = request.form['edit_good_id']
+        base_info = GoodBaseInfo.query.filter_by(good_id=good_id).first()
+        base_info = GoodBaseInfo()
+        if base_info is None:
+            return "0"
+        good_name = request.form['edit_good_name']
+        description = request.form['edit_description']
+        coupon = get_float(request.form['edit_coupon'])
+        prize = get_float(request.form['edit_prize'])
+        has_video = int(request.form["edit_has_video"])
+
+
+        sku_url = request.form['edit_sku_url']
+        sku_id = request.form['edit_sku_id']
+        price = get_float(request.form['edit_price'])
+
+        proxy_id = int(request.form["edit_proxy_id"])
+        proxy_url = request.form['edit_proxy_url']
+        cost = get_float(request.form['edit_cost'])
+        express = request.form['edit_express']
+        postage = get_float(request.form['edit_postage'])
+        address = request.form['edit_address']
+        produce_address = request.form['edit_produce']
+        qualification = request.form['edit_qualification']
+        extra = request.form['edit_extra']
+        day_limit = get_float(request.form["edit_day_limit"])
+        activity_limit = get_float(request.form["edit_activity_limit"])
+        upload_file = request.files['edit_file']
+
+        sku_info = GoodSkuInfo.query.filter_by(good_id=good_id,sku_id=sku_id).first()
+        if sku_info is None:
+            return "0"
+        proxy_info = SkuProxyInfo.query.filter_by(proxy_id=proxy_id).first()
+        if proxy_info is None:
+            return "0"
+        base_info.good_title = good_name
+        base_info.good_description = description
+        base_info.coupon = coupon
+        base_info.good_prize = prize
+        base_info.good_has_video = has_video
+        sku_info.sku_url = sku_url
+        sku_info.sku_price = prize
+        proxy_info.good_proxy_url = proxy_url
+        proxy_info.good_cost = cost
+        proxy_info.good_express = express
+        proxy_info.postage_address = address
+        proxy_info.good_postage = postage
+        proxy_info.produce_address = produce_address
+        proxy_info.qualification = qualification
+        proxy_info.good_extra = extra
+        proxy_info.day_limit = day_limit
+        proxy_info.activity_limit = activity_limit
+        if upload_file and allowed_file(upload_file.filename):
+            filename = good_id + "." + get_file_suffix(upload_file.filename)
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            if os.path.exists(image_path):
+                os.remove(image_path)
+            upload_file.save(image_path)
+            base_info.good_image_url = image_path
+        db.session.add(base_info)
+        db.session.add(sku_info)
+        db.session.add(proxy_info)
+        db.session.commit()
+        db.session.close()
+        return "1"
 
 
