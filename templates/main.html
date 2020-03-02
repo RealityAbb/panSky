@@ -728,30 +728,30 @@ $('.btn-good-proxy-add').click(function() {
 
 
 function base_info_read_only(modal_form, readonly) {
-    if (readonly) {
-        modal_form.find("input[name=edit_good_name]").setAttribute("readonly", true);
-        modal_form.find("input[name=edit_description]").setAttribute("readonly", true);
-        modal_form.find('select[name=edit_has_video]').setAttribute("readonly", true);
-        modal_form.find("input[name=edit_coupon]").setAttribute("readonly", true);
-        modal_form.find("input[name=edit_postage_prize]").setAttribute("readonly", true);
-        modal_form.find("input[name=edit_category]").setAttribute("readonly", true);
+    if (readonly == true) {
+        modal_form.find("input[name=edit_good_name]").readonly = true;
+        modal_form.find("input[name=edit_description]").readonly = true;
+        modal_form.find('select[name=edit_has_video]').readonly = true;
+        modal_form.find("input[name=edit_coupon]").readonly = true;
+        modal_form.find("input[name=edit_postage_prize]").readonly = true;
+        modal_form.find("input[name=edit_category]").readonly = true;
     } else {
-        modal_form.find("input[name=edit_good_name]").removeAttribute("readonly");
-        modal_form.find("input[name=edit_description]").removeAttribute("readonly");
-        modal_form.find('select[name=edit_has_video]').removeAttribute("readonly");
-        modal_form.find("input[name=edit_coupon]").removeAttribute("readonly");
-        modal_form.find("input[name=edit_postage_prize]").removeAttribute("readonly");
-        modal_form.find("input[name=edit_category]").removeAttribute("readonly");
+        modal_form.find("input[name=edit_good_name]").readonly = false;
+        modal_form.find("input[name=edit_description]").readonly = false;
+        modal_form.find('select[name=edit_has_video]').readonly = false;
+        modal_form.find("input[name=edit_coupon]").readonly = false;
+        modal_form.find("input[name=edit_postage_prize]").readonly = false;
+        modal_form.find("input[name=edit_category]").readonly = false;
     }
 }
 
 function sku_info_read_only(modal_form, readonly) {
-    if (readonly) {
-        modal_form.find("input[name=edit_sku_url]").setAttribute("readonly", true);
-        modal_form.find("input[name=edit_price]").setAttribute("readonly", true);
+    if (readonly == true) {
+        modal_form.find("input[name=edit_sku_url]").readonly = true;
+        modal_form.find("input[name=edit_price]").readonly = true;
     } else {
-        modal_form.find("input[name=edit_sku_url]").removeAttribute("readonly");
-        modal_form.find("input[name=edit_price]").removeAttribute("readonly");
+        modal_form.find("input[name=edit_sku_url]").readonly = false;
+        modal_form.find("input[name=edit_price]").readonly = false;
     }
 
 }
