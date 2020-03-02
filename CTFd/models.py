@@ -1087,7 +1087,7 @@ class SkuProxyInfo(db.Model):
         real_price = self.sku_info.sku_price - self.good_base_info.coupon
         ## 不用劵销售价格
         real_price_no = self.sku_info.sku_price
-        if real_price:
+        if real_price <= 0:
             return
         ##正常的利润
         self.profit.profit = self.sku_info.sku_price * (1 - MALL_REBATE) - real_cost
