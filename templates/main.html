@@ -433,7 +433,7 @@
                        </thead>
                         <tbody>
                             {% for good in goods %}
-                                <td style="overflow-x: auto;" onClick="select_change({{ good.good_id }})">
+                                <tr style="overflow-x: auto;" onClick="select_change({{ good.good_id }})">
                                 <td> <input type="checkbox" name="select_goods" class="checkboxes" value="{{good.good_id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}">
                                     <input type="hidden" name="id" value="{{ good.good_id }}">
                                     <input type="hidden" name="sku_id" value="{{ good.sku_id }}">
@@ -567,6 +567,7 @@ $('.glyphicon-pencil').click(function(){
     modal_form.find("input[name=edit_sku_id]").val(sku_id);
     modal_form.find("input[name=edit_proxy_id]").val(proxy_id);
     modal_form.find("input[name=edit_title]").val(title);
+    alert(has_video)
     if (has_video === true ) {
         modal_form.find('select[name=edit_has_video]').find("option[value='1']").attr("selected","selected")
     } else {
