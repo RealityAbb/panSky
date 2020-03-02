@@ -265,7 +265,7 @@
                                         <HR/>
                                         <div class="form-group input-container-left" >
                                             <label class="control-label input-label">sku链接</label>
-                                            <input type="url" class="form-control host-input input-content" name="edit_sku" id="edit_sku_url"  placeholder="sku详情页链接">
+                                            <input type="url" class="form-control host-input input-content" name="edit_sku_url" id="edit_sku_url"  placeholder="sku详情页链接">
                                         </div>
                                         <div class="form-group input-container-right" >
                                             <label class="control-label input-label">售价</label>
@@ -566,9 +566,8 @@ $('.glyphicon-pencil').click(function(){
     modal_form.find("input[name=edit_good_id]").val(good_id);
     modal_form.find("input[name=edit_sku_id]").val(sku_id);
     modal_form.find("input[name=edit_proxy_id]").val(proxy_id);
-    modal_form.find("input[name=edit_title]").val(title);
-    alert(has_video)
-    if (has_video === true ) {
+    modal_form.find("input[name=edit_good_name]").val(title);
+    if (has_video == "True" ) {
         modal_form.find('select[name=edit_has_video]').find("option[value='1']").attr("selected","selected")
     } else {
         modal_form.find('select[name=edit_has_video]').find("option[value='0']").attr("selected","selected")
@@ -581,8 +580,8 @@ $('.glyphicon-pencil').click(function(){
     modal_form.find("input[name=edit_coupon]").val(coupon);
     modal_form.find("input[name=edit_express]").val(express);
     modal_form.find("input[name=edit_postage]").val(postage);
-    modal_form.find("input[name=edit_postage_address]").val(postage_address);
-    modal_form.find("input[name=edit_produce_address]").val(produce_address);
+    modal_form.find("input[name=edit_address]").val(postage_address);
+    modal_form.find("input[name=edit_produce]").val(produce_address);
     modal_form.find("input[name=edit_postage_prize]").val(postage_prize);
     modal_form.find("input[name=edit_extra]").val(extra);
     $('#div-edit form').attr('action', '/good/edit')
