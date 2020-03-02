@@ -213,9 +213,10 @@ def init_views(app):
         base_info.good_description = description
         base_info.coupon = coupon
         base_info.good_prize = prize
+
         base_info.good_has_video = has_video
         sku_info.sku_url = sku_url
-        sku_info.sku_price = prize
+        sku_info.sku_price = price
         proxy_info.good_proxy_url = proxy_url
         proxy_info.good_cost = cost
         proxy_info.good_express = express

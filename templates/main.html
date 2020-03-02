@@ -443,7 +443,11 @@
                                     <input type="hidden" name="has_video" value="{{ good.good_base_info.good_has_video }}"></td>
 
                                 <td class="goodId">{{ good.good_id}}</td>
-                                <td><img src="{{good.good_base_info.good_image_url}}" width="100px" height="100px"></td>
+                                {% if good.good_base_info.good_image_url == "" %}
+                                    <td></td>
+                                {%  else %}
+                                   <td><img src="{{good.good_base_info.good_image_url}}" width="100px" height="100px"></td>
+                                {%  endif %}
                                 <td class="title">{{good.good_base_info.good_title}}</td>
                                 <td class="description">{{ good.good_base_info.good_description}}</td>
                                 {% if good.good_base_info.good_has_video == True %}
