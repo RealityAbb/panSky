@@ -959,8 +959,9 @@ class GoodBaseInfo(db.Model):
     coupon = db.Column(db.Float) ## 优惠券
     create_time = db.Column(db.Float)
     good_prize = db.Column(db.Float) ## 赠品
+    category = db.Column(db.String) ## 类目
 
-    def __init__(self, _good_id = "", _good_title = "", _good_description = "", _good_image_url =  "", _good_has_video = False, _coupon = 0, _good_prize = 0):
+    def __init__(self, _good_id = "", _category = "", _good_title = "", _good_description = "", _good_image_url =  "", _good_has_video = False, _coupon = 0, _good_prize = 0):
         self.good_id = _good_id
         self.good_title = _good_title
         self.good_description = _good_description
@@ -969,6 +970,7 @@ class GoodBaseInfo(db.Model):
         self.create_time = time.time()
         self.coupon = _coupon
         self.good_prize = _good_prize
+        self.category = _category
 
 class GoodSkuInfo(db.Model):
     id = db.Column(db.Integer, primary_key = True)

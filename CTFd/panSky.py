@@ -39,7 +39,7 @@ def main_result(request, alert_info = None):
     return render_template('main.html', viewfunc=viewfunc, pagination=pagination, goods=goods, lm_total=total_count, AlertInfo = alert_info)
 def add_test_data():
     good_id = "612947314674"
-    good = GoodBaseInfo(good_id, "吸尘器", "简介", "/static/img/green.png")
+    good = GoodBaseInfo(good_id, "家务/地板清洁", "吸尘器", "简介", "/static/img/green.png")
     db.session.add(good)
     for i in range(5):
         _sku_url = "https://detail.tmall.com/item.htm?id=612947314674"
@@ -132,6 +132,7 @@ def init_views(app):
             return main_result(request, "该商品已存在！")
         good_name = request.form['good_name']
         description = request.form['description']
+        category = request.form['category']
         sku_url = request.form['sku']
         sku_id = create_id(good_id, sku_url)
         price = get_float(request.form['price'])
@@ -154,7 +155,7 @@ def init_views(app):
             filename = good_id + "." + get_file_suffix(upload_file.filename)
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             upload_file.save(image_path)
-        base_info = GoodBaseInfo(good_id, good_name, description, image_path, has_video, coupon, prize)
+        base_info = GoodBaseInfo(good_id, good_name, category, description, image_path, has_video, coupon, prize)
         db.session.add(base_info)
         sku_info = GoodSkuInfo(good_id, sku_id, sku_url, price)
         db.session.add(sku_info)
@@ -177,11 +178,11 @@ def init_views(app):
     def edit_goods():
         good_id = request.form['edit_good_id']
         base_info = GoodBaseInfo.query.filter_by(good_id=good_id).first()
-        base_info = GoodBaseInfo()
         if base_info is None:
             return "0"
         good_name = request.form['edit_good_name']
         description = request.form['edit_description']
+        category = request.form['edit_category']
         coupon = get_float(request.form['edit_coupon'])
         prize = get_float(request.form['edit_prize'])
         has_video = int(request.form["edit_has_video"])
@@ -213,10 +214,12 @@ def init_views(app):
         base_info.good_description = description
         base_info.coupon = coupon
         base_info.good_prize = prize
-
+        base_info.category = category
         base_info.good_has_video = has_video
+
         sku_info.sku_url = sku_url
         sku_info.sku_price = price
+
         proxy_info.good_proxy_url = proxy_url
         proxy_info.good_cost = cost
         proxy_info.good_express = express
@@ -236,6 +239,66 @@ def init_views(app):
         #     upload_file.save(image_path)
         #     base_info.good_image_url = image_path
         db.session.add(base_info)
+        db.session.add(sku_info)
+        db.session.add(proxy_info)
+        db.session.commit()
+        db.session.close()
+        return "1"
+    @app.route('/goods/add/sku', methods=["POST"])
+    def add_sku():
+        good_id = request.form['edit_good_id']
+        sku_id = request.form['edit_sku_id']
+        base_info = GoodBaseInfo.query.filter_by(good_id=good_id).first()
+        if base_info is None:
+            return "0"
+
+        sku_info = GoodSkuInfo.query.filter_by(good_id=good_id,sku_id=sku_id).first()
+        if sku_info is None:
+            return "0"
+
+        proxy_url = request.form['edit_proxy_url']
+        cost = get_float(request.form['edit_cost'])
+        express = request.form['edit_express']
+        postage = get_float(request.form['edit_postage'])
+        address = request.form['edit_address']
+        produce_address = request.form['edit_produce']
+        qualification = request.form['edit_qualification']
+        extra = request.form['edit_extra']
+        day_limit = get_float(request.form["edit_day_limit"])
+        activity_limit = get_float(request.form["edit_activity_limit"])
+
+        proxy_info = SkuProxyInfo(good_id, sku_id, proxy_url, express, postage, address, produce_address, cost, qualification, day_limit, activity_limit, extra)
+        db.session.add(sku_info)
+        db.session.add(proxy_info)
+        db.session.commit()
+        db.session.close()
+        return "1"
+
+    @app.route('/goods/add/proxy', methods=["POST"])
+    def add_proxy():
+        good_id = request.form['edit_good_id']
+        base_info = GoodBaseInfo.query.filter_by(good_id=good_id).first()
+        if base_info is None:
+            return "0"
+
+        sku_url = request.form['edit_sku_url']
+        sku_id = create_id(good_id, sku_url)
+        price = get_float(request.form['edit_price'])
+
+        proxy_url = request.form['edit_proxy_url']
+        cost = get_float(request.form['edit_cost'])
+        express = request.form['edit_express']
+        postage = get_float(request.form['edit_postage'])
+        address = request.form['edit_address']
+        produce_address = request.form['edit_produce']
+        qualification = request.form['edit_qualification']
+        extra = request.form['edit_extra']
+        day_limit = get_float(request.form["edit_day_limit"])
+        activity_limit = get_float(request.form["edit_activity_limit"])
+
+        sku_info = GoodSkuInfo(good_id, sku_id, sku_url, price)
+        proxy_info = SkuProxyInfo(good_id, sku_id, proxy_url, express, postage, address, produce_address, cost,
+                                  qualification, day_limit, activity_limit, extra)
         db.session.add(sku_info)
         db.session.add(proxy_info)
         db.session.commit()

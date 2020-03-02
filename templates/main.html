@@ -146,6 +146,10 @@
                         </select>
                     </div>
                     <div class="form-group input-container-right">
+                          <label class="control-label input-label">类目</label>
+                          <input type="text" name="category" class="form-control host-input input-content" value="家务/地板清洁" placeholder="家务/地板清洁"></input>
+                    </div>
+                    <div class="form-group input-container-left">
                         <label class="control-label input-label">预览图</label>
                         <input class="input-content" type="file" name="file">
                     </div>
@@ -292,8 +296,8 @@
                                             </select>
                                         </div>
                                         <div class="form-group input-container-right">
-                                            <label class="control-label input-label">预览图</label>
-                                            <input class="input-content" type="file" name="file">
+                                            <label class="control-label input-label">类目</label>
+                                            <input type="text" name="edit_category" class="form-control host-input input-content" placeholder="类目"></input>
                                         </div>
                                         <div class="form-group input-container-left">
                                             <label class="control-label input-label">商品简介</label>
@@ -438,9 +442,10 @@
                         <tr>
                             <th><input onclick="selectAll()" type="checkbox" name="controlAll" style="controlAll" id="controlAll"/></th>
                             <!-- <th>选择</th> -->
-                            <th>序号</th>
+                            <th>商品ID</th>
                             <th>预览图</th>
                             <th>名称</th>
+                            <th>类目</th>
                             <th>商品简介</th>
                             <th>包含视频</th>
                             <th>店铺链接</th>
@@ -491,6 +496,7 @@
                                    <td><img src="{{good.good_base_info.good_image_url}}" width="100px" height="100px"></td>
                                 {%  endif %}
                                 <td class="title">{{good.good_base_info.good_title}}</td>
+                                <td class="category">{{ good.good_base_info.category }}</td>
                                 <td class="description">{{ good.good_base_info.good_description}}</td>
                                 {% if good.good_base_info.good_has_video == True %}
                                     <td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
@@ -512,24 +518,24 @@
                                         <div style="width: 200px">
                                             <div style="display=flex; float: left">
                                                 <button type="button" class="btn btn-edit-default btn-good-edit">编辑</button>
-                                                <button type="button" class="btn btn-edit-default">新增SKU</button>
+                                                <button type="button" class="btn btn-edit-default btn-good-sku-add">新增SKU</button>
                                             </div>
                                             <div style="display=flex; float: right">
-                                                <button type="button" class="btn btn-edit-default ">新增代发</button>
+                                                <button type="button" class="btn btn-edit-default btn-good-proxy-add">新增代发</button>
                                             </div>
                                         </div>
                                         <div style="width: 200px">
                                              <div style="display=flex; float:left">
-                                                <button type="button" class="btn btn-edit-default">上传</button>
-                                                <button type="button" class="btn btn-edit-danger">删除SKU</button>
+                                                <button type="button" class="btn btn-edit-default btn-good-upload">上传</button>
+                                                <button type="button" class="btn btn-edit-danger btn-good-sku-delete">删除SKU</button>
                                             </div>
                                             <div style="display=flex; float: right">
-                                                <button type="button" class="btn btn-edit-danger">删除代发</button>
+                                                <button type="button" class="btn btn-edit-danger btn-good-proxy-delete">删除代发</button>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="postage_prize">{{good.good_base_info.good_prize}}</td>
+                                <td class="good_prize">{{good.good_base_info.good_prize}}</td>
                                 <td class="profit">{{ good.profit.profit }}</td>
                                 <td class="profit_rate">{{ good.profit.profit_rate }}</td>
                                 <td class="profit">{{ good.profit.profit_1 }}</td>
@@ -612,6 +618,7 @@ $('.btn-good-edit').click(function(){
     const sku_id = elem.find('input[name=sku_id]').val();
     const proxy_id = elem.find('input[name=proxy_id]').val();
     const title = elem.find('.title').text().trim();
+    const category = elem.find('.category').text().trim();
     const has_video = elem.find('input[name=has_video]').val();
     const description = elem.find('.description').text().trim();
     const sku_url = elem.find('input[name=sku_url]').val();
@@ -623,7 +630,7 @@ $('.btn-good-edit').click(function(){
     const postage = elem.find('.postage').text().trim();
     const postage_address = elem.find('.postage_address').text().trim();
     const produce_address = elem.find('.produce_address').text().trim();
-    const postage_prize = elem.find('.postage_prize').text().trim();
+    const good_prize = elem.find('.good_prize').text().trim();
     const extra = elem.find('.extra').text().trim();
 
     const modal_form = $('#div-edit form');
@@ -631,12 +638,14 @@ $('.btn-good-edit').click(function(){
     modal_form.find("input[name=edit_sku_id]").val(sku_id);
     modal_form.find("input[name=edit_proxy_id]").val(proxy_id);
     modal_form.find("input[name=edit_good_name]").val(title);
+
     if (has_video == "True" ) {
         modal_form.find('select[name=edit_has_video]').find("option[value='1']").attr("selected","selected")
     } else {
         modal_form.find('select[name=edit_has_video]').find("option[value='0']").attr("selected","selected")
     }
     modal_form.find("input[name=edit_description]").val(description);
+    modal_form.find("input[name=edit_category]").val(category);
     modal_form.find("input[name=edit_sku_url]").val(sku_url);
     modal_form.find("input[name=edit_proxy_url]").val(proxy_url);
     modal_form.find("input[name=edit_price]").val(price);
@@ -646,11 +655,92 @@ $('.btn-good-edit').click(function(){
     modal_form.find("input[name=edit_postage]").val(postage);
     modal_form.find("input[name=edit_address]").val(postage_address);
     modal_form.find("input[name=edit_produce]").val(produce_address);
-    modal_form.find("input[name=edit_postage_prize]").val(postage_prize);
+    modal_form.find("input[name=edit_prize]").val(good_prize);
     modal_form.find("input[name=edit_extra]").val(extra);
+    show_base_info(modal_form, "true");
+    show_sku_info(modal_form, "true")
     $('#div-edit form').attr('action', '/goods/edit')
     $('#div-edit').modal('toggle');
 });
+$('.btn-good-sku-add').click(function() {
+    const elem = $(this).parent().parent();
+    const good_id = elem.find('input[name=id]').val();
+    const title = elem.find('.title').text().trim();
+    const has_video = elem.find('input[name=has_video]').val();
+    const description = elem.find('.description').text().trim();
+    const good_prize = elem.find('.good_prize').text().trim();
+    const coupon = elem.find('.coupon').text().trim();
+    const category = elem.find('.category').text().trim();
+
+
+    const modal_form = $('#div-edit form');
+    modal_form.find("input[name=edit_good_id]").val(good_id);
+    modal_form.find("input[name=edit_good_name]").val(title);
+    if (has_video == "True" ) {
+        modal_form.find('select[name=edit_has_video]').find("option[value='1']").attr("selected","selected")
+    } else {
+        modal_form.find('select[name=edit_has_video]').find("option[value='0']").attr("selected","selected")
+    }
+    modal_form.find("input[name=edit_description]").val(description);
+    modal_form.find("input[name=edit_coupon]").val(coupon);
+    modal_form.find("input[name=edit_prize]").val(good_prize);
+    modal_form.find("input[name=edit_category]").val(category);
+    show_base_info(modal_form, "false");
+    show_sku_info(modal_form, "true")
+    $('#div-edit form').attr('action', '/goods/add/sku')
+    $('#div-edit').modal('toggle');
+});
+$('.btn-good-proxy-add').click(function() {
+    const elem = $(this).parent().parent();
+    const good_id = elem.find('input[name=id]').val();
+    const title = elem.find('.title').text().trim();
+    const has_video = elem.find('input[name=has_video]').val();
+    const description = elem.find('.description').text().trim();
+    const good_prize = elem.find('.good_prize').text().trim();
+    const coupon = elem.find('.coupon').text().trim();
+    const category = elem.find('.category').text().trim();
+
+
+    const sku_url = elem.find('input[name=sku_url]').val();
+    const price = elem.find('.price').text().trim();
+    const sku_id = elem.find('input[name=sku_id]').val();
+
+
+    const modal_form = $('#div-edit form');
+    modal_form.find("input[name=edit_good_id]").val(good_id);
+    modal_form.find("input[name=edit_good_name]").val(title);
+    if (has_video == "True" ) {
+        modal_form.find('select[name=edit_has_video]').find("option[value='1']").attr("selected","selected")
+    } else {
+        modal_form.find('select[name=edit_has_video]').find("option[value='0']").attr("selected","selected")
+    }
+    modal_form.find("input[name=edit_description]").val(description);
+    modal_form.find("input[name=edit_category]").val(category);
+    modal_form.find("input[name=edit_coupon]").val(coupon);
+    modal_form.find("input[name=edit_prize]").val(good_prize);
+    modal_form.find("input[name=edit_sku_url]").val(sku_url);
+    modal_form.find("input[name=edit_sku_id]").val(sku_id)
+
+    show_base_info(modal_form, "false");
+    show_sku_info(modal_form, "true")
+    $('#div-edit form').attr('action', '/goods/add/proxy')
+    $('#div-edit').modal('toggle');
+});
+
+
+
+function show_base_info(modal_form, show) {
+    modal_form.find("input[name=edit_good_name]").attr("readOnly", show);
+    modal_form.find("input[name=edit_description]").attr("readOnly", show);
+    modal_form.find('select[name=edit_has_video]').attr("readOnly", show);
+    modal_form.find("input[name=edit_coupon]").attr("readOnly", show);
+    modal_form.find("input[name=edit_postage_prize]").attr("readOnly", show);
+}
+
+function show_sku_info(modal_form, show) {
+    modal_form.find("input[name=edit_sku_url]").attr("readOnly", show);
+    modal_form.find("input[name=edit_price]").attr("readOnly", show);
+}
 
 
 //----------judgeoperationresult
