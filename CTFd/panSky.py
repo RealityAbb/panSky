@@ -28,7 +28,7 @@ def get_float(src):
     return result
 def main_result(request, alert_info = None):
     page = request.args.get('page', 1, type=int)
-    pagination = SkuProxyInfo.query.order_by(SkuProxyInfo.good_id).paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
+    pagination = SkuProxyInfo.query.order_by(SkuProxyInfo.good_id, SkuProxyInfo.sku_id).paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
     goods = pagination.items
     total_count = db.session.query(db.func.count(SkuProxyInfo.proxy_id)).first()[0]
     for good in goods:
@@ -67,7 +67,7 @@ def init_views(app):
     @app.route('/main', methods=['GET', 'POST'])
     def main_page():
         page = request.args.get('page',1, type=int)
-        pagination= SkuProxyInfo.query.order_by(SkuProxyInfo.good_id).paginate(page,per_page=PER_PAGE_COUNT,error_out=False)
+        pagination= SkuProxyInfo.query.order_by(SkuProxyInfo.good_id, SkuProxyInfo.sku_id).paginate(page,per_page=PER_PAGE_COUNT,error_out=False)
         goods = pagination.items
         total_count = db.session.query(db.func.count(SkuProxyInfo.proxy_id)).first()[0]
         for good in goods:
@@ -92,7 +92,7 @@ def init_views(app):
             for good in goods:
                 set_sku_base_info(good)
         elif good_id != "":
-            query = SkuProxyInfo.query.filter_by(good_id=good_id)
+            query = SkuProxyInfo.query.filter_by(good_id=good_id).order_by(SkuProxyInfo.sku_id)
             pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
             goods = pagination.items
             total_count = len(query.all())
@@ -110,7 +110,7 @@ def init_views(app):
             ids = []
             for good in goods:
                 ids.append(good.good_id)
-            query = SkuProxyInfo.query.filter(SkuProxyInfo.good_id.in_(ids))
+            query = SkuProxyInfo.query.filter(SkuProxyInfo.good_id.in_(ids)).order_by(SkuProxyInfo.good_id, SkuProxyInfo.sku_id)
             pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
             goods = pagination.items
             for good in goods:
