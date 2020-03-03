@@ -52,9 +52,10 @@
 </head>
 <body style="width: 100%; height:100%">
 <div class="container wrap" style="width: 100%; height: 100%">
-    <div><img src="/static/img/left.jpeg" width="400px" height="600px"></div>
-    <div><img src="/static/img/center.jpeg" width="400px" height="400px" onclick="click()"></div>
-    <div><img src="/static/img/right.jpeg" width="400px" height="600px"></div>
+    <img src="/static/img/left.jpeg" width="400px" height="600px" style="margin-left: 100px">
+    <a href="/forever" style="margin-left:100px">
+    <img src="/static/img/center.jpeg" width="400px" height="400px" ></a>
+    <img src="/static/img/right.jpeg" width="400px" height="600px" style="margin-left: 100px">
 </div>
 
 {%block content %}
@@ -64,6 +65,7 @@
 {% block scripts %}
 <script type="text/javascript">
 function click() {
+    alert("click")
     window.location="/forever"
 }
 </script>
