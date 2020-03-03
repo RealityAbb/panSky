@@ -121,9 +121,12 @@ def init_views(app):
         viewfunc = ".search"
         return render_template('main.html',viewfunc=viewfunc,pagination=pagination,goods=goods, lm_total=total_count, search_good_id=good_id, search_good_title=good_title, search_proxy_id=good_proxy_id)
 
-    @app.route('/test', methods=['GET', 'POST'])
+    @app.route('/love', methods=['GET', 'POST'])
     def main_test():
         return render_template('maintest.html')
+    @app.route('/forever', methods=['GET', 'POST'])
+    def main_forever():
+        return render_template('forever.html')
     @app.route('/good/new', methods=['POST'])
     def add_good():
         good_id = request.form['good_id']
