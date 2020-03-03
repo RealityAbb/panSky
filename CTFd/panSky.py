@@ -247,8 +247,8 @@ def init_views(app):
         db.session.commit()
         db.session.close()
         return "1"
-    @app.route('/goods/add/sku', methods=["POST"])
-    def add_sku():
+    @app.route('/goods/add/proxy', methods=["POST"])
+    def add_proxy():
         good_id = request.form['edit_good_id']
         sku_id = request.form['edit_sku_id']
         base_info = GoodBaseInfo.query.filter_by(good_id=good_id).first()
@@ -277,8 +277,8 @@ def init_views(app):
         db.session.close()
         return "1"
 
-    @app.route('/goods/add/proxy', methods=["POST"])
-    def add_proxy():
+    @app.route('/goods/add/sku', methods=["POST"])
+    def add_sku():
         good_id = request.form['edit_good_id']
         base_info = GoodBaseInfo.query.filter_by(good_id=good_id).first()
         if base_info is None:
