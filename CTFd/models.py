@@ -11,28 +11,32 @@ import hashlib
 import time
 import urlparse
 
+
 def sha512(string):
     return hashlib.sha512(string).hexdigest()
+
 
 def ip2long(ip):
     return unpack('!I', inet_aton(ip))[0]
 
+
 def long2ip(ip_int):
     return inet_ntoa(pack('!I', ip_int))
 
+
 db = SQLAlchemy(use_native_unicode="utf8")
+
 
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32),unique=True)
+    name = db.Column(db.String(32), unique=True)
     admin = db.Column(db.Integer)
     password = db.Column(db.String(32))
     ukeyid = db.Column(db.String(32))
     ukeycert = db.Column(db.String(32))
     style = db.Column(db.Integer)
     pk = db.Column(db.Unicode(64))
-    losesign = db.Column(db.Boolean,default=True)
-
+    losesign = db.Column(db.Boolean, default=True)
 
     def __init__(self, name, admin, password, ukeyid, ukeycert, style, pk, losesign):
         self.name = name
@@ -43,40 +47,44 @@ class Users(db.Model):
         self.style = style
         self.pk = pk
         self.losesign = losesign
-        
+
     def __repr__(self):
         return '<user %r>' % self.name
 
-class SystemRoutes(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	gateway = db.Column(db.String(128))
-	style = db.Column(db.String(128))
 
-	def __init__(self, gateway, style):
-		self.gateway = gateway
-		self.style = style
+class SystemRoutes(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    gateway = db.Column(db.String(128))
+    style = db.Column(db.String(128))
+
+    def __init__(self, gateway, style):
+        self.gateway = gateway
+        self.style = style
+
 
 class SysIPAddress(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	ip = db.Column(db.String(128),unique=True)
+    id = db.Column(db.Integer, primary_key=True)
+    ip = db.Column(db.String(128), unique=True)
 
-	def __init__(self, ip):
-		self.ip = ip
+    def __init__(self, ip):
+        self.ip = ip
+
 
 class Certificates(db.Model):
     keyid = db.Column(db.Integer, primary_key=True)
     id = db.Column(db.Integer)
     certname = db.Column(db.String(64))
-    
+
     def __init__(self, id, certname):
         self.id = id
         self.certname = certname
+
 
 class UploadCertificates(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     certname = db.Column(db.String(64))
 
-    def __init__(self,certname):
+    def __init__(self, certname):
         self.id = id
         self.certname = certname
 
@@ -88,7 +96,7 @@ class CertDetail(db.Model):
     algorithm = db.Column(db.String(128))
     issuer = db.Column(db.String(128))
     starttime = db.Column(db.Float)
-    endtime= db.Column(db.Float)
+    endtime = db.Column(db.Float)
     theme = db.Column(db.String(128))
 
     def __init__(self, version, uuid, algorithm, issuer, starttime, endtime, theme):
@@ -100,6 +108,7 @@ class CertDetail(db.Model):
         self.endtime = endtime
         self.theme = theme
 
+
 class Tree(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     province = db.Column(db.String(128))
@@ -107,7 +116,7 @@ class Tree(db.Model):
     part = db.Column(db.String(128))
     fourth = db.Column(db.String(128))
 
-    def __init__(self,province,city,part,fourth):
+    def __init__(self, province, city, part, fourth):
         self.province = province
         self.city = city
         self.part = part
@@ -116,7 +125,7 @@ class Tree(db.Model):
 
 class Cipermachine(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    ip = db.Column(db.String(128),unique=True)
+    ip = db.Column(db.String(128), unique=True)
     machinenumber = db.Column(db.String(128))
     province = db.Column(db.String(128))
     city = db.Column(db.String(128))
@@ -127,7 +136,9 @@ class Cipermachine(db.Model):
     spingtime = db.Column(db.Integer)
     discription = db.Column(db.String(128))
     encrypttype = db.Column(db.SmallInteger)
-    def __init__(self, ip, machinenumber, province, city, part, fourth, manufacture, isonline, spingtime, discription, encrypttype = 0):
+
+    def __init__(self, ip, machinenumber, province, city, part, fourth, manufacture, isonline, spingtime, discription,
+                 encrypttype=0):
         self.ip = ip
         self.machinenumber = machinenumber
         self.province = province
@@ -140,80 +151,87 @@ class Cipermachine(db.Model):
         self.discription = discription
         self.encrypttype = encrypttype
 
+
 class Terminallogs(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	rank = db.Column(db.String(128))
-	time = db.Column(db.Float)
-	name = db.Column(db.String(128))
-	style = db.Column(db.String(128))
-	content = db.Column(db.String(128))
+    id = db.Column(db.Integer, primary_key=True)
+    rank = db.Column(db.String(128))
+    time = db.Column(db.Float)
+    name = db.Column(db.String(128))
+    style = db.Column(db.String(128))
+    content = db.Column(db.String(128))
 
-	def __init__(self, rank, time, name, style, content):
-		self.rank=rank
-		self.time=time
-		self.name=name
-		self.style=style
-		self.content=content
+    def __init__(self, rank, time, name, style, content):
+        self.rank = rank
+        self.time = time
+        self.name = name
+        self.style = style
+        self.content = content
 
-	def __repr__(self):
-		return self.id
+    def __repr__(self):
+        return self.id
+
 
 class LeadMachinelogs(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	rank = db.Column(db.String(128))
-	time = db.Column(db.Float)
-	name = db.Column(db.String(128))
-	style = db.Column(db.String(128))
-	content = db.Column(db.String(128))
+    id = db.Column(db.Integer, primary_key=True)
+    rank = db.Column(db.String(128))
+    time = db.Column(db.Float)
+    name = db.Column(db.String(128))
+    style = db.Column(db.String(128))
+    content = db.Column(db.String(128))
 
-	def __init__(self, rank, time, name, style, content):
-		self.rank=rank
-		self.time=time
-		self.name=name
-		self.style=style
-		self.content=content
+    def __init__(self, rank, time, name, style, content):
+        self.rank = rank
+        self.time = time
+        self.name = name
+        self.style = style
+        self.content = content
 
-	def __repr__(self):
-		return self.id
+    def __repr__(self):
+        return self.id
+
 
 class EquipmentsStatus(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	status = db.Column(db.Integer)
-	workmodel = db.Column(db.Integer)
-	sign = db.Column(db.Integer)
-	restain = db.Column(db.Integer)
-	encrypt = db.Column(db.Integer)
-	decrypt = db.Column(db.Integer)
-	errorencrypt = db.Column(db.Integer)
-	errordecrypt = db.Column(db.Integer)
-	send = db.Column(db.Integer)
-	receive = db.Column(db.Integer)
-	errorreceive = db.Column(db.Integer)
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.Integer)
+    workmodel = db.Column(db.Integer)
+    sign = db.Column(db.Integer)
+    restain = db.Column(db.Integer)
+    encrypt = db.Column(db.Integer)
+    decrypt = db.Column(db.Integer)
+    errorencrypt = db.Column(db.Integer)
+    errordecrypt = db.Column(db.Integer)
+    send = db.Column(db.Integer)
+    receive = db.Column(db.Integer)
+    errorreceive = db.Column(db.Integer)
 
-	def __init__(self, id,status, workmodel, sign, restain, encrypt, decrypt, errorencrypt, errordecrypt, send, receive, errorreceive):
-		self.id = id
-		self.status = status
-		self.workmodel = workmodel
-		self.sign = sign
-		self.restain = restain
-		self.encrypt = encrypt
-		self.decrypt = decrypt
-		self.errorencrypt = errorencrypt
-		self.errordecrypt = errordecrypt
-		self.send = send
-		self.receive = receive
-		self.errorreceive = errorreceive
+    def __init__(self, id, status, workmodel, sign, restain, encrypt, decrypt, errorencrypt, errordecrypt, send,
+                 receive, errorreceive):
+        self.id = id
+        self.status = status
+        self.workmodel = workmodel
+        self.sign = sign
+        self.restain = restain
+        self.encrypt = encrypt
+        self.decrypt = decrypt
+        self.errorencrypt = errorencrypt
+        self.errordecrypt = errordecrypt
+        self.send = send
+        self.receive = receive
+        self.errorreceive = errorreceive
+
 
 class ChannelNumber(db.Model):
-	keyid = db.Column(db.Integer,primary_key=True)
-	id = db.Column(db.Integer)
-	channelnumber = db.Column(db.Integer)
-	def __init__(self, id, number):
-		self.id =  id
-		self.channelnumber = number
+    keyid = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer)
+    channelnumber = db.Column(db.Integer)
+
+    def __init__(self, id, number):
+        self.id = id
+        self.channelnumber = number
+
 
 class ChannelStatus(db.Model):
-    keyid = db.Column(db.Integer,primary_key=True)
+    keyid = db.Column(db.Integer, primary_key=True)
     id = db.Column(db.Integer)
     channelnumber = db.Column(db.Integer)
     uip = db.Column(db.String(128))
@@ -230,7 +248,9 @@ class ChannelStatus(db.Model):
     receive = db.Column(db.Integer)
     errorreceive = db.Column(db.Integer)
 
-    def __init__(self, id, channelnumber, uip=None, mode=None, mainsub=None, strategy=None, negostatus=None, successtime=None, encrypt=None, decrypt=None, errorencrypt=None, errordecrypt=None, send=None, receive=None, errorreceive=None):
+    def __init__(self, id, channelnumber, uip=None, mode=None, mainsub=None, strategy=None, negostatus=None,
+                 successtime=None, encrypt=None, decrypt=None, errorencrypt=None, errordecrypt=None, send=None,
+                 receive=None, errorreceive=None):
         self.id = id
         self.channelnumber = channelnumber
         self.uip = uip
@@ -245,7 +265,8 @@ class ChannelStatus(db.Model):
         self.errordecrypt = errordecrypt
         self.send = send
         self.receive = receive
-        self.errorreceive= errorreceive
+        self.errorreceive = errorreceive
+
 
 # class Config(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
@@ -260,14 +281,15 @@ class DStandarCertificate(db.Model):
     keyid = db.Column(db.Integer, primary_key=True)
     machineid = db.Column(db.Integer)
     certname = db.Column(db.String(64))
-    
+
     def __init__(self, machineid, certname):
         self.machineid = machineid
         self.certname = certname
 
+
 class DSecurityStrategy(db.Model):
     __tablename__ = 'channel_security_strategy'
-    keyid = db.Column(db.Integer,primary_key=True)
+    keyid = db.Column(db.Integer, primary_key=True)
 
     id = db.Column(db.Integer)
     channelnumber = db.Column(db.Integer)
@@ -287,8 +309,9 @@ class DSecurityStrategy(db.Model):
     SrcPortMax = db.Column(db.Integer)
     DstPortMin = db.Column(db.Integer)
     DstPortMax = db.Column(db.Integer)
-    def __init__(self, id, channelnumber,strategynumber, SrcIP, SrcIPMask, DstIP,DstIPMask, Direction, Protocol, Mode, Reserved, SrcPortMin, SrcPortMax, DstPortMin,DstPortMax):
-        
+
+    def __init__(self, id, channelnumber, strategynumber, SrcIP, SrcIPMask, DstIP, DstIPMask, Direction, Protocol, Mode,
+                 Reserved, SrcPortMin, SrcPortMax, DstPortMin, DstPortMax):
         self.id = id
         self.channelnumber = channelnumber
         self.strategynumber = strategynumber
@@ -308,15 +331,18 @@ class DSecurityStrategy(db.Model):
         self.DstPortMin = DstPortMin
         self.DstPortMax = DstPortMax
 
+
 class DMachineLogLength(db.Model):
     __tablename__ = "machine_loglengths"
     keyid = db.Column(db.Integer, primary_key=True)
     id = db.Column(db.Integer)
     length = db.Column(db.Integer)
+
     def __init__(self, id, length):
         self.id = id
         self.length = length
-        
+
+
 class DMachineLog(db.Model):
     __tablename__ = "machine_logs"
     keyid = db.Column(db.Integer, primary_key=True)
@@ -330,6 +356,7 @@ class DMachineLog(db.Model):
         self.time = time
         self.style = style
         self.content = content
+
 
 class DPrivateEquipmentCommonInfo(db.Model):
     __tablename__ = "prinvate_equipment_common_info"
@@ -349,11 +376,11 @@ class DPrivateEquipmentCommonInfo(db.Model):
     compress = db.Column(db.SmallInteger)
     isstandalone = db.Column(db.Boolean)
     ismaster = db.Column(db.Boolean)
-    stp_prio = db.Column(db.Integer) ## using to shuang ji hu bei
+    stp_prio = db.Column(db.Integer)  ## using to shuang ji hu bei
     syn_timeout1 = db.Column(db.Integer)
     syn_timeout2 = db.Column(db.Integer)
     no_alarm = db.Column(db.Boolean)
-    change_time = db.Column(db.SmallInteger) # using to local access
+    change_time = db.Column(db.SmallInteger)  # using to local access
     nic_num = db.Column(db.SmallInteger)
     max_log_size = db.Column(db.Integer)
     master_master_channel = db.Column(db.Boolean)
@@ -368,7 +395,7 @@ class DPrivateEquipmentCommonInfo(db.Model):
     enc_errors = db.Column(db.Integer)
     dec_errors = db.Column(db.Integer)
     packets_total = db.Column(db.Integer)
-    
+
     ### 1.2.44
     equipment_id = db.Column(db.String(64))
     equipment_info = db.Column(db.String(64))
@@ -376,10 +403,11 @@ class DPrivateEquipmentCommonInfo(db.Model):
     ##masterchange = db.Column(db.Boolean)   
     ### 1.1.57 1.2.58 IPSec
     ipsec_parameter = db.Column(db.String(256))
-    
+
     ### 1.1.59 1.2.60 plateform state
     secplateformflag = db.Column(db.Boolean)
-    def __init__(self,id, category_dict):
+
+    def __init__(self, id, category_dict):
         self.id = id
         self.work_model = None
         self.ncard = None
@@ -395,11 +423,11 @@ class DPrivateEquipmentCommonInfo(db.Model):
         self.compress = None
         self.isstandalone = None
         self.ismaster = None
-        self.stp_prio = None ## using to shuang ji hu bei
+        self.stp_prio = None  ## using to shuang ji hu bei
         self.syn_timeout1 = None
         self.syn_timeout2 = None
         self.no_alarm = None
-        self.change_time = None # using to local access
+        self.change_time = None  # using to local access
         self.nic_num = None
         self.max_log_size = None
         self.master_master_channel = None
@@ -413,23 +441,20 @@ class DPrivateEquipmentCommonInfo(db.Model):
         self.dec_packets = None
         self.enc_errors = None
         self.dec_errors = None
-        self.packets_total = None 
+        self.packets_total = None
         ## 1.2.44        
         self.equipment_id = None
         self.equipment_info = None
 
         ##1.2.53
-        #self.masterchange = False
+        # self.masterchange = False
 
         ## 1.2.55 1.2.57 IPSec
         self.ipsec_parameter = None
         ### 1.2.59 1.2.60
         self.secplateformflag = None
-        
-        
-        self.Modify(category_dict)
 
-        
+        self.Modify(category_dict)
 
     def Modify(self, category_dict):
         category_keys = category_dict.keys()
@@ -461,7 +486,7 @@ class DPrivateEquipmentCommonInfo(db.Model):
             elif category_key == 'compress':
                 self.compress = category_value
             elif category_key == 'isstandalone':
-                self.isstandalone = category_value                
+                self.isstandalone = category_value
             elif category_key == 'ismaster':
                 self.ismaster = category_value
             elif category_key == 'stp_prio':
@@ -469,7 +494,7 @@ class DPrivateEquipmentCommonInfo(db.Model):
             elif category_key == 'syn_timeout1':
                 self.syn_timeout1 = category_value
             elif category_key == 'syn_timeout2':
-                self.syn_timeout2 = category_value                
+                self.syn_timeout2 = category_value
             elif category_key == 'no_alarm':
                 self.no_alarm = category_value
             elif category_key == 'change_time':
@@ -492,16 +517,16 @@ class DPrivateEquipmentCommonInfo(db.Model):
                 self.softbypass = category_value
             ## 1.2.43
             elif category_key == 'enc_packets':
-                self.enc_packets = category_value                
+                self.enc_packets = category_value
             elif category_key == 'dec_packets':
-                self.dec_packets = category_value                
+                self.dec_packets = category_value
             elif category_key == 'enc_errors':
-                self.enc_errors = category_value                
+                self.enc_errors = category_value
             elif category_key == 'dec_errors':
-                self.dec_errors = category_value                
+                self.dec_errors = category_value
             elif category_key == 'packets_total':
-                self.packets_total = category_value  
-            ## 1.2.44
+                self.packets_total = category_value
+                ## 1.2.44
             elif category_key == 'equipment_id':
                 self.equipment_id = category_value
             elif category_key == 'equipment_info':
@@ -517,18 +542,20 @@ class DPrivateEquipmentCommonInfo(db.Model):
             ## 1.2.59 1.2.60
             elif category_key == 'secplateformflag':
                 self.secplateformflag = category_value
-class DPrivateEquipmentLinkInfo(db.Model):                
+
+
+class DPrivateEquipmentLinkInfo(db.Model):
     __tablename__ = "private_equipment_link_info"
     keyid = db.Column(db.Integer, primary_key=True)
     id = db.Column(db.Integer)
     lino = db.Column(db.SmallInteger)
     stp_state = db.Column(db.Boolean)
-    #syn_timeout = db.Column(db.SmallInteger)
-    twin_active = db.Column(db.SmallInteger) # using to global_forward_policy
+    # syn_timeout = db.Column(db.SmallInteger)
+    twin_active = db.Column(db.SmallInteger)  # using to global_forward_policy
     ipaddr = db.Column(db.String(32))
     ipmask = db.Column(db.String(32))
     twin_addr = db.Column(db.String(32))
-    man_nic_addr = db.Column(db.String(32))    
+    man_nic_addr = db.Column(db.String(32))
     virtual_ip_enabled = db.Column(db.Boolean)
     vlan_trunk_enabled = db.Column(db.Boolean)
     vlan_bind_channel = db.Column(db.Boolean)
@@ -536,25 +563,26 @@ class DPrivateEquipmentLinkInfo(db.Model):
     global_forward_policy = db.Column(db.Boolean)
     line_work_enable = db.Column(db.Boolean)
     default_vid = db.Column(db.Integer)
-    #one_ip_hotswap = db.Column(db.Boolean)
+    # one_ip_hotswap = db.Column(db.Boolean)
     multi_ip = db.Column(db.Boolean)
-    
+
     ###1.2.34
     is_allowed_access = db.Column(db.Boolean)
     ###1.2.45 1.2.46 MAC Addr
     route_mac = db.Column(db.String(24))
     switch_mac = db.Column(db.String(24))
-    
+
     ###1.2.54 1.2.55 1.2.56 Nat IP
     nat_ip_enabled = db.Column(db.Boolean)
     nat_ipaddr = db.Column(db.String(32))
     nat_ipmask = db.Column(db.String(32))
-    def __init__(self,id,lino,category_dict):
+
+    def __init__(self, id, lino, category_dict):
         self.id = id
         self.lino = lino
         self.stp_state = None
-        #self.syn_timeout = None
-        self.twin_active = None # using to global_forward_policy
+        # self.syn_timeout = None
+        self.twin_active = None  # using to global_forward_policy
         self.ipaddr = None
         self.ipmask = None
         self.twin_addr = None
@@ -566,7 +594,7 @@ class DPrivateEquipmentLinkInfo(db.Model):
         self.global_forward_policy = None
         self.line_work_enable = None
         self.default_vid = None
-        #self.one_ip_hotswap = None
+        # self.one_ip_hotswap = None
         self.multi_ip = None
         ## 1.2.34
         self.is_allowed_access = None
@@ -577,10 +605,8 @@ class DPrivateEquipmentLinkInfo(db.Model):
         nat_ip_enabled = None
         nat_ipaddr = None
         nat_ipmask = None
-        
-        
-        self.Modify(category_dict)
 
+        self.Modify(category_dict)
 
     def Modify(self, category_dict):
         category_keys = category_dict.keys()
@@ -588,7 +614,7 @@ class DPrivateEquipmentLinkInfo(db.Model):
             category_value = category_dict[category_key]
             if category_key == 'stp_state':
                 self.stp_state = category_value
-            #elif category_key == 'syn_timeout':
+            # elif category_key == 'syn_timeout':
             #    self.syn_timeout = category_value
             elif category_key == 'twin_active':
                 self.twin_active = category_value
@@ -617,26 +643,28 @@ class DPrivateEquipmentLinkInfo(db.Model):
             # elif category_key == 'one_ip_hotswap':
             #     self.one_ip_hotswap = category_value
             elif category_key == 'multi_ip':
-                self.multi_ip = category_value       
-            ## 1.2.34
+                self.multi_ip = category_value
+                ## 1.2.34
             elif category_key == 'is_allowed_access':
                 self.is_allowed_access = category_value
             ## 1.2.45
             elif category_key == 'route_mac':
                 self.route_mac = category_value
             elif category_key == 'switch_mac':
-                self.switch_mac = category_value 
+                self.switch_mac = category_value
 
-            ## 1.2.54 1.2.55 1.2.56
+                ## 1.2.54 1.2.55 1.2.56
             elif category_key == 'nat_ip_enabled':
                 self.nat_ip_enabled = category_value
             elif category_key == 'nat_ipaddr':
                 self.nat_ipaddr = category_value
             elif category_key == 'nat_ipmask':
-                self.nat_ipmask = category_value              
-### route table
+                self.nat_ipmask = category_value
+            ### route table
+
+
 class DRouteTable(db.Model):
-    __tablename__  = "route_table"
+    __tablename__ = "route_table"
     keyid = db.Column(db.Integer, primary_key=True)
     id = db.Column(db.Integer)
     lino = db.Column(db.SmallInteger)
@@ -645,7 +673,8 @@ class DRouteTable(db.Model):
     netmask = db.Column(db.String(16))
     gateway = db.Column(db.String(16))
     type = db.Column(db.String(16))
-    def __init__(self,id,lino,routenumber, ipaddr, netmask, gateway,type):
+
+    def __init__(self, id, lino, routenumber, ipaddr, netmask, gateway, type):
         self.id = id
         self.lino = lino
         self.routenumber = routenumber
@@ -653,10 +682,12 @@ class DRouteTable(db.Model):
         self.netmask = netmask
         self.gateway = gateway
         self.type = type
-### channel infomation 
+
+
+### channel infomation
 class DPrivateChannelInfo(db.Model):
     __tablename__ = "private_channel_info"
-    keyid = db.Column(db.Integer,primary_key=True)
+    keyid = db.Column(db.Integer, primary_key=True)
     id = db.Column(db.Integer)
     lino = db.Column(db.Integer)
     channelnumber = db.Column(db.Integer)
@@ -675,10 +706,11 @@ class DPrivateChannelInfo(db.Model):
     neg_packets_err = db.Column(db.Integer)
     vlan_id = db.Column(db.Integer)
 
-
-    def __init__(self,id, peer_addr, channelnumber, channelnumber_band, work_model, vlan_id,  channelname, teamid,lino, neg_status = "未知", policy_num = None, peer_prior = "未知", peer_state = "未知",last_neg_successtime = "未知",neg_packets_sent=None, neg_packets_recv=None, neg_packets_err =None):
+    def __init__(self, id, peer_addr, channelnumber, channelnumber_band, work_model, vlan_id, channelname, teamid, lino,
+                 neg_status="未知", policy_num=None, peer_prior="未知", peer_state="未知", last_neg_successtime="未知",
+                 neg_packets_sent=None, neg_packets_recv=None, neg_packets_err=None):
         self.id = id
-        self.channelname =  channelname
+        self.channelname = channelname
         self.peer_addr = peer_addr
         self.channelnumber = channelnumber
         self.channelnumber_band = channelnumber_band
@@ -694,10 +726,12 @@ class DPrivateChannelInfo(db.Model):
         self.neg_packets_err = neg_packets_err
         self.teamid = teamid
         self.lino = lino
+
+
 ### channel strategy
 class DPrivateSecurityStrategy(db.Model):
     __tablename__ = 'private_security_strategy'
-    keyid = db.Column(db.Integer,primary_key=True)
+    keyid = db.Column(db.Integer, primary_key=True)
 
     id = db.Column(db.Integer)
     channelnumber = db.Column(db.Integer)
@@ -712,7 +746,7 @@ class DPrivateSecurityStrategy(db.Model):
     Port_Source_End = db.Column(db.Integer)
     Port_Dest_Begin = db.Column(db.Integer)
     Port_Dest_End = db.Column(db.Integer)
-    
+
     Direction = db.Column(db.SmallInteger)
     Protocol = db.Column(db.SmallInteger)
     WorkMode = db.Column(db.SmallInteger)
@@ -721,8 +755,9 @@ class DPrivateSecurityStrategy(db.Model):
     Policy_limit = db.Column(db.SmallInteger)
     Policy_level = db.Column(db.SmallInteger)
 
-    def __init__(self, id, channelnumber,strategynumber, Source_Begin_IP="未知",Source_End_IP="未知", Dest_Begin_IP="未知",Dest_End_IP="未知",Port_Source_Begin=0,Port_Source_End=0,Port_Dest_Begin=0,Port_Dest_End=0, Direction=0, Protocol=0,WorkMode=0, NatMode=0, Policy_Name="未知", Policy_limit=0, Policy_level=0):
-        
+    def __init__(self, id, channelnumber, strategynumber, Source_Begin_IP="未知", Source_End_IP="未知", Dest_Begin_IP="未知",
+                 Dest_End_IP="未知", Port_Source_Begin=0, Port_Source_End=0, Port_Dest_Begin=0, Port_Dest_End=0,
+                 Direction=0, Protocol=0, WorkMode=0, NatMode=0, Policy_Name="未知", Policy_limit=0, Policy_level=0):
         self.id = id
         self.channelnumber = channelnumber
         self.strategynumber = strategynumber
@@ -736,7 +771,7 @@ class DPrivateSecurityStrategy(db.Model):
         self.Port_Source_End = Port_Source_End
         self.Port_Dest_Begin = Port_Dest_Begin
         self.Port_Dest_End = Port_Dest_End
-        
+
         self.Direction = Direction
         self.Protocol = Protocol
         self.WorkMode = WorkMode
@@ -761,7 +796,8 @@ class DVlanList(db.Model):
     dev_in_this_vlan = db.Column(db.Boolean)
     is_apply_arp = db.Column(db.Boolean)
 
-    def __init__(self, id, lino, vid, subnet, netmask, forward_next_hop, backward_next_hop, dev_in_this_vlan, is_apply_arp):
+    def __init__(self, id, lino, vid, subnet, netmask, forward_next_hop, backward_next_hop, dev_in_this_vlan,
+                 is_apply_arp):
         self.id = id
         self.lino = lino
         self.vid = vid
@@ -771,8 +807,8 @@ class DVlanList(db.Model):
         self.backward_next_hop = backward_next_hop
         self.dev_in_this_vlan = dev_in_this_vlan
         self.is_apply_arp = is_apply_arp
-   
-  
+
+
 class DPrivateCertInfo(db.Model):
     __tablename__ = "private_cert_info"
     keyid = db.Column(db.Integer, primary_key=True)
@@ -791,7 +827,9 @@ class DPrivateCertInfo(db.Model):
     name = db.Column(db.String(32))
     email = db.Column(db.String(64))
     cert_type = db.Column(db.SmallInteger)
-    def __init__(self, id, cert_name,cert_type, province="未知", city="未知",organ="未知",depart="未知",name="未知",email="未知"):
+
+    def __init__(self, id, cert_name, cert_type, province="未知", city="未知", organ="未知", depart="未知", name="未知",
+                 email="未知"):
         self.id = id
         self.cert_name = cert_name
         self.province = province
@@ -801,6 +839,8 @@ class DPrivateCertInfo(db.Model):
         self.name = name
         self.email = email
         self.cert_type = cert_type
+
+
 ### log server
 class DLogServerInfo(db.Model):
     __tablename__ = 'log_server_info'
@@ -812,8 +852,8 @@ class DLogServerInfo(db.Model):
     direction = db.Column(db.String(16))
     lino = db.Column(db.SmallInteger)
     vlan_id = db.Column(db.Integer)
-    
-    def __init__(self,id,serverid,ipaddr,ports,direction,lino,vlan_id):
+
+    def __init__(self, id, serverid, ipaddr, ports, direction, lino, vlan_id):
         self.id = id
         self.serverid = serverid
         self.ipaddr = ipaddr
@@ -833,9 +873,10 @@ class LMIPAddr(db.Model):
 
     def __init__(self, IP1, IP2, IP3, IP4):
         self.IP1 = IP1
-        self.IP2 = IP2       
+        self.IP2 = IP2
         self.IP3 = IP3
         self.IP4 = IP4
+
 
 class LMRoute(db.Model):
     __tablename__ = "lead_machine_route"
@@ -846,12 +887,13 @@ class LMRoute(db.Model):
     style = db.Column(db.String(16))
     interface = db.Column(db.String(16))
 
-    def __init__(self, IPAddr, Mask, Gateway,style,interface):
+    def __init__(self, IPAddr, Mask, Gateway, style, interface):
         self.IPAddr = IPAddr
         self.Mask = Mask
         self.Gateway = Gateway
-        self.style = style    
-        self.interface = interface          
+        self.style = style
+        self.interface = interface
+
 
 class LeadMachine(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -864,8 +906,9 @@ class LeadMachine(db.Model):
         self.outtime = outtime
         self.resendtime = resendtime
 
+
 class Flag(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
     addlmflag = db.Column(db.Integer)
     createkeyflag = db.Column(db.Integer)
     exportlmcertflag = db.Column(db.Integer)
@@ -877,7 +920,8 @@ class Flag(db.Model):
     initialUSBKeyflag = db.Column(db.Integer)
     importUSBKeyflag = db.Column(db.Integer)
 
-    def __init__(self, addlmflag=0, createkeyflag=0, exportlmcertflag=0, configIPflag=0, restartflag=0, configrouteflag=0,importCAflag=0,importsyscertflag=0,initialUSBKeyflag=0,importUSBKeyflag=0):
+    def __init__(self, addlmflag=0, createkeyflag=0, exportlmcertflag=0, configIPflag=0, restartflag=0,
+                 configrouteflag=0, importCAflag=0, importsyscertflag=0, initialUSBKeyflag=0, importUSBKeyflag=0):
         self.addlmflag = addlmflag
         self.createkeyflag = createkeyflag
         self.exportlmcertflag = exportlmcertflag
@@ -889,22 +933,27 @@ class Flag(db.Model):
         self.initialUSBKeyflag = initialUSBKeyflag
         self.importUSBKeyflag = importUSBKeyflag
 
+
 class DLeadMachineCert(db.Model):
-    id = db.Column(db.Integer,primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     certname = db.Column(db.String(64))
     certpath = db.Column(db.String(128))
 
-    def __init__(self,certname, certpath):
+    def __init__(self, certname, certpath):
         self.certname = certname
         self.certpath = certpath
+
+
 def getPlatform(url):
     if "taobao.com" in url:
         return "淘宝"
     if "tmall.com" in url:
         return "天猫"
-    if "pinduoduo.com" in url or  "yangkeduo.com" in url:
+    if "pinduoduo.com" in url or "yangkeduo.com" in url:
         return "拼多多"
     return "未知"
+
+
 def get_id(src):
     if "http" in src or "https" in src:
         parse = urlparse.urlparse(src)
@@ -922,10 +971,14 @@ def get_id(src):
             elif query.has_key("goods_id"):
                 return query['goods_id']
     return src
+
+
 def format_float(f):
-    return "%0.2f" % (f * 100) +  '%'
+    return "%0.2f" % (f * 100) + '%'
+
+
 class Good(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
     goodId = db.Column(db.String(32))
     goodTitle = db.Column(db.String(128))
     goodDescription = db.Column(db.String(128))
@@ -937,6 +990,7 @@ class Good(db.Model):
     goodExpress = db.Column(db.String(128))
     goodPostage = db.Column(db.Float)
     goodExtra = db.Column(db.String(256))
+
     def __init__(self):
         self.goodId = "6147245"
         self.goodTitle = "吸尘器"
@@ -949,19 +1003,22 @@ class Good(db.Model):
         self.goodExpress = "韵达 顺丰"
         self.goodPostage = 10
         self.goodExtra = ""
+
+
 class GoodBaseInfo(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
     good_id = db.Column(db.String(32))
     good_title = db.Column(db.String(64))
     good_description = db.Column(db.String(128))
     good_image_url = db.Column(db.String(128))
     good_has_video = db.Column(db.Boolean)
-    coupon = db.Column(db.Float) ## 优惠券
+    coupon = db.Column(db.Float)  ## 优惠券
     create_time = db.Column(db.Float)
-    good_prize = db.Column(db.Float) ## 赠品
-    category = db.Column(db.String(64)) ## 类目
+    good_prize = db.Column(db.Float)  ## 赠品
+    category = db.Column(db.String(64))  ## 类目
 
-    def __init__(self, _good_id = "", _category = "", _good_title = "", _good_description = "", _good_image_url =  "", _good_has_video = False, _coupon = 0, _good_prize = 0):
+    def __init__(self, _good_id="", _category="", _good_title="", _good_description="", _good_image_url="",
+                 _good_has_video=False, _coupon=0, _good_prize=0):
         self.good_id = _good_id
         self.good_title = _good_title
         self.good_description = _good_description
@@ -972,14 +1029,17 @@ class GoodBaseInfo(db.Model):
         self.good_prize = _good_prize
         self.category = _category
 
+
 class GoodSkuInfo(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
     good_id = db.Column(db.String(32))
     sku_id = db.Column(db.String(64))
-    sku_url = db.Column(db.String(128)) ## 店铺链接
+    sku_url = db.Column(db.String(256))  ## 店铺链接
     sku_price = db.Column(db.Float)
+    sku_description = db.Column(db.String(256))
     create_time = db.Column(db.Float)
-    def __init__(self, _good_id = "", _sku_id = "", _sku_url =  "",  _good_price  = 0):
+
+    def __init__(self, _good_id="", _sku_id="", _sku_url="", _good_price=0, _sku_description=""):
         self.good_id = _good_id
         self.sku_url = _sku_url
         self.sku_id = _sku_id
@@ -987,15 +1047,19 @@ class GoodSkuInfo(db.Model):
         self.create_time = time.time()
         self.sku_price_90 = _good_price * 0.9
         self.sku_price_80 = _good_price * 0.8
+        self.sku_description = _sku_description
+
     def reset(self):
-        self.sku_url=""
+        self.sku_url = ""
         self.sku_price = 0
         self.create_time = time.time()
         self.sku_price_90 = 0
         self.sku_price_80 = 0
 
 
-MALL_REBATE = 0.05 ## 天猫扣点
+MALL_REBATE = 0.05  ## 天猫扣点
+
+
 class Profit:
     def __init__(self):
         ##正常的利润
@@ -1020,24 +1084,29 @@ class Profit:
         self.profit_6 = ""
         self.profit_6_rate = ""
 
+
 class SkuProxyInfo(db.Model):
-    proxy_id = db.Column(db.Integer, primary_key = True)
+    proxy_id = db.Column(db.Integer, primary_key=True)
     good_id = db.Column(db.String(32))
     sku_id = db.Column(db.String(64))
-    good_proxy_url = db.Column(db.String(128)) ## 代发链接
-    good_proxy_platform = db.Column(db.String(32)) ## 代发平台
-    good_proxy_id = db.Column(db.String(32)) ## 代发ID
-    good_express = db.Column(db.String(128)) ## 快递
-    good_postage = db.Column(db.Float) ## 快递费
-    postage_address = db.Column(db.String(32)) ## 发货地址
-    produce_address = db.Column(db.String(32)) ##  产地
-    good_cost = db.Column(db.Float) ## 成本价
-    good_extra = db.Column(db.String(256)) ## 备注
+    good_proxy_url = db.Column(db.String(256))  ## 代发链接
+    good_proxy_platform = db.Column(db.String(32))  ## 代发平台
+    good_proxy_id = db.Column(db.String(32))  ## 代发ID
+    good_express = db.Column(db.String(128))  ## 快递
+    good_postage = db.Column(db.Float)  ## 快递费
+    postage_address = db.Column(db.String(32))  ## 发货地址
+    produce_address = db.Column(db.String(32))  ##  产地
+    good_cost = db.Column(db.Float)  ## 成本价
+    good_extra = db.Column(db.String(256))  ## 备注
     create_time = db.Column(db.Float)
-    qualification = db.Column(db.String(32)) ## 资质
-    day_limit = db.Column(db.Float) ## 日常限价
-    activity_limit = db.Column(db.Float) ## 活动限价
-    def __init__(self, _good_id, _sku_id, _good_proxy_url = "", _good_express = "", _good_postage = 0, _postage_address = "", _produce_address = "", _good_cost = 0, _qualification="", _day_limit = 0, _activity_limit = 0, _good_extra = ""):
+    qualification = db.Column(db.String(32))  ## 资质
+    day_limit = db.Column(db.Float)  ## 日常限价
+    activity_limit = db.Column(db.Float)  ## 活动限价
+    proxy_shop = db.Column(db.String(128))
+
+    def __init__(self, _good_id, _sku_id, _good_proxy_url="", _good_express="", _good_postage=0, _postage_address="",
+                 _produce_address="", _good_cost=0, _qualification="", _day_limit=0, _activity_limit=0, _good_extra="",
+                 _proxy_shop=""):
         self.good_id = _good_id
         self.sku_id = _sku_id
         self.good_proxy_url = _good_proxy_url
@@ -1054,7 +1123,9 @@ class SkuProxyInfo(db.Model):
         self.sku_info = GoodSkuInfo()
         self.good_base_info = GoodBaseInfo()
         self.profit = Profit()
+        self.proxy_shop = _proxy_shop
         self.create_time = time.time()
+
     def reset(self):
         self.good_proxy_url = ""
         self.good_proxy_platform = ""
@@ -1070,13 +1141,16 @@ class SkuProxyInfo(db.Model):
         self.sku_info = GoodSkuInfo()
         self.good_base_info = GoodBaseInfo()
         self.profit = Profit()
+        self.proxy_shop = ""
         self.create_time = time.time()
+
     def set_parent_info(self, _good_base_info, _sku_info):
         if _good_base_info is not None:
             self.good_base_info = _good_base_info
         if _sku_info is not None:
             self.sku_info = _sku_info
         self.calculate_price()
+
     def calculate_price(self):
         self.profit = Profit()
         if self.sku_info.sku_price <= 0:
@@ -1110,4 +1184,3 @@ class SkuProxyInfo(db.Model):
         ## 20%佣金 服务费5% 不加劵
         self.profit.profit_6 = (real_price_no - real_price_no * (0.2 + 0.05 + MALL_REBATE) - real_cost)
         self.profit.profit_rate_6 = format_float(self.profit.profit_6 / real_price_no)
-

@@ -169,7 +169,14 @@
                         <label class="control-label input-label">售价</label>
                         <input type="number" class="form-control host-input input-content" name="price" id="price"  placeholder="0.0" step="0.01">
                     </div>
-                    <HR/>
+                    <div class="form-group input-container-left" >
+                        <label class="control-label input-label">sku规格</label>
+                        <input type="text" class="form-control host-input input-content" name="sku_description" id="sku_description"  placeholder="sku规格">
+                    </div>
+                    <div class="form-group input-container-right" >
+                        <label class="control-label input-label">代发店铺</label>
+                        <input type="text" class="form-control host-input input-content" name="proxy_shop" id="proxy_shop">
+                    </div>
                     <div class="form-group  input-container-left">
                         <label class="control-label input-label">代发链接</label>
                         <input type="url" class="form-control host-input input-content" name="proxy_url" id="proxy_url"  placeholder="代发链接">
@@ -308,6 +315,14 @@
                                         <div class="form-group input-container-right">
                                             <label class="control-label input-label">优惠劵</label>
                                             <input type="number" class="form-control host-input input-content" name="edit_coupon" id="edit_coupon" placeholder="0.0" step="0.01">
+                                        </div>
+                                        <div class="form-group input-container-left" >
+                                            <label class="control-label input-label">sku规格</label>
+                                            <input type="text" class="form-control host-input input-content" name="edit_sku_description" id="edit_sku_description"  placeholder="sku规格">
+                                        </div>
+                                        <div class="form-group input-container-right" >
+                                            <label class="control-label input-label">代发店铺</label>
+                                            <input type="text" class="form-control host-input input-content" name="edit_proxy_shop" id="edit_proxy_shop">
                                         </div>
                                         <HR/>
                                         <div class="form-group input-container-left" >
@@ -500,6 +515,7 @@
                                     <input type="hidden" name="proxy_id" value="{{ good.proxy_id }}">
                                     <input type="hidden" name="sku_url" value="{{ good.sku_info.sku_url }}">
                                     <input type="hidden" name="proxy_url" value="{{ good.good_proxy_url }}">
+                                    <input type="hidden" name="sku_description" value="{{ good.sku_info.sku_description }}">
                                     <input type="hidden" name="has_video" value="{{ good.good_base_info.good_has_video }}"></td>
 
                                 <td class="goodId">{{ good.good_id}}</td>
@@ -516,7 +532,12 @@
                                 {% elif good.good_base_info.good_has_video == False %}
                                     <td><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </td>
                                 {% endif %}
-                                <td class="sku_ur_ref"><a href="{{good.sku_info.sku_url}}" target="_blank">店铺链接</a></td>
+                                {% if good.sku_info.sku_description == "" %}
+                                     <td class="sku_ur_ref"><a href="{{good.sku_info.sku_url}}" target="_blank">"sku链接"</a></td>
+                                {% else %}
+                                    <td class="sku_ur_ref"><a href="{{good.sku_info.sku_url}}" target="_blank">{{ good.sku_info.sku_description }}</a></td>
+                                {% endif %}
+
                                 <td class="price">{{good.sku_info.sku_price}}</td>
                                 <td class="good_url_ref"><a href="{{good.good_proxy_url}}" target="_blank">{{ good.good_proxy_platform }}</a></td>
 
@@ -646,6 +667,7 @@ $('.btn-good-edit').click(function(){
     const good_prize = elem.find('.good_prize').text().trim();
     const extra = elem.find('.extra').text().trim();
     const modal_form = $('#div-edit form');
+    const sku_description = elem.find('input[name=sku_description]').val();
     modal_form.find("input[name=edit_good_id]").val(good_id);
     modal_form.find("input[name=edit_sku_id]").val(sku_id);
     modal_form.find("input[name=edit_proxy_id]").val(proxy_id);
@@ -659,6 +681,7 @@ $('.btn-good-edit').click(function(){
     modal_form.find("input[name=edit_description]").val(description);
     modal_form.find("input[name=edit_category]").val(category);
     modal_form.find("input[name=edit_sku_url]").val(sku_url);
+    modal_form.find("input[name=edit_sku_description]").val(sku_description);
     modal_form.find("input[name=edit_proxy_url]").val(proxy_url);
     modal_form.find("input[name=edit_price]").val(price);
     modal_form.find("input[name=edit_cost]").val(cost);
@@ -716,6 +739,7 @@ $('.btn-good-proxy-add').click(function() {
     const sku_url = elem.find('input[name=sku_url]').val();
     const price = elem.find('.price').text().trim();
     const sku_id = elem.find('input[name=sku_id]').val();
+    const sku_description = elem.find('input[name=sku_description]').val();
 
 
     const modal_form = $('#div-edit form');
@@ -733,6 +757,7 @@ $('.btn-good-proxy-add').click(function() {
     modal_form.find("input[name=edit_sku_url]").val(sku_url);
     modal_form.find("input[name=edit_sku_id]").val(sku_id);
     modal_form.find("input[name=edit_price]").val(price);
+    modal_form.find("input[name=edit_sku_description]").val(sku_description);
 
     base_info_read_only(modal_form, true);
     sku_info_read_only(modal_form, true);
@@ -809,10 +834,12 @@ function sku_info_read_only(modal_form, readonly) {
     if (readonly == true) {
         modal_form.find("input[name=edit_sku_url]").attr("readonly", "true");
         modal_form.find("input[name=edit_price]").attr("readonly", "true");
+        modal_form.find("input[name=edit_sku_description]").attr("readonly", "true");
     } else {
 
         modal_form.find("input[name=edit_sku_url]").attr("readonly", false);
         modal_form.find("input[name=edit_price]").attr("readonly", false);
+        modal_form.find("input[name=edit_sku_description]").attr("readonly", false);
     }
 
 }
