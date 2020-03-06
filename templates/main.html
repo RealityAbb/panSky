@@ -254,7 +254,7 @@
             </div>
             </br></br>
             <div id="search">
-                <form method="POST" action="/search" enctype="multipart/form-data" onsubmit="search_test()">
+                <form method="POST" action="/search" enctype="multipart/form-data">
                     <input name='nonce' type='hidden' value="{{ nonce }}">
 
                     {% if viewfunc==".main_page" %}
@@ -998,7 +998,8 @@ function search_test() {
     const obj1=document.getElementById("search_good_id").value;
     const obj2=document.getElementById("search_good_title").value;
     const obj3=document.getElementById("search_proxy_id").value;
-    if (obj1 == "" && obj2 == "" && obj3 == "") {
+    const obj4=document.getElementById("search_proxy_shop").value;
+    if (obj1 == "" && obj2 == "" && obj3 == "" && obj4 == "") {
         alert("填写搜索条件");
         return false;
     }
