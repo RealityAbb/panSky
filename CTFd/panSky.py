@@ -79,7 +79,7 @@ def set_sku_base_info(sku_info):
 
 def init_views(app):
     @app.route('/main', methods=['GET', 'POST'])
-    def main_page():
+    def main():
         page = request.args.get('page', 1, type=int)
         pagination = SkuProxyInfo.query.order_by(SkuProxyInfo.good_id, SkuProxyInfo.sku_id).paginate(page,
                                                                                                      per_page=PER_PAGE_COUNT,
