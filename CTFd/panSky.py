@@ -90,18 +90,19 @@ def init_views(app):
             good_base_info = GoodBaseInfo.query.filter_by(good_id=good.good_id).first()
             good_sku_info = GoodSkuInfo.query.filter_by(good_id=good.good_id, sku_id=good.sku_id).first()
             good.set_parent_info(good_base_info, good_sku_info)
-        viewfunc = ".main_page"
+        viewfunc = ".main"
         return render_template('main.html', viewfunc=viewfunc, pagination=pagination, goods=goods, lm_total=total_count)
 
     @app.route('/search', methods=['GET', 'POST'])
     def search():
-        if request.method == 'GET':
-            return redirect("/main")
         page = request.args.get('page', 1, type=int)
-        good_id = get_id(str(request.form['search_good_id']))
-        good_title = request.form['search_good_title']
-        good_proxy_id = get_id(str(request.form['search_proxy_id']))
-        good_proxy_shop = request.form['search_proxy_shop']
+        try:
+            good_id = get_id(str(request.form['search_good_id']))
+            good_title = request.form['search_good_title']
+            good_proxy_id = get_id(str(request.form['search_proxy_id']))
+            good_proxy_shop = request.form['search_proxy_shop']
+        except:
+            redirect ("/main")
         if good_id != "" and good_proxy_id != "":
             query = SkuProxyInfo.query.filter_by(good_id=good_id, good_proxy_id=good_proxy_id)
             pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
