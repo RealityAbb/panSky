@@ -543,7 +543,7 @@
                                 {% endif %}
 
                                 <td class="price">{{good.sku_info.sku_price}}</td>
-                                {% if good.sku_info.sku_description != "" %}
+                                {% if good.sku_info.sku_description == "" %}
                                     <td class="good_url_ref">未知</td>
                                 {% else %}
                                     <td class="good_url_ref"><a href="{{good.good_proxy_url}}" target="_blank">{{ good.good_proxy_platform }} {{ good.proxy_shop }}</a></td>
