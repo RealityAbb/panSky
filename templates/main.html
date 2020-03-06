@@ -536,12 +536,19 @@
                                 {% endif %}
                                 {% if good.sku_info.sku_description == "" %}
                                      <td class="sku_ur_ref"><a href="{{good.sku_info.sku_url}}" target="_blank">sku链接</a></td>
+                                {% elif good.sku_info.sku_url == "" %}
+                                     <td class="sku_ur_ref">未知</td>
                                 {% else %}
                                     <td class="sku_ur_ref"><a href="{{good.sku_info.sku_url}}" target="_blank">{{ good.sku_info.sku_description }}</a></td>
                                 {% endif %}
 
                                 <td class="price">{{good.sku_info.sku_price}}</td>
-                                <td class="good_url_ref"><a href="{{good.good_proxy_url}}" target="_blank">{{ good.good_proxy_platform }} {{ good.proxy_shop }}</a></td>
+                                {% if good.sku_info.sku_description != "" %}
+                                    <td class="good_url_ref">未知</td>
+                                {% else %}
+                                    <td class="good_url_ref"><a href="{{good.good_proxy_url}}" target="_blank">{{ good.good_proxy_platform }} {{ good.proxy_shop }}</a></td>
+                                {% endif %}
+
                                 <td class="cost">{{good.good_cost}}</td>
                                 <td class="coupon">{{good.good_base_info.coupon}}</td>
                                 <td class="express">{{good.good_express}}</td>
