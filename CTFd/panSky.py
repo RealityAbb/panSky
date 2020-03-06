@@ -101,6 +101,7 @@ def init_views(app):
         good_id = get_id(str(request.form['search_good_id']))
         good_title = request.form['search_good_title']
         good_proxy_id = get_id(str(request.form['search_proxy_id']))
+        good_proxy_shop = request.form['search_proxy_shop']
         if good_id != "" and good_proxy_id != "":
             query = SkuProxyInfo.query.filter_by(good_id=good_id, good_proxy_id=good_proxy_id)
             pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
@@ -134,11 +135,19 @@ def init_views(app):
             for good in goods:
                 set_sku_base_info(good)
             total_count = len(query.all())
+        elif good_proxy_shop != "":
+            query = SkuProxyInfo.query.filter(SkuProxyInfo.proxy_shop.like("%" + good_proxy_shop + '%'))\
+                .order_by(SkuProxyInfo.good_id, SkuProxyInfo.sku_id)
+            pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
+            goods = pagination.items
+            total_count = len(query.all())
+            for good in goods:
+                set_sku_base_info(good)
         else:
             return redirect('/main')
         viewfunc = ".search"
         return render_template('main.html', viewfunc=viewfunc, pagination=pagination, goods=goods, lm_total=total_count,
-                               search_good_id=good_id, search_good_title=good_title, search_proxy_id=good_proxy_id)
+                               search_good_id=good_id, search_good_title=good_title, search_proxy_id=good_proxy_id, search_proxy_shop=good_proxy_shop)
 
     @app.route('/love', methods=['GET', 'POST'])
     def main_test():

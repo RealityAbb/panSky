@@ -262,6 +262,7 @@
                             <input type="text" class="form-control host-input input_box"  name="search_good_id" id="search_good_id"  width="200px" placeholder="商品ID或商品链接">
                             <input type="text" class="form-control host-input input_box"  name="search_good_title" id="search_good_title" width="200px" placeholder="商品标题关键字">
                             <input type="text" class="form-control host-input input_box"  name="search_proxy_id" id="search_proxy_id" width="200px" placeholder="代发ID或代发链接">
+                            <input type="text" class="form-control host-input input_box"  name="search_proxy_shop" id="search_proxy_shop" width="200px" placeholder="代发店铺">
                             <button type="submit" class="btn btn-sm btn-primary btn-query" >查找</button>
                         </div>
                     {% elif viewfunc==".search" %}
@@ -269,6 +270,7 @@
                             <input type="text" class="form-control host-input input_box"  name="search_good_id" id="search_good_id"  width="200px" value="{{ search_good_id}}" placeholder="商品ID或商品链接">
                             <input type="text" class="form-control host-input input_box"  name="search_good_title" id="search_good_title" width="200px"  value="{{ search_good_title}}" placeholder="商品标题关键字">
                             <input type="text" class="form-control host-input input_box"  name="search_proxy_id" id="search_proxy_id" width="200px"  value="{{ search_proxy_id}}" placeholder="代发ID或代发链接">
+                            <input type="text" class="form-control host-input input_box"  name="search_proxy_shop" id="search_proxy_shop" width="200px" value="{{ search_proxy_shop}}" placeholder="代发店铺">
                             <button type="submit" class="btn btn-sm btn-primary btn-query" >查找</button>
                         </div>
                     {% endif %}
