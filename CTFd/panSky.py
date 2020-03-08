@@ -1,7 +1,7 @@
 # coding=utf-8
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, flash, send_from_directory
 from CTFd.utils import authed, judge_result, allowed_file, get_file_suffix
-from CTFd.models import db, GoodBaseInfo, GoodSkuInfo, SkuProxyInfo, get_id, DisplayGoodInfo
+from CTFd.models import db, GoodBaseInfo, GoodSkuInfo, SkuProxyInfo, get_id, DisplayGoodInfo, getPlatform
 from flask import current_app as app
 from werkzeug.utils import secure_filename
 
@@ -281,6 +281,7 @@ def init_views(app):
         sku_info.sku_description = sku_description
 
         proxy_info.good_proxy_url = proxy_url
+        proxy_info.good_proxy_platform = getPlatform(proxy_url)
         proxy_info.good_cost = cost
         proxy_info.good_express = express
         proxy_info.postage_address = address
