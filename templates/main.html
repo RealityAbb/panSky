@@ -488,6 +488,7 @@
                             <!-- <th>证书</th> -->
                             <th>发货地址</th>
                             <th>产地</th>
+                            <th>备注</th>
                             <th>修改</th>
                             <th>赠品</th>
                             <th>正常利润</th>
@@ -504,7 +505,6 @@
                             <th>20%佣金</th>
                             <th>20%佣金 5%服务费加劵</th>
                             <th>20%佣金 5%服务费</th>
-                            <th>备注</th>
                         </tr>
                        </thead>
                         <tbody>
@@ -527,7 +527,7 @@
                                    <td><img src="{{good.good_base_info.good_image_url}}" width="100px" height="100px"></td>
                                 {%  endif %}
                                 <td class="title">{{good.good_base_info.good_title}}</td>
-                                <td class="category">{{ good.good_base_info.category }}</td>
+                                <td class="category" style="width: 100px">{{ good.good_base_info.category }}</td>
                                 <td class="description">{{ good.good_base_info.good_description}}</td>
                                 {% if good.good_base_info.good_has_video == True %}
                                     <td><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
@@ -543,7 +543,7 @@
                                 {% endif %}
 
                                 <td class="price">{{good.sku_info.sku_price}}</td>
-                                {% if good.sku_info.sku_description == "" %}
+                                {% if good.good_proxy_url == "" %}
                                     <td class="good_url_ref">未知</td>
                                 {% else %}
                                     <td class="good_url_ref"><a href="{{good.good_proxy_url}}" target="_blank">{{ good.good_proxy_platform }} {{ good.proxy_shop }}</a></td>
@@ -555,6 +555,7 @@
                                 <td class="postage">{{good.good_postage}}</td>
                                 <td class="postage_address">{{good.postage_address}}</td>
                                 <td class="produce_address">{{good.produce_address}}</td>
+                                <td class="extra" style="width: 100px">{{good.good_extra}}</td>
                                 <td>
                                     <div >
                                         <div style="width: 200px">
@@ -592,7 +593,7 @@
                                 <td class="profit">{{ good.profit.profit_rate_4 }}</td>
                                 <td class="profit">{{ good.profit.profit_rate_5 }}</td>
                                 <td class="profit">{{ good.profit.profit_rate_6 }}</td>
-                                <td class="extra">{{good.good_extra}}</td>
+                                <td class="extra" style="width: 100px">{{good.good_extra}}</td>
                                 <td style="display:none;">{{good.id}}</td>
                             </tr>
                         {% endfor %}
