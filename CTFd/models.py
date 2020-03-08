@@ -1083,7 +1083,28 @@ class Profit:
         ## 20%佣金 服务费5% 不加劵
         self.profit_6 = ""
         self.profit_6_rate = ""
-
+class DisplayGoodInfo:
+    def __init__(self, _good_id="", _category="", _good_title="", _good_description="", _good_image_url="",
+                 _good_has_video=False, _coupon=0, _good_prize=0):
+        self.good_id = _good_id
+        self.good_title = _good_title
+        self.good_description = _good_description
+        self.good_image_url = _good_image_url
+        self.good_has_video = _good_has_video
+        self.create_time = time.time()
+        self.coupon = _coupon
+        self.good_prize = _good_prize
+        self.category = _category
+    def copy(self, good_info, _copy_all = False):
+        self.good_id = good_info.good_id
+        self.good_title = good_info.good_title
+        if _copy_all:
+            self.good_description = good_info.good_description
+            self.category = good_info.category
+        self.good_image_url = good_info.good_image_url
+        self.good_has_video = good_info.good_has_video
+        self.coupon = good_info.coupon
+        self.good_prize = good_info.good_prize
 
 class SkuProxyInfo(db.Model):
     proxy_id = db.Column(db.Integer, primary_key=True)
@@ -1122,6 +1143,7 @@ class SkuProxyInfo(db.Model):
         self.activity_limit = _activity_limit
         self.sku_info = GoodSkuInfo()
         self.good_base_info = GoodBaseInfo()
+        self.good_display_info = DisplayGoodInfo()
         self.profit = Profit()
         self.proxy_shop = _proxy_shop
         self.create_time = time.time()
@@ -1150,7 +1172,9 @@ class SkuProxyInfo(db.Model):
         if _sku_info is not None:
             self.sku_info = _sku_info
         self.calculate_price()
-
+    def set_display_info(self, _display_info):
+        if _display_info is not None:
+            self.good_display_info = _display_info
     def calculate_price(self):
         self.profit = Profit()
         if self.sku_info.sku_price <= 0:

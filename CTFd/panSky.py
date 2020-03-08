@@ -1,7 +1,7 @@
 # coding=utf-8
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, flash, send_from_directory
 from CTFd.utils import authed, judge_result, allowed_file, get_file_suffix
-from CTFd.models import db, GoodBaseInfo, GoodSkuInfo, SkuProxyInfo, get_id
+from CTFd.models import db, GoodBaseInfo, GoodSkuInfo, SkuProxyInfo, get_id, DisplayGoodInfo
 from flask import current_app as app
 from werkzeug.utils import secure_filename
 
@@ -86,10 +86,15 @@ def init_views(app):
                                                                                                      error_out=False)
         goods = pagination.items
         total_count = db.session.query(db.func.count(SkuProxyInfo.proxy_id)).first()[0]
+        last_good_id = 0
         for good in goods:
             good_base_info = GoodBaseInfo.query.filter_by(good_id=good.good_id).first()
             good_sku_info = GoodSkuInfo.query.filter_by(good_id=good.good_id, sku_id=good.sku_id).first()
             good.set_parent_info(good_base_info, good_sku_info)
+            display_info = DisplayGoodInfo()
+            display_info.copy(good.good_base_info, last_good_id != good.good_id)
+            good.set_display_info()
+            last_good_id = good.good_id
         viewfunc = ".main"
         return render_template('main.html', viewfunc=viewfunc, pagination=pagination, goods=goods, lm_total=total_count)
 
