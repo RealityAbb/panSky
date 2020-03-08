@@ -951,6 +951,8 @@ def getPlatform(url):
         return "天猫"
     if "pinduoduo.com" in url or "yangkeduo.com" in url:
         return "拼多多"
+    if "1688.com" in url:
+        return "1688"
     return "未知"
 
 
