@@ -482,7 +482,6 @@
                             <th>售价</th>
                             <th>代发链接</th>
                             <th>成本</th>
-                            <th>优惠劵</th>
                             <th>快递</th>
                             <th>邮费</th>
                             <!-- <th>证书</th> -->
@@ -490,6 +489,7 @@
                             <th>产地</th>
                             <th>备注</th>
                             <th>修改</th>
+                            <th>优惠劵</th>
                             <th>赠品</th>
                             <th>正常利润</th>
                             <th>正常利润占比</th>
@@ -552,7 +552,6 @@
                                 {% endif %}
 
                                 <td class="cost">{{good.good_cost}}</td>
-                                <td class="coupon">{{good.good_base_info.coupon}}</td>
                                 <td class="express">{{good.good_express}}</td>
                                 <td class="postage">{{good.good_postage}}</td>
                                 <td class="postage_address">{{good.postage_address}}</td>
@@ -580,6 +579,7 @@
                                         </div>
                                     </div>
                                 </td>
+                                <td class="coupon">{{good.good_base_info.coupon}}</td>
                                 <td class="good_prize">{{good.good_base_info.good_prize}}</td>
                                 <td class="profit">{{ good.profit.profit }}</td>
                                 <td class="profit_rate">{{ good.profit.profit_rate }}</td>
@@ -595,7 +595,6 @@
                                 <td class="profit">{{ good.profit.profit_rate_4 }}</td>
                                 <td class="profit">{{ good.profit.profit_rate_5 }}</td>
                                 <td class="profit">{{ good.profit.profit_rate_6 }}</td>
-                                <td class="extra" style="width: 100px">{{good.good_extra}}</td>
                                 <td style="display:none;">{{good.id}}</td>
                             </tr>
                         {% endfor %}
