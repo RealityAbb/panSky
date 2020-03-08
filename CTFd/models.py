@@ -1041,7 +1041,10 @@ class GoodSkuInfo(db.Model):
 
     def __init__(self, _good_id="", _sku_id="", _sku_url="", _good_price=0, _sku_description=""):
         self.good_id = _good_id
-        self.sku_url = _sku_url
+        if len(_sku_url) > 255:
+            self.sku_url = _sku_url[:255]
+        else:
+            self.sku_url = _sku_url
         self.sku_id = _sku_id
         self.sku_price = _good_price
         self.create_time = time.time()
@@ -1130,7 +1133,10 @@ class SkuProxyInfo(db.Model):
                  _proxy_shop=""):
         self.good_id = _good_id
         self.sku_id = _sku_id
-        self.good_proxy_url = _good_proxy_url
+        if len(_good_proxy_url) > 255:
+            self.good_proxy_url = _good_proxy_url[:255]
+        else:
+            self.good_proxy_url = _good_proxy_url
         self.good_proxy_platform = getPlatform(_good_proxy_url)
         self.good_proxy_id = get_id(_good_proxy_url)
         self.good_express = _good_express
