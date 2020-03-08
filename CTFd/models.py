@@ -1098,8 +1098,8 @@ class DisplayGoodInfo:
     def copy(self, good_info, _copy_all = False):
         self.good_id = good_info.good_id
         self.good_title = good_info.good_title
+        self.good_description = good_info.good_description
         if _copy_all:
-            self.good_description = good_info.good_description
             self.category = good_info.category
             self.good_image_url = good_info.good_image_url
         self.good_has_video = good_info.good_has_video
