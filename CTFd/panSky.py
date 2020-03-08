@@ -71,10 +71,13 @@ def add_test_data():
     db.session.commit()
 
 
-def set_sku_base_info(sku_info):
+def set_sku_base_info(sku_info, last_good_id):
     good_base_info = GoodBaseInfo.query.filter_by(good_id=sku_info.good_id).first()
     good_sku_info = GoodSkuInfo.query.filter_by(good_id=sku_info.good_id, sku_id=sku_info.sku_id).first()
     sku_info.set_parent_info(good_base_info, good_sku_info)
+    display_info = DisplayGoodInfo()
+    display_info.copy(good_base_info, last_good_id != sku_info.good_id)
+    sku_info.set_display_info(display_info)
 
 
 def init_views(app):
@@ -93,7 +96,7 @@ def init_views(app):
             good.set_parent_info(good_base_info, good_sku_info)
             display_info = DisplayGoodInfo()
             display_info.copy(good.good_base_info, last_good_id != good.good_id)
-            good.set_display_info()
+            good.set_display_info(display_info)
             last_good_id = good.good_id
         viewfunc = ".main"
         return render_template('main.html', viewfunc=viewfunc, pagination=pagination, goods=goods, lm_total=total_count)
@@ -120,15 +123,20 @@ def init_views(app):
             pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
             goods = pagination.items
             total_count = len(query.all())
+            last_good_id = 0
             for good in goods:
-                set_sku_base_info(good)
+                set_sku_base_info(good, last_good_id)
+                last_good_id = good.good_id
         elif good_proxy_id != "":
             query = SkuProxyInfo.query.filter_by(good_id=good_id, good_proxy_id=good_proxy_id)
             pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
             goods = pagination.items
             total_count = len(query.all())
+            last_good_id = 0
             for good in goods:
-                set_sku_base_info(good)
+                set_sku_base_info(good, last_good_id)
+                last_good_id = good.good_id
+
         elif good_title != "":
             goods = GoodBaseInfo.query.filter(GoodBaseInfo.good_title.like("%" + good_title + '%')).all()
             ids = []
@@ -138,8 +146,11 @@ def init_views(app):
                                                                                       SkuProxyInfo.sku_id)
             pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
             goods = pagination.items
+            last_good_id = 0
             for good in goods:
-                set_sku_base_info(good)
+                set_sku_base_info(good, last_good_id)
+                last_good_id = good.good_id
+
             total_count = len(query.all())
         elif good_proxy_shop != "":
             query = SkuProxyInfo.query.filter(SkuProxyInfo.proxy_shop.like("%" + good_proxy_shop + '%'))\
@@ -147,8 +158,11 @@ def init_views(app):
             pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
             goods = pagination.items
             total_count = len(query.all())
+            last_good_id = 0
             for good in goods:
-                set_sku_base_info(good)
+                set_sku_base_info(good, last_good_id)
+                last_good_id = good.good_id
+
         else:
             return redirect('/main')
         viewfunc = ".search"
