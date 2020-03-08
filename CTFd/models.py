@@ -1101,7 +1101,7 @@ class DisplayGoodInfo:
         if _copy_all:
             self.good_description = good_info.good_description
             self.category = good_info.category
-        self.good_image_url = good_info.good_image_url
+            self.good_image_url = good_info.good_image_url
         self.good_has_video = good_info.good_has_video
         self.coupon = good_info.coupon
         self.good_prize = good_info.good_prize
