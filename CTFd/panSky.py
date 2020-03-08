@@ -84,7 +84,7 @@ def init_views(app):
     @app.route('/main', methods=['GET', 'POST'])
     def main():
         page = request.args.get('page', 1, type=int)
-        pagination = SkuProxyInfo.query.order_by(SkuProxyInfo.good_id, SkuProxyInfo.sku_id).paginate(page,
+        pagination = SkuProxyInfo.query.order_by(SkuProxyInfo.good_id, SkuProxyInfo.sku_id, SkuProxyInfo.good_cost).paginate(page,
                                                                                                      per_page=PER_PAGE_COUNT,
                                                                                                      error_out=False)
         goods = pagination.items
@@ -119,7 +119,7 @@ def init_views(app):
             for good in goods:
                 set_sku_base_info(good)
         elif good_id != "":
-            query = SkuProxyInfo.query.filter_by(good_id=good_id).order_by(SkuProxyInfo.sku_id)
+            query = SkuProxyInfo.query.filter_by(good_id=good_id).order_by(SkuProxyInfo.sku_id, SkuProxyInfo.good_cost)
             pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
             goods = pagination.items
             total_count = len(query.all())
@@ -143,7 +143,8 @@ def init_views(app):
             for good in goods:
                 ids.append(good.good_id)
             query = SkuProxyInfo.query.filter(SkuProxyInfo.good_id.in_(ids)).order_by(SkuProxyInfo.good_id,
-                                                                                      SkuProxyInfo.sku_id)
+                                                                                      SkuProxyInfo.sku_id,
+                                                                                      SkuProxyInfo.good_cost)
             pagination = query.paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
             goods = pagination.items
             last_good_id = 0
