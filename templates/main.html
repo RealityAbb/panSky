@@ -517,8 +517,10 @@
                                     <input type="hidden" name="sku_url" value="{{ good.sku_info.sku_url }}">
                                     <input type="hidden" name="proxy_url" value="{{ good.good_proxy_url }}">
                                     <input type="hidden" name="sku_description" value="{{ good.sku_info.sku_description }}">
-                                    <input type="hidden" name="has_video" value="{{ good.good_base_info.good_has_video }}"></td>
-                                    <input type="hidden" name="proxy_shop" value="{{ good.proxy_shop }}"></td>
+                                    <input type="hidden" name="has_video" value="{{ good.good_base_info.good_has_video }}">
+                                    <input type="hidden" name="proxy_shop" value="{{ good.proxy_shop }}">
+                                    <input type="hidden" name="real_title" value="{{ good.good_base_info.good_title }}">
+                                    <input type="hidden" name="real_description" value="{{ good.good_base_info.good_description }}">
                                     <input type="hidden" name="real_category" value="{{ good.good_base_info.category }}"></td>
                                 <td class="goodId">{{ good.good_id}}</td>
                                 {% if good.good_display_info.good_image_url == "" %}
@@ -526,7 +528,7 @@
                                 {%  else %}
                                    <td><img src="{{good.good_base_info.good_image_url}}" width="100px" height="100px"></td>
                                 {%  endif %}
-                                <td class="title">{{good.good_base_info.good_title}}</td>
+                                <td class="title">{{good.good_display_info.good_title}}</td>
                                 <td class="category" style="width: 100px">{{ good.good_display_info.category }}</td>
                                 <td class="description">{{ good.good_display_info.good_description}}</td>
                                 {% if good.good_base_info.good_has_video == True %}
@@ -660,10 +662,10 @@ $('.btn-good-edit').click(function(){
     const good_id = elem.find('input[name=id]').val();
     const sku_id = elem.find('input[name=sku_id]').val();
     const proxy_id = elem.find('input[name=proxy_id]').val();
-    const title = elem.find('.title').text().trim();
+    const title = elem.find('input[name=real_title]').val();
+    const description = elem.find('input[name=real_description]').val();
     const category = elem.find('input[name=real_category]').val();
     const has_video = elem.find('input[name=has_video]').val();
-    const description = elem.find('.description').text().trim();
     const sku_url = elem.find('input[name=sku_url]').val();
     const price = elem.find('.price').text().trim();
     const proxy_url = elem.find('input[name=proxy_url]').val();
@@ -711,13 +713,14 @@ $('.btn-good-edit').click(function(){
 $('.btn-good-sku-add').click(function() {
     const elem = $(this).parent().parent().parent().parent().parent();
     const good_id = elem.find('input[name=id]').val();
-    const title = elem.find('.title').text().trim();
+
     const has_video = elem.find('input[name=has_video]').val();
-    const description = elem.find('.description').text().trim();
+
     const good_prize = elem.find('.good_prize').text().trim();
     const coupon = elem.find('.coupon').text().trim();
     const category = elem.find('input[name=real_category]').val();
-
+    const title = elem.find('input[name=real_title]').val();
+    const description = elem.find('input[name=real_description]').val();
 
     const modal_form = $('#div-edit form');
     modal_form.find("input[name=edit_good_id]").val(good_id);
@@ -739,13 +742,12 @@ $('.btn-good-sku-add').click(function() {
 $('.btn-good-proxy-add').click(function() {
     const elem = $(this).parent().parent().parent().parent().parent();
     const good_id = elem.find('input[name=id]').val();
-    const title = elem.find('.title').text().trim();
     const has_video = elem.find('input[name=has_video]').val();
-    const description = elem.find('.description').text().trim();
     const good_prize = elem.find('.good_prize').text().trim();
     const coupon = elem.find('.coupon').text().trim();
     const category = elem.find('input[name=real_category]').val();
-
+    const title = elem.find('input[name=real_title]').val();
+    const description = elem.find('input[name=real_description]').val();
 
     const sku_url = elem.find('input[name=sku_url]').val();
     const price = elem.find('.price').text().trim();
