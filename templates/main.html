@@ -475,7 +475,6 @@
                             <th>商品ID</th>
                             <th>预览图</th>
                             <th>名称</th>
-                            <th>类目</th>
                             <th>商品简介</th>
                             <th>包含视频</th>
                             <th>店铺链接</th>
@@ -489,10 +488,10 @@
                             <th>产地</th>
                             <th>备注</th>
                             <th>修改</th>
-                            <th>优惠劵</th>
-                            <th>赠品</th>
                             <th>正常利润</th>
                             <th>正常利润占比</th>
+                            <th>优惠劵</th>
+                            <th>赠品</th>
                             <th>30%佣金 加劵</th>
                             <th>20%佣金 加劵</th>
                             <th>30%佣金</th>
@@ -505,6 +504,7 @@
                             <th>20%佣金</th>
                             <th>20%佣金 5%服务费加劵</th>
                             <th>20%佣金 5%服务费</th>
+                            <th>类目</th>
                         </tr>
                        </thead>
                         <tbody>
@@ -579,10 +579,10 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="coupon">{{good.good_base_info.coupon}}</td>
-                                <td class="good_prize">{{good.good_base_info.good_prize}}</td>
                                 <td class="profit">{{ good.profit.profit }}</td>
                                 <td class="profit_rate">{{ good.profit.profit_rate }}</td>
+                                <td class="coupon">{{good.good_base_info.coupon}}</td>
+                                <td class="good_prize">{{good.good_base_info.good_prize}}</td>
                                 <td class="profit">{{ good.profit.profit_1 }}</td>
                                 <td class="profit">{{ good.profit.profit_2 }}</td>
                                 <td class="profit">{{ good.profit.profit_3 }}</td>
@@ -595,6 +595,7 @@
                                 <td class="profit">{{ good.profit.profit_rate_4 }}</td>
                                 <td class="profit">{{ good.profit.profit_rate_5 }}</td>
                                 <td class="profit">{{ good.profit.profit_rate_6 }}</td>
+                                <td class="category" style="width: 100px">{{ good.good_display_info.category }}</td>
                                 <td style="display:none;">{{good.id}}</td>
                             </tr>
                         {% endfor %}
