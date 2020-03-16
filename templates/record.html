@@ -398,7 +398,7 @@
                         <div class="panel panel-primary">
                             <div class="panel-heading">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" id="exampleModalLabel">删除商品</h4>
+                                <h4 class="modal-title" id="exampleModalLabel">设置cookies</h4>
                             </div>
                             <form method="POST" action="/record/cookie" enctype="multipart/form-data">
                                 <div class="panel-body">
@@ -816,29 +816,14 @@ function create() {
 
 //--------------delete good
 $('#btn-delete-good').click(function () {
-    var elem = $(this).parent().parent();
-    var id = elem.find('input[name=id]').val();
-    var obj= document.getElementsByName('select_goods');
-    var goods_ids = '';
-    var j = 0;
-    for(var i=0; i < obj.length; i++) {
-        if(obj[i].checked) {
-            goods_ids += obj[i].value+',';
-            j++;
-        }
-    }
-    if (j <= 0) {
-        alert("请选择要删除的商品");
-    } else {
-        load_delete_machine(goods_ids);
-    }
-});
-
-function load_delete_machine(goods_ids){
     var modal_form = $('#div-delete form');
     modal_form.find('input[name=choose_goods_ids]').val(goods_ids)
     modal_form.attr('action','/pdd/cookie')
     $('#div-delete').modal('toggle');
+});
+
+function load_delete_machine(goods_ids){
+
 }
 
 $('#div-btn-delete').click(function(e){
