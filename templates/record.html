@@ -833,7 +833,7 @@ $('#btn-delete-good').click(function () {
 function load_delete_machine(goods_ids){
     var modal_form = $('#div-delete form');
     modal_form.find('input[name=choose_goods_ids]').val(goods_ids)
-    modal_form.attr('action','/pdd/cookie')
+    modal_form.attr('action','/record/cookie')
     $('#div-delete').modal('toggle');
 }
 
