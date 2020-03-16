@@ -410,12 +410,14 @@ def init_views(app):
 
     @app.route('/record/cookie', methods=['POST'])
     def set_cookie():
+        global PDD_COOKIES
         PDD_COOKIES = request.form["set_cookie_value"]
         print PDD_COOKIES
         return "0"
 
     @app.route('/record/refresh', methods=['POST'])
     def record_refresh():
+        global PDD_COOKIES
         print PDD_COOKIES
         session = PinDuoDuo(PDD_COOKIES)
         records = session.start()
