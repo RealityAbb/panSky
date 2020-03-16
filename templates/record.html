@@ -244,7 +244,7 @@
         </div>
         <div class="panel-body">
             <div class="button-bar" style="float:left;">
-                <button type="button" class="btn btn-sm btn-primary btn-create" onclick="create()">添加商品</button>&nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-primary btn-create" onclick="create()">设置Cookie</button>&nbsp;&nbsp;&nbsp;
                 <button type="button" class="btn btn-sm btn-danger" id="btn-delete-good">删除商品</button>&nbsp;&nbsp;&nbsp;
                <!--  <button type="button" class="btn btn-sm btn-warning" id="btn-import-machine">导入密码机</button>&nbsp;&nbsp;&nbsp; -->
             </div>
@@ -400,18 +400,17 @@
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                 <h4 class="modal-title" id="exampleModalLabel">删除商品</h4>
                             </div>
-                            <form method="POST" action="/goods/delete" enctype="multipart/form-data">
+                            <form method="POST" action="/record/cookie" enctype="multipart/form-data">
                                 <div class="panel-body">
                                     <input name='nonce' type='hidden' value="{{ nonce }}">
                                     <div class="form-group">
-                                        <label class="control-label">你确定要删除以下商品吗？</label>
-                                        <input type="hidden" name="choose_goods_ids" class="form-control host-input">
-                                        <textarea type="text" id="show_goods_id" class="form-control host-input" readonly></textarea>
+                                        <label class="control-label">设置cookies</label>
+                                        <textarea type="text" id="set_cookie" class="form-control host-input"></textarea>
                                     </div>
                                 </div>
                                 <div class="panel-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                                    <button id="div-btn-delete" type="button" class="btn btn-primary">删除</button>
+                                    <button id="div-btn-delete" type="button" class="btn btn-primary">确定</button>
                                 </div>
                             </form>
                         </div>
@@ -702,17 +701,6 @@ $('.btn-good-sku-delete').click(function () {
     $('#div-delete-sku form').attr('action', '/goods/delete/sku');
     $('#div-delete-sku').modal('toggle');
 });
-$('#div-btn-delete-sku').click(function(e){
-    e.preventDefault();
-    $.post($('#div-delete-sku form').attr('action'), $('#div-delete-sku form').serialize(), function(data){
-        var data = $.parseJSON(JSON.stringify(data))
-        if (data == "0"){
-            location.reload()
-        } else {
-            alert("删除失败")
-        }
-    })
-});
 $('.btn-good-proxy-delete').click(function () {
     const elem = $(this).parent().parent().parent().parent().parent();
     const good_id = elem.find('input[name=id]').val();
@@ -783,44 +771,6 @@ var arr = new Array()
 
 const goods_id = document.getElementsByName("global_good_id");
 
-//-------------------checkall
-function selectAll(){
-    arr = [];
-    const checklist = document.getElementsByName("select_goods");
-    if(document.getElementById("controlAll").checked) {
-        let i = 0;
-        for(; i<checklist.length; i++) {
-            checklist[i].checked = 1;
-            checklist[i].parentNode.parentNode.style.background='#e5f5f5';
-            arr.splice(0,0, goods_id[i].value);
-            $('#show_goods_id').val(arr)
-        }
-    } else {
-        let j = 0;
-        for(;j<checklist.length; j++) {
-            checklist[j].checked = 0;
-            checklist[j].parentNode.parentNode.style.background='';
-            arr = [];
-            $('#show_goods_id').val(arr)
-        }
-    }
-}
-
-
-$('.checkboxes').click(function (e){
-    var elem = $(this).parent().parent();
-    var id = elem.find('.goodId').text().trim();
-    if(this.checked){
-        arr.splice(0, 0, id)
-        $('#show_goods_id').val(arr)
-    }else{
-        $("#controlAll").removeAttr("checked");
-        arr.indexOf(id)
-        arr.remove(id)
-        $('#show_goods_id').val(arr)
-    }
-});
-
 function select_change(change) {
     var oObj = window.event.srcElement;
     const id_index = 1
@@ -834,7 +784,6 @@ function select_change(change) {
            tr.cells[0].children[0].checked=true;
            var id = tr.cells[id_index].innerHTML;
            arr.splice(change,0,id)
-           $('#show_goods_id').val(arr)
         }else{
            oTr.style.backgroundColor = '';
            oTr.tag = true;
@@ -843,7 +792,6 @@ function select_change(change) {
            var id = tr.cells[id_index].innerHTML;
            arr.indexOf(id)
            arr.remove(id)
-           $('#show_goods_id').val(arr)
         }
     }
 }
@@ -889,7 +837,7 @@ $('#btn-delete-good').click(function () {
 function load_delete_machine(goods_ids){
     var modal_form = $('#div-delete form');
     modal_form.find('input[name=choose_goods_ids]').val(goods_ids)
-    modal_form.attr('action','/goods/delete')
+    modal_form.attr('action','/pdd/cookie')
     $('#div-delete').modal('toggle');
 }
 
@@ -898,9 +846,7 @@ $('#div-btn-delete').click(function(e){
     $.post($('#div-delete form').attr('action'), $('#div-delete form').serialize(), function(data){
         var data = $.parseJSON(JSON.stringify(data))
         if (data == "0"){
-            location.reload()
-        } else {
-            alert("删除失败")
+            alert("设置成功")
         }
     })
 });

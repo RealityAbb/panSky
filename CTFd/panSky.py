@@ -79,6 +79,7 @@ def set_sku_base_info(sku_info, last_good_id):
     display_info.copy(good_base_info, last_good_id != sku_info.good_id)
     sku_info.set_display_info(display_info)
 
+PDD_COOKIES = ""
 
 def init_views(app):
     @app.route('/main', methods=['GET', 'POST'])
@@ -405,3 +406,8 @@ def init_views(app):
         viewfunc="record"
         return render_template('record.html', viewfunc=viewfunc, pagination=pagination, goods=goods, lm_total=total_count)
 
+    @app.route('/record/cookie', methods=['POST'])
+    def set_cookie():
+        PDD_COOKIES = request.form["set_cookie"]
+        print PDD_COOKIES
+        return "0"
