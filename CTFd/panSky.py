@@ -416,6 +416,7 @@ def init_views(app):
 
     @app.route('/record/refresh', methods=['POST'])
     def record_refresh():
+        print PDD_COOKIES
         session = PinDuoDuo(PDD_COOKIES)
         records = session.start()
         for record_info in records:
