@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import re
 import json
 import yaml
-from orderModel import DetailInfo, PingDuoDuoGood, OrderInfo
+from CTFd.orderModel import DetailInfo, PingDuoDuoGood, OrderInfo, Order
 def byteify(input):
     if isinstance(input, dict):
         return {byteify(key): byteify(value) for key, value in input.iteritems()}
@@ -30,7 +30,7 @@ def set_user_agent():
     ]
     user_agent = random.choice(USER_AGENTS)
     return user_agent
-COUNT_PER_TIMES = 2
+COUNT_PER_TIMES = 10
 class PinDuoDuo:
     def __init__(self, _cookie):
         self.cookies_str = _cookie
@@ -127,9 +127,12 @@ class PinDuoDuo:
             all_order_list.extend(order_list)
             order_list = self.query_record_list(session, order_list[-1].order_sn)
         all_order_list.extend(order_list)
+        result = []
         for order in all_order_list:
             order_detail_url = self.get_detail_url_domain + order.order_link_url
             detail = self.query_detail(session, order_detail_url)
+            result.append(Order(self.user_id, order, detail))
+        return result
 if __name__ == '__main__':
     cookie = "api_uid=CiS3pV5XK+a4+gA9HAy9Ag==; _nano_fp=XpdJX5m8Xpg8npTxlT_aGkXe9DO4t3ayz8s5eVIc; ua=Mozilla%2F5.0%20(Macintosh%3B%20Intel%20Mac%20OS%20X%2010_13_6)%20AppleWebKit%2F537.36%20(KHTML%2C%20like%20Gecko)%20Chrome%2F80.0.3987.132%20Safari%2F537.36; webp=1; msec=1800000; PDDAccessToken=KIUAD4UTI3X3TR7NOWQ27MEZUC7YEEYPZNVVR7THRC5265RRJT5A1111208; pdd_user_id=5722344946962; pdd_user_uin=NCX3F2DDNZ2KHCEFQF7AGFWOTE_GEXDA; rec_list_orders=rec_list_orders_bIzOsY; rec_list_personal=rec_list_personal_l316cx; JSESSIONID=702FDDC9E5D6E5C1E6CD043395B7EA10"
     pdd = PinDuoDuo(cookie)

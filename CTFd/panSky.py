@@ -4,6 +4,8 @@ from CTFd.utils import authed, judge_result, allowed_file, get_file_suffix
 from CTFd.models import db, GoodBaseInfo, GoodSkuInfo, SkuProxyInfo, get_id, DisplayGoodInfo, getPlatform, PddOrderInfo
 from flask import current_app as app
 from werkzeug.utils import secure_filename
+from CTFd.pddCrawing import PinDuoDuo
+from CTFd.orderModel import Order, DetailInfo, OrderInfo, MallInfo
 
 import time
 import hashlib
@@ -414,5 +416,25 @@ def init_views(app):
 
     @app.route('/record/refresh', methods=['POST'])
     def record_refresh():
-        time.sleep(1)
+        session = PinDuoDuo(PDD_COOKIES)
+        records = session.start()
+        for record_info in records:
+            detail = record_info.detail_info
+            order_info = record_info.order_info
+            record = PddOrderInfo(record_info.user_id)
+            record.set_order_info(_order_sn=order_info.order_sn,
+                                  _order_status=order_info.order_status,
+                                  _order_time=order_info.order_time,
+                                  _pay_way=detail.pay_way,
+                                  _pay_status=order_info.pay_status)
+            record.set_express_info(_express_company=detail.express,
+                                    _mobile=detail.mobile,
+                                    _receive_name=detail.receive_name,
+                                    _express_id=order_info.express_id,
+                                    _send_time=order_info.shipping_time,
+                                    _receive_time=order_info.receive_time)
+            record.set_mall_info(order_info.mall_info.id, order_info.mall_info.mall_name, order_info.mall_info.mall_url)
+            db.session.add(record)
+        db.session.commit()
+        db.session.close()
         return "0"

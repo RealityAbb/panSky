@@ -166,6 +166,7 @@ class DetailInfo:
         self.parse_mall(data.get("mall"))
 
 class Order:
-    def __init__(self, _order_info, _detail_info):
+    def __init__(self, _user_id,  _order_info = OrderInfo(), _detail_info = DetailInfo()):
+        self.user_id = _user_id
         self.order_info = _order_info
         self.detail_info = _detail_info

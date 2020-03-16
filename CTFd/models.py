@@ -1330,7 +1330,7 @@ class PddOrderInfo(db.Model):
         self.express_id = self.express_id
         self.send_time = _send_time
         self.send_time_str = convert_timestamp(_send_time)
-    def sed_mall_info(self, _id, _mall_url, _mall_name):
+    def set_mall_info(self, _id, _mall_url, _mall_name):
         self.mall_id = _id
         self.mall_url = _mall_url
         self.mall_name = _mall_name
