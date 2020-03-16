@@ -830,17 +830,6 @@ $('#btn-record-refresh').click(function(e){
 
 //--------------delete good
 $('#btn-delete-good').click(function () {
-    var elem = $(this).parent().parent();
-    var id = elem.find('input[name=id]').val();
-    var obj= document.getElementsByName('select_goods');
-    var goods_ids = '';
-    var j = 0;
-    for(var i=0; i < obj.length; i++) {
-        if(obj[i].checked) {
-            goods_ids += obj[i].value+',';
-            j++;
-        }
-    }
     load_delete_machine(goods_ids);
 });
 
@@ -857,6 +846,7 @@ $('#div-btn-delete').click(function(e){
         var data = $.parseJSON(JSON.stringify(data))
         if (data == "0"){
             alert("设置成功")
+            $('#div-delete').modal('hide')
         }
     })
 });
