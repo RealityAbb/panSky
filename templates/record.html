@@ -244,8 +244,8 @@
         </div>
         <div class="panel-body">
             <div class="button-bar" style="float:left;">
-                <button type="button" class="btn btn-sm btn-primary btn-create" onclick="create()">设置Cookie</button>&nbsp;&nbsp;&nbsp;
-                <button type="button" class="btn btn-sm btn-danger" id="btn-delete-good">删除商品</button>&nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-primary btn-create" id="btn-record-refresh">一键更新</button>&nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-danger" id="btn-delete-good">设置Cookie</button>&nbsp;&nbsp;&nbsp;
                <!--  <button type="button" class="btn btn-sm btn-warning" id="btn-import-machine">导入密码机</button>&nbsp;&nbsp;&nbsp; -->
             </div>
             <div class="button-bar" style="float:right">
@@ -809,9 +809,24 @@ Array.prototype.remove = function(val) {
     }
 };
 
+
+
 function create() {
     $('#div-create').modal("toggle")
 };
+
+$('#btn-record-refresh').click(function(e){
+    e.preventDefault();
+    var zhezhao=document.getElementById("zhezhao");
+    var login=document.getElementById("login");
+    zhezhao.style.display="block";
+    login.style.display="block";
+    $.post('/record/refresh', {
+            'nonce':'{{ nonce }}',
+        }, function(data){
+            window.location.href = "/pdd/record"
+        })
+});
 
 //--------------delete good
 $('#btn-delete-good').click(function () {
