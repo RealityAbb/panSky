@@ -411,7 +411,8 @@ def init_views(app):
         PDD_COOKIES = request.form["set_cookie_value"]
         print PDD_COOKIES
         return "0"
-    @app.route("/record/refresh", method=['POST'])
+
+    @app.route('/record/refresh', methods=['POST'])
     def record_refresh():
         time.sleep(1)
         return "0"
