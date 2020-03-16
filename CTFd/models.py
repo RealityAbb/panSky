@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from socket import inet_aton, inet_ntoa
 from struct import unpack, pack
 from passlib.hash import bcrypt_sha256
+from CTFd.orderModel import MallInfo, OrderInfo, DetailInfo, PingDuoDuoGood
 
 import datetime
 import hashlib
@@ -1216,3 +1217,120 @@ class SkuProxyInfo(db.Model):
         ## 20%佣金 服务费5% 不加劵
         self.profit.profit_6 = (real_price_no - real_price_no * (0.2 + 0.05 + MALL_REBATE) - real_cost)
         self.profit.profit_rate_6 = format_float(self.profit.profit_6 / real_price_no)
+
+def convert_timestamp(timestamp):
+    if timestamp <= 0:
+        return ""
+    time_local = time.localtime(timestamp)
+    # 转换成新的时间格式(2016-05-05 20:28:54)
+    return time.strftime("%Y-%m-%d %H:%M:%S", time_local)
+def convert_order_status(status):
+    return str(status)
+
+def convert_pay_status(status):
+    return str(status)
+
+def convert_express_status(status):
+    return str(status)
+
+class PddOrderInfo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(32))
+    order_sn = db.Column(db.String(32))
+    order_status = db.Column(db.Integer)
+    order_status_str = db.Column(db.String(64))
+    order_time = db.Column(db.Integer)
+    order_time_str = db.Column(db.String(32))
+
+    pay_way = db.Column(db.String(32))
+    pay_time = db.Column(db.Integer)
+    pay_time_str = db.Column(db.String(32))
+    pay_status = db.Column(db.Integer)
+    pay_status_str = db.Column(db.String(64))
+
+    express_id = db.Column(db.String(32)) #快递单号
+    express_status = db.Column(db.Integer)
+    express_status_str = db.Column(db.String(64))
+    express_company = db.Column(db.String(32)) #快递公司
+    send_time = db.Column(db.Integer) #发货时间
+    send_time_str = db.Column(db.String(32)) #发货时间
+    goods = db.Column(db.String(512)) #商品
+    mall_id = db.Column(db.String(64))
+    mall_name = db.Column(db.String(128))
+    mall_url = db.Column(db.String(128))
+    mobile = db.Column(db.String(32))
+    receive_name = db.Column(db.String(32))
+    express_address = db.Column(db.String(256))
+    def __init__(self, _user_id):
+        self.user_id = _user_id
+        self.order_sn = ""
+        self.order_status = -1
+        self.order_status_str = ""
+        self.order_time = 0
+        self.order_time_str = ""
+
+        self.pay_way = ""
+        self.pay_time = 0
+        self.pay_time_str = ""
+        self.pay_status = -1
+        self.pay_status_str = ""
+
+        self.mobile = ""
+        self.receive_name = ""
+        self.express_address = ""
+
+        self.express_id = ""
+        self.express_status = 0
+        self.express_status_str = ""
+        self.express_company = ""
+        self.send_time = 0
+        self.send_time_str = ""
+        self.goods = ""
+        self.goods_list = []
+        self.mall_id = ""
+        self.mall_name = ""
+        self.mall_url = ""
+
+    def set_order_info(self,
+                       _order_sn = "",
+                       _order_status = 0,
+                       _order_time = 0,
+                       _pay_way = "",
+                       _pay_status = 0,
+                       _pay_time = 0,
+                       ):
+        self.order_sn = _order_sn
+        self.order_status = _order_status
+        self.order_status_str = convert_order_status(_order_status)
+        self.order_time = _order_time
+        self.order_time_str = convert_timestamp(_order_time)
+
+        self.pay_way = _pay_way
+        self.pay_status = _pay_status
+        self.pay_status_str = convert_pay_status(_pay_status)
+        self.pay_time = _pay_time
+        self.pay_time_str = convert_timestamp(_pay_time)
+
+    def set_express_info(self,
+                         _express_company = "",
+                         _mobile = "",
+                         _receive_name = "",
+                         _express_status = 0,
+                         _express_status_str = "",
+                         _express_address = "",
+                         _express_id = "",
+                         _send_time = 0,
+                         _receive_time = 0):
+        self.express_company = _express_company
+        self.express_address = _express_address
+        self.mobile = _mobile
+        self.receive_name = _receive_name
+        self.express_status = _express_status
+        self.express_status_str = convert_express_status(_express_status)
+        self.express_id = self.express_id
+        self.send_time = _send_time
+        self.send_time_str = convert_timestamp(_send_time)
+    def sed_mall_info(self, _id, _mall_url, _mall_name):
+        self.mall_id = _id
+        self.mall_url = _mall_url
+        self.mall_name = _mall_name

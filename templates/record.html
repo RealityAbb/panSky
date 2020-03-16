@@ -1,0 +1,932 @@
+{% extends "base.html" %}
+{% import "macros.html" as macros %}
+{% import "macroselect.html" as macroselect %}
+{% block title %}
+店铺管理
+{% endblock %}
+
+{% block content %}
+<style type="text/css">
+    .scroll-spy {
+        height: 768px;
+        overflow-x: auto;
+        overflow-y: auto;
+        position: relative;
+    }
+    *
+    {
+        margin:0px;
+        padding:0px;
+    }
+    .zhezhao
+    {
+      width:100%;
+      height:100%;
+      background-color:#000;
+      filter:alpha(opacity=80);
+      -moz-opacity:0.5;
+      opacity:0.5;
+      position:fixed;
+      left:0px;
+      top:0px;
+      display:none;
+      z-index:1000;
+     }
+    .login
+    {
+      width:280px;
+      height:180px;
+      position:fixed;
+      top:35%;
+      left:45%;
+      background-image: url(/static/img/zhuan.gif);
+      background-repeat: no-repeat;
+      display:none;
+      z-index:1500;
+     }
+    #wrap {
+        display: flex;
+        align-items: center;
+    }
+    .input_box {
+        margin-right: 20px;
+    }
+    .tScroll {
+       /*  min-height:100%;  */
+        min-width: 200%;
+    }
+    .input-container-left {
+        display: flex;
+        width: 260px;
+        align-items: center;
+        float: left;
+    }
+    .input-container-right {
+        display: flex;
+        width: 260px;
+        align-items: center;
+        float: right;
+        margin-left: 20px;
+    }
+    .input-label {
+        width: 70px;
+    }
+    .input-content {
+        width: 190px;
+        height: 30px;
+    }
+    .edit-box {
+        width: 200px;
+    }
+    .btn-edit-default {
+        color: #333;
+        background-color: #fff;
+        border-color: #ccc;
+        padding: 2px 3px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 12px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+    .btn-edit-primary {
+        color: #fff;
+        background-color: #337ab7;
+        border-color: #2e6da4;
+        padding: 2px 3px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 12px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+    .btn-edit-danger {
+        color: #fff;
+        background-color: #d9534f;
+        border-color: #d43f3a;
+        padding: 2px 3px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 12px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+    .td {
+        align: "center"
+    }
+
+
+
+
+</style>
+<!--添加商品--->
+<div class="modal fade" id="div-create" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">添加商品</h4>
+            </div>
+            <form method="POST" action="/good/new" enctype="multipart/form-data">
+                <input name='nonce' type='hidden' value="{{ nonce }}">
+                <div class="panel-body">
+                    <div class="form-group input-container-left">
+                        <label for="host" class="control-label input-label">商品ID</label>
+                        <input type="text" class="form-control host-input input-content"  name="good_id" id="good_id" placeholder="商品ID" required>
+                    </div>
+                    <div class="form-group input-container-right">
+                        <label class="control-label input-label">商品名称</label>
+                        <input type="text" name="good_name" class="form-control host-input input-content" placeholder="商品名称"></input>
+                    </div>
+                    <div class="form-group input-container-left">
+                        <label class="control-label input-label">包含视频</label>
+                        <select name="has_video" id="good_has_video" class="form-control host-input input-content" >
+                            <option value="0" selected = "selected">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </div>
+                    <div class="form-group input-container-right">
+                          <label class="control-label input-label">类目</label>
+                          <input type="text" name="category" class="form-control host-input input-content" value="家务/地板清洁" placeholder="家务/地板清洁"></input>
+                    </div>
+                    <div class="form-group input-container-left">
+                        <label class="control-label input-label">商品简介</label>
+                        <input type="text" class="form-control host-input input-container input-content" name="description" id="description" placeholder="简介">
+                    </div>
+                    <div class="form-group input-container-right">
+                        <label class="control-label input-label">优惠劵</label>
+                        <input type="number" class="form-control host-input input-content" name="coupon" id="coupon" placeholder="0.0" step="0.01">
+                    </div>
+                    <HR/>
+                    <div class="form-group input-container-left" >
+                        <label class="control-label input-label">sku链接</label>
+                        <input type="url" class="form-control host-input input-content" name="sku" id="sku"  placeholder="sku详情页链接">
+                    </div>
+                    <div class="form-group input-container-right" >
+                        <label class="control-label input-label">售价</label>
+                        <input type="number" class="form-control host-input input-content" name="price" id="price"  placeholder="0.0" step="0.01">
+                    </div>
+                    <div class="form-group input-container-left" >
+                        <label class="control-label input-label">sku规格</label>
+                        <input type="text" class="form-control host-input input-content" name="sku_description" id="sku_description"  placeholder="sku规格">
+                    </div>
+                    <div class="form-group input-container-right" >
+                        <label class="control-label input-label">代发店铺</label>
+                        <input type="text" class="form-control host-input input-content" name="proxy_shop" id="proxy_shop">
+                    </div>
+                    <div class="form-group  input-container-left">
+                        <label class="control-label input-label">代发链接</label>
+                        <input type="url" class="form-control host-input input-content" name="proxy_url" id="proxy_url"  placeholder="代发链接">
+                    </div>
+                    <div class="form-group input-container-right">
+                        <label class="control-label input-label">成本</label>
+                        <input type="number" class="form-control host-input input-content" name="cost" id="cost" placeholder="0.0" step="0.01">
+                    </div>
+                    <div class="form-group input-container-left">
+                        <label class="control-label input-label">快递</label>
+                        <input type="text" class="form-control host-input input-content" name="express" id="express" placeholder="快递">
+                    </div>
+                    <div class="form-group input-container-right">
+                        <label class="control-label input-label">邮费</label>
+                        <input type="number" class="form-control host-input input-content" name="postage" id="postage" placeholder="0.0" step="0.01">
+                    </div>
+                    <div class="form-group input-container-left">
+                        <label class="control-label input-label">发货地址</label>
+                        <input type="text" class="form-control host-input input-content" name="address" id="address">
+                    </div>
+                    <div class="form-group input-container-right">
+                        <label class="control-label input-label">产地</label>
+                        <input type="text" class="form-control host-input input-content" name="produce" id="produce">
+                    </div>
+                    <div class="form-group input-container-left">
+                        <label class="control-label input-label">赠品价值</label>
+                        <input type="number" class="form-control host-input input-content" name="prize" id="prize" placeholder="0.0" step="0.01">
+                    </div>
+                     <div class="form-group input-container-right">
+                        <label class="control-label input-label">日常限价</label>
+                        <input type="number" class="form-control host-input input-content" name="day_limit" id="day_limit"  placeholder="0.0" step="0.01">
+                    </div>
+                     <div class="form-group input-container-left">
+                        <label class="control-label input-label">活动限价</label>
+                        <input type="number" class="form-control host-input input-content" name="activity_limit" id="activity_limit"  placeholder="0.0" step="0.01">
+                    </div>
+                    <div class="form-group input-container-right">
+                        <label class="control-label input-label">资质文件</label>
+                        <input type="text" class="form-control host-input input-content" name="qualification" id="qualification" placeholder="资质文件">
+                    </div>
+                    <div class="form-group input-container-left">
+                        <label class="control-label input-label">预览图</label>
+                        <input class="input-content" type="file" name="file">
+                    </div>
+                    <div class="form-group input-container-right" >
+                        <label class="control-label input-label">备注</label>
+                        <input type="text" class="form-control host-input input-content" name="extra" id="extra" placeholder="备注" maxlength="8">
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">创建</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-9" style="padding-right: 1em; width: 100% ">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                  商品基本信息
+            </h4>
+        </div>
+        <div class="panel-body">
+            <div class="button-bar" style="float:left;">
+                <button type="button" class="btn btn-sm btn-primary btn-create" onclick="create()">添加商品</button>&nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-danger" id="btn-delete-good">删除商品</button>&nbsp;&nbsp;&nbsp;
+               <!--  <button type="button" class="btn btn-sm btn-warning" id="btn-import-machine">导入密码机</button>&nbsp;&nbsp;&nbsp; -->
+            </div>
+            <div class="button-bar" style="float:right">
+                <a href="/main"><button type="button" class="btn btn-sm btn-primary">显示全部商品</button></a>&nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm glyphicon glyphicon-refresh"></button>
+            </div>
+            </br></br>
+            <div id="search">
+                <form method="POST" action="/search" enctype="multipart/form-data">
+                    <input name='nonce' type='hidden' value="{{ nonce }}">
+
+                    {% if viewfunc==".main" %}
+                        <div id="wrap" class="form-group" style="width: 800px" align="center">
+                            <input type="text" class="form-control host-input input_box"  name="search_good_id" id="search_good_id"  width="200px" placeholder="商品ID或商品链接">
+                            <input type="text" class="form-control host-input input_box"  name="search_good_title" id="search_good_title" width="200px" placeholder="商品标题关键字">
+                            <input type="text" class="form-control host-input input_box"  name="search_proxy_id" id="search_proxy_id" width="200px" placeholder="代发ID或代发链接">
+                            <input type="text" class="form-control host-input input_box"  name="search_proxy_shop" id="search_proxy_shop" width="200px" placeholder="代发店铺">
+                            <button type="submit" class="btn btn-sm btn-primary btn-query" >查找</button>
+                        </div>
+                    {% elif viewfunc==".search" %}
+                        <div id="wrap" class="form-group" style="width: 800px" align="center">
+                            <input type="text" class="form-control host-input input_box"  name="search_good_id" id="search_good_id"  width="200px" value="{{ search_good_id}}" placeholder="商品ID或商品链接">
+                            <input type="text" class="form-control host-input input_box"  name="search_good_title" id="search_good_title" width="200px"  value="{{ search_good_title}}" placeholder="商品标题关键字">
+                            <input type="text" class="form-control host-input input_box"  name="search_proxy_id" id="search_proxy_id" width="200px"  value="{{ search_proxy_id}}" placeholder="代发ID或代发链接">
+                            <input type="text" class="form-control host-input input_box"  name="search_proxy_shop" id="search_proxy_shop" width="200px" value="{{ search_proxy_shop}}" placeholder="代发店铺">
+                            <button type="submit" class="btn btn-sm btn-primary btn-query" >查找</button>
+                        </div>
+                    {% endif %}
+
+                </form>
+            </div>
+
+            <div id="imformation" class="scroll-spy" style="width: 100%" align="center">
+
+                <div class="modal fade" id="div-edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">编辑商品</h4>
+                            </div>
+                            <div class="panel-body">
+                                <form method="POST" action="" enctype="multipart/form-data">
+                                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                                    <div class="panel-body">
+                                        <div class="form-group input-container-left">
+                                            <label for="host" class="control-label input-label">商品ID</label>
+                                            <input type="text" class="form-control host-input input-content"  name="edit_good_id" id="edit_good_id" placeholder="商品ID" readonly required>
+                                        </div>
+                                        <div class="form-group input-container-right">
+                                            <label class="control-label input-label">商品名称</label>
+                                            <input type="text" name="edit_good_name" class="form-control host-input input-content" placeholder="商品名称"></input>
+                                        </div>
+                                        <div class="form-group input-container-left">
+                                            <label class="control-label input-label">有无视频</label>
+                                            <select name="edit_has_video" id="edit_has_video" class="form-control host-input input-content" >
+                                                <option value="0" selected = "selected">否</option>
+                                                <option value="1">是</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group input-container-right">
+                                            <label class="control-label input-label">类目</label>
+                                            <input type="text" name="edit_category" class="form-control host-input input-content" placeholder="类目"></input>
+                                        </div>
+                                        <div class="form-group input-container-left">
+                                            <label class="control-label input-label">商品简介</label>
+                                            <input type="text" class="form-control host-input input-container input-content" name="edit_description" id="edit_description" placeholder="简介">
+                                        </div>
+                                        <div class="form-group input-container-right">
+                                            <label class="control-label input-label">优惠劵</label>
+                                            <input type="number" class="form-control host-input input-content" name="edit_coupon" id="edit_coupon" placeholder="0.0" step="0.01">
+                                        </div>
+                                        <div class="form-group input-container-left" >
+                                            <label class="control-label input-label">sku规格</label>
+                                            <input type="text" class="form-control host-input input-content" name="edit_sku_description" id="edit_sku_description"  placeholder="sku规格">
+                                        </div>
+                                        <div class="form-group input-container-right" >
+                                            <label class="control-label input-label">代发店铺</label>
+                                            <input type="text" class="form-control host-input input-content" name="edit_proxy_shop" id="edit_proxy_shop">
+                                        </div>
+                                        <HR/>
+                                        <div class="form-group input-container-left" >
+                                            <label class="control-label input-label">sku链接</label>
+                                            <input type="url" class="form-control host-input input-content" name="edit_sku_url" id="edit_sku_url"  placeholder="sku详情页链接">
+                                        </div>
+                                        <div class="form-group input-container-right" >
+                                            <label class="control-label input-label">售价</label>
+                                            <input type="number" class="form-control host-input input-content" name="edit_price" id="edit_price"  placeholder="0.0" step="0.01">
+                                        </div>
+                                        <HR/>
+                                        <div class="form-group  input-container-left">
+                                            <label class="control-label input-label">代发链接</label>
+                                            <input type="url" class="form-control host-input input-content" name="edit_proxy_url" id="edit_proxy_url"  placeholder="代发链接">
+                                        </div>
+                                        <div class="form-group input-container-right">
+                                            <label class="control-label input-label">成本</label>
+                                            <input type="number" class="form-control host-input input-content" name="edit_cost" id="edit_cost" placeholder="0.0" step="0.01">
+                                        </div>
+                                        <div class="form-group input-container-left">
+                                            <label class="control-label input-label">快递</label>
+                                            <input type="text" class="form-control host-input input-content" name="edit_express" id="edit_express" placeholder="快递">
+                                        </div>
+                                        <div class="form-group input-container-right">
+                                            <label class="control-label input-label">邮费</label>
+                                            <input type="number" class="form-control host-input input-content" name="edit_postage" id="edit_postage" placeholder="0.0" step="0.01">
+                                        </div>
+                                        <div class="form-group input-container-left">
+                                            <label class="control-label input-label">发货地址</label>
+                                            <input type="text" class="form-control host-input input-content" name="edit_address" id="edit_address">
+                                        </div>
+                                        <div class="form-group input-container-right">
+                                            <label class="control-label input-label">产地</label>
+                                            <input type="text" class="form-control host-input input-content" name="edit_produce" id="edit_produce">
+                                        </div>
+                                        <div class="form-group input-container-left">
+                                            <label class="control-label input-label">赠品价值</label>
+                                            <input type="number" class="form-control host-input input-content" name="edit_prize" id="edit_prize" placeholder="0.0" step="0.01">
+                                        </div>
+                                         <div class="form-group input-container-right">
+                                            <label class="control-label input-label">日常限价</label>
+                                            <input type="number" class="form-control host-input input-content" name="edit_day_limit" id="edit_day_limit"  placeholder="0.0" step="0.01">
+                                        </div>
+                                         <div class="form-group input-container-left">
+                                            <label class="control-label input-label">活动限价</label>
+                                            <input type="number" class="form-control host-input input-content" name="edit_activity_limit" id="edit_activity_limit"  placeholder="0.0" step="0.01">
+                                        </div>
+                                        <div class="form-group input-container-right">
+                                            <label class="control-label input-label">资质文件</label>
+                                            <input type="text" class="form-control host-input input-content" name="edit_qualification" id="edit_qualification" placeholder="资质文件">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <input type="text" class="form-control host-input" name="edit_extra" id="edit_extra" placeholder="备注">
+                                        </div>
+                                        <input name="edit_sku_id" type="hidden">
+                                        <input name="edit_proxy_id" type="hidden">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                        <button id="div-btn-edit" type="button" class="btn btn-primary">保存</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="div-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">删除商品</h4>
+                            </div>
+                            <form method="POST" action="/goods/delete" enctype="multipart/form-data">
+                                <div class="panel-body">
+                                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                                    <div class="form-group">
+                                        <label class="control-label">你确定要删除以下商品吗？</label>
+                                        <input type="hidden" name="choose_goods_ids" class="form-control host-input">
+                                        <textarea type="text" id="show_goods_id" class="form-control host-input" readonly></textarea>
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button id="div-btn-delete" type="button" class="btn btn-primary">删除</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="div-delete-sku" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">删除SKU</h4>
+                            </div>
+                            <form method="POST" action="/goods/delete/sku" enctype="multipart/form-data">
+                                <div class="panel-body">
+                                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                                    <div class="form-group">
+                                        <label class="control-label">确定要删除SKU和对应代发链接吗？</label>
+                                        <input name="delete_sku_id" type="hidden">
+                                        <input name="delete_sku_good_id" type="hidden">
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button id="div-btn-delete-sku" type="button" class="btn btn-primary">删除</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="div-delete-proxy" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="exampleModalLabel">删除代发链接</h4>
+                            </div>
+                            <form method="POST" action="/goods/delete/proxy" enctype="multipart/form-data">
+                                <div class="panel-body">
+                                    <input name='nonce' type='hidden' value="{{ nonce }}">
+                                    <div class="form-group">
+                                        <label class="control-label">确定要删除代发链接吗？</label>
+                                        <input name="delete_proxy_sku_id" type="hidden">
+                                        <input name="delete_proxy_id" type="hidden">
+                                        <input name="delete_proxy_good_id" type="hidden">
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button id="div-btn-delete-proxy" type="button" class="btn btn-primary">删除</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                   <table class="table table-bordered table-responsive tScroll" id="table1">
+                        <thead>
+                        <tr>
+                            <th><input onclick="selectAll()" type="checkbox" name="controlAll" style="controlAll" id="controlAll"/></th>
+                            <!-- <th>选择</th> -->
+                            <th>定单号</th>
+                            <th>订单状态</th>
+                            <th>下单时间</th>
+                            <th>快递单号</th>
+                            <th>快递状态</th>
+                            <th>快递公司</th>
+                            <th>收件人</th>
+                            <th>电话</th>
+                            <th>收件地址</th>
+                            <th>发货时间</th>
+                            <th>付款方式</th>
+                            <th>付款时间</th>
+                            <th>付款状态</th>
+                            <th>商家</th>
+                            <th>商家链接</th>
+                        </tr>
+                       </thead>
+                        <tbody>
+                            {% for good in goods %}
+                                <tr style="overflow-x: auto;" onClick="select_change({{ good.good_id }})">
+                                <td> <input type="checkbox" name="select_goods" class="checkboxes" value="{{good.good_id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>
+                                <td class="order_id">{{ good.id}}</td>
+                                <td class="order_sn" >{{good.order_sn}}</td>
+                                <td class="order_status_str">{{ good.order_status_str}}</td>
+                                <td class="order_time_str">{{good.order_time_str}}</td>
+                                <td class="express_id">{{good.express_id}}</td>
+                                <td class="express_status_str">{{good.express_status_str}}</td>
+                                <td class="express_company">{{good.express_company}}</td>
+                                <td class="receive_name">{{good.receive_name}}</td>
+                                <td class="mobile" style="width: 100px">{{good.mobile}}</td>
+                                <td class="express_address">{{ good.express_address }}</td>
+                                <td class="send_time_str">{{ good.send_time_str }}</td>
+
+                                <td class="pay_way">{{good.pay_way}}</td>
+                                <td class="pay_time_str">{{good.pay_time_str}}</td>
+                                <td class="pay_status_str">{{ good.pay_status_str }}</td>
+                                <td class="mall_name">{{ good.mall_name }}</td>
+                                <td class="mall_url"><a href="{{good.mall_url}}" target="_blank">商家链接</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                   </table>
+                {% if pagination %}
+                    {% if viewfunc==".record" %}
+                    <div calss="pagination" align="center">
+                        {{ macros.pagination_widget(pagination, viewfunc) }}
+                    </div>
+                    {% elif viewfunc==".search" %}
+                    <div calss="pagination" align="center">
+                        {{ macroselect.pagination_widget(pagination, viewfunc, search_good_id, search_good_title, search_proxy_id) }}
+                    </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<body onload="AlertFunc()">
+    <input id="AlertInfo" value="{{AlertInfo}}" type="hidden">
+</body>
+
+<div class="zhezhao" id="zhezhao"></div>
+<div class="login" id="login"></div>
+
+    {% for good in goods %}
+    <input type="hidden" value="{{ good.good_id }}" name="global_good_id">
+    {% endfor %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/bootstrap-treeview.js"></script>
+<script type="text/javascript">
+function AlertFunc() {
+    var info=document.getElementById("AlertInfo").value;
+    if(info !== "") {
+       alert(info);
+    }
+}
+
+//------------refresh
+$('.glyphicon-refresh').click(function(e){
+    var nodeall = document.getElementById('inputdata').value
+    if(nodeall != ""){
+        $.post('/machineshow', {
+            firstnode:firstnode,
+            secondnode:secondnode,
+            thirdnode:thirdnode,
+            fourthnode:fourthnode,
+            'nonce':'{{ nonce }}',
+        }, function(data){
+            $("#imformation").html(data);
+        })
+    }else{
+        location.reload()
+    }
+});
+$('.btn-good-edit').click(function(){
+    const elem = $(this).parent().parent().parent().parent().parent();
+    const good_id = elem.find('input[name=id]').val();
+    const sku_id = elem.find('input[name=sku_id]').val();
+    const proxy_id = elem.find('input[name=proxy_id]').val();
+    const title = elem.find('input[name=real_title]').val();
+    const description = elem.find('input[name=real_description]').val();
+    const category = elem.find('input[name=real_category]').val();
+    const has_video = elem.find('input[name=has_video]').val();
+    const sku_url = elem.find('input[name=sku_url]').val();
+    const price = elem.find('.price').text().trim();
+    const proxy_url = elem.find('input[name=proxy_url]').val();
+    const cost = elem.find('.cost').text().trim();
+    const coupon = elem.find('.coupon').text().trim();
+    const express = elem.find('.express').text().trim();
+    const postage = elem.find('.postage').text().trim();
+    const postage_address = elem.find('.postage_address').text().trim();
+    const produce_address = elem.find('.produce_address').text().trim();
+    const good_prize = elem.find('.good_prize').text().trim();
+    const extra = elem.find('.extra').text().trim();
+    const proxy_shop = elem.find('input[name=proxy_shop]').val();
+    const modal_form = $('#div-edit form');
+    const sku_description = elem.find('input[name=sku_description]').val();
+    modal_form.find("input[name=edit_good_id]").val(good_id);
+    modal_form.find("input[name=edit_sku_id]").val(sku_id);
+    modal_form.find("input[name=edit_proxy_id]").val(proxy_id);
+    modal_form.find("input[name=edit_good_name]").val(title);
+
+    if (has_video == "True" ) {
+        modal_form.find('select[name=edit_has_video]').find("option[value='1']").attr("selected","selected")
+    } else {
+        modal_form.find('select[name=edit_has_video]').find("option[value='0']").attr("selected","selected")
+    }
+    modal_form.find("input[name=edit_description]").val(description);
+    modal_form.find("input[name=edit_category]").val(category);
+    modal_form.find("input[name=edit_sku_url]").val(sku_url);
+    modal_form.find("input[name=edit_sku_description]").val(sku_description);
+    modal_form.find("input[name=edit_proxy_url]").val(proxy_url);
+    modal_form.find("input[name=edit_price]").val(price);
+    modal_form.find("input[name=edit_cost]").val(cost);
+    modal_form.find("input[name=edit_coupon]").val(coupon);
+    modal_form.find("input[name=edit_express]").val(express);
+    modal_form.find("input[name=edit_postage]").val(postage);
+    modal_form.find("input[name=edit_address]").val(postage_address);
+    modal_form.find("input[name=edit_produce]").val(produce_address);
+    modal_form.find("input[name=edit_prize]").val(good_prize);
+    modal_form.find("input[name=edit_extra]").val(extra);
+    modal_form.find("input[name=edit_proxy_shop]").val(proxy_shop);
+    base_info_read_only(modal_form, false);
+    sku_info_read_only(modal_form, false);
+    $('#div-edit form').attr('action', '/goods/edit');
+    $('#div-edit').modal('toggle');
+});
+$('.btn-good-sku-add').click(function() {
+    const elem = $(this).parent().parent().parent().parent().parent();
+    const good_id = elem.find('input[name=id]').val();
+
+    const has_video = elem.find('input[name=has_video]').val();
+
+    const good_prize = elem.find('.good_prize').text().trim();
+    const coupon = elem.find('.coupon').text().trim();
+    const category = elem.find('input[name=real_category]').val();
+    const title = elem.find('input[name=real_title]').val();
+    const description = elem.find('input[name=real_description]').val();
+
+    const modal_form = $('#div-edit form');
+    modal_form.find("input[name=edit_good_id]").val(good_id);
+    modal_form.find("input[name=edit_good_name]").val(title);
+    if (has_video == "True" ) {
+        modal_form.find('select[name=edit_has_video]').find("option[value='1']").attr("selected","selected")
+    } else {
+        modal_form.find('select[name=edit_has_video]').find("option[value='0']").attr("selected","selected")
+    }
+    modal_form.find("input[name=edit_description]").val(description);
+    modal_form.find("input[name=edit_coupon]").val(coupon);
+    modal_form.find("input[name=edit_prize]").val(good_prize);
+    modal_form.find("input[name=edit_category]").val(category);
+    base_info_read_only(modal_form, true);
+    sku_info_read_only(modal_form, false);
+    $('#div-edit form').attr('action', '/goods/add/sku');
+    $('#div-edit').modal('toggle');
+});
+$('.btn-good-proxy-add').click(function() {
+    const elem = $(this).parent().parent().parent().parent().parent();
+    const good_id = elem.find('input[name=id]').val();
+    const has_video = elem.find('input[name=has_video]').val();
+    const good_prize = elem.find('.good_prize').text().trim();
+    const coupon = elem.find('.coupon').text().trim();
+    const category = elem.find('input[name=real_category]').val();
+    const title = elem.find('input[name=real_title]').val();
+    const description = elem.find('input[name=real_description]').val();
+
+    const sku_url = elem.find('input[name=sku_url]').val();
+    const price = elem.find('.price').text().trim();
+    const sku_id = elem.find('input[name=sku_id]').val();
+    const sku_description = elem.find('input[name=sku_description]').val();
+
+
+    const modal_form = $('#div-edit form');
+    modal_form.find("input[name=edit_good_id]").val(good_id);
+    modal_form.find("input[name=edit_good_name]").val(title);
+    if (has_video == "True" ) {
+        modal_form.find('select[name=edit_has_video]').find("option[value='1']").attr("selected","selected")
+    } else {
+        modal_form.find('select[name=edit_has_video]').find("option[value='0']").attr("selected","selected")
+    }
+    modal_form.find("input[name=edit_description]").val(description);
+    modal_form.find("input[name=edit_category]").val(category);
+    modal_form.find("input[name=edit_coupon]").val(coupon);
+    modal_form.find("input[name=edit_prize]").val(good_prize);
+    modal_form.find("input[name=edit_sku_url]").val(sku_url);
+    modal_form.find("input[name=edit_sku_id]").val(sku_id);
+    modal_form.find("input[name=edit_price]").val(price);
+    modal_form.find("input[name=edit_sku_description]").val(sku_description);
+
+    base_info_read_only(modal_form, true);
+    sku_info_read_only(modal_form, true);
+    $('#div-edit form').attr('action', '/goods/add/proxy');
+    $('#div-edit').modal('toggle');
+});
+
+$('.btn-good-sku-delete').click(function () {
+
+    const elem = $(this).parent().parent().parent().parent().parent();
+    const good_id = elem.find('input[name=id]').val();
+    const sku_id = elem.find('input[name=sku_id]').val();
+    const modal_form = $('#div-delete-sku form');
+    modal_form.find("input[name=delete_sku_good_id]").val(good_id);
+    modal_form.find("input[name=delete_sku_id]").val(sku_id)
+    $('#div-delete-sku form').attr('action', '/goods/delete/sku');
+    $('#div-delete-sku').modal('toggle');
+});
+$('#div-btn-delete-sku').click(function(e){
+    e.preventDefault();
+    $.post($('#div-delete-sku form').attr('action'), $('#div-delete-sku form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        } else {
+            alert("删除失败")
+        }
+    })
+});
+$('.btn-good-proxy-delete').click(function () {
+    const elem = $(this).parent().parent().parent().parent().parent();
+    const good_id = elem.find('input[name=id]').val();
+    const sku_id = elem.find('input[name=sku_id]').val();
+    const proxy_id = elem.find('input[name=proxy_id]').val();
+    const modal_form = $('#div-delete-proxy form');
+    modal_form.find("input[name=delete_proxy_good_id]").val(good_id);
+    modal_form.find("input[name=delete_proxy_id]").val(proxy_id)
+    modal_form.find("input[name=delete_proxy_sku_id]").val(sku_id);
+    $('#div-delete-proxy form').attr('action', '/goods/delete/proxy');
+    $('#div-delete-proxy').modal('toggle');
+});
+$('#div-btn-delete-proxy').click(function(e){
+    e.preventDefault();
+    $.post($('#div-delete-proxy form').attr('action'), $('#div-delete-proxy form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        } else {
+            alert("删除失败")
+        }
+    })
+});
+
+
+function base_info_read_only(modal_form, readonly) {
+    if (readonly == true) {
+        modal_form.find("input[name=edit_good_name]").attr("readonly", "true");
+        modal_form.find("input[name=edit_description]").attr("readonly", "true");
+        modal_form.find('select[name=edit_has_video]').attr("readonly", "true");
+        modal_form.find("input[name=edit_coupon]").attr("readonly", "true");
+        modal_form.find("input[name=edit_postage_prize]").attr("readonly", "true");
+        modal_form.find("input[name=edit_category]").attr("readonly", "true");
+    } else {
+        modal_form.find("input[name=edit_good_name]").attr("readonly", false);
+        modal_form.find("input[name=edit_description]").attr("readonly", false);
+        modal_form.find('select[name=edit_has_video]').attr("readonly", false);
+        modal_form.find("input[name=edit_coupon]").attr("readonly", false);
+        modal_form.find("input[name=edit_postage_prize]").attr("readonly", false);
+        modal_form.find("input[name=edit_category]").attr("readonly", false);
+    }
+}
+
+function sku_info_read_only(modal_form, readonly) {
+    if (readonly == true) {
+        modal_form.find("input[name=edit_sku_url]").attr("readonly", "true");
+        modal_form.find("input[name=edit_price]").attr("readonly", "true");
+        modal_form.find("input[name=edit_sku_description]").attr("readonly", "true");
+    } else {
+
+        modal_form.find("input[name=edit_sku_url]").attr("readonly", false);
+        modal_form.find("input[name=edit_price]").attr("readonly", false);
+        modal_form.find("input[name=edit_sku_description]").attr("readonly", false);
+    }
+
+}
+
+
+//----------judgeoperationresult
+function SwitchStatusCode(data){
+    switch(data)
+    {
+        default: alert('操作异常');
+    }
+}
+
+var arr = new Array()
+
+const goods_id = document.getElementsByName("global_good_id");
+
+//-------------------checkall
+function selectAll(){
+    arr = [];
+    const checklist = document.getElementsByName("select_goods");
+    if(document.getElementById("controlAll").checked) {
+        let i = 0;
+        for(; i<checklist.length; i++) {
+            checklist[i].checked = 1;
+            checklist[i].parentNode.parentNode.style.background='#e5f5f5';
+            arr.splice(0,0, goods_id[i].value);
+            $('#show_goods_id').val(arr)
+        }
+    } else {
+        let j = 0;
+        for(;j<checklist.length; j++) {
+            checklist[j].checked = 0;
+            checklist[j].parentNode.parentNode.style.background='';
+            arr = [];
+            $('#show_goods_id').val(arr)
+        }
+    }
+}
+
+
+$('.checkboxes').click(function (e){
+    var elem = $(this).parent().parent();
+    var id = elem.find('.goodId').text().trim();
+    if(this.checked){
+        arr.splice(0, 0, id)
+        $('#show_goods_id').val(arr)
+    }else{
+        $("#controlAll").removeAttr("checked");
+        arr.indexOf(id)
+        arr.remove(id)
+        $('#show_goods_id').val(arr)
+    }
+});
+
+function select_change(change) {
+    var oObj = window.event.srcElement;
+    const id_index = 1
+    //alert(change.tagName.toLowerCase());
+    if(oObj.tagName.toLowerCase() == "td"){
+        var oTr = oObj.parentNode;
+        if(oTr.style.backgroundColor == ''){
+           oTr.style.backgroundColor = '#e5f5f5';
+           oTr.tag = true;
+           var tr = event.srcElement.parentElement;
+           tr.cells[0].children[0].checked=true;
+           var id = tr.cells[id_index].innerHTML;
+           arr.splice(change,0,id)
+           $('#show_goods_id').val(arr)
+        }else{
+           oTr.style.backgroundColor = '';
+           oTr.tag = true;
+           var tr = event.srcElement.parentElement;
+           tr.cells[0].children[0].checked=false;
+           var id = tr.cells[id_index].innerHTML;
+           arr.indexOf(id)
+           arr.remove(id)
+           $('#show_goods_id').val(arr)
+        }
+    }
+}
+
+Array.prototype.indexOf = function(val) {
+    for (var i = 0; i < this.length; i++) {
+        if (this[i] == val) return i;
+    }
+    return -1;
+};
+
+Array.prototype.remove = function(val) {
+    var index = this.indexOf(val);
+    if (index > -1) {
+        this.splice(index, 1);
+    }
+};
+
+function create() {
+    $('#div-create').modal("toggle")
+};
+
+//--------------delete good
+$('#btn-delete-good').click(function () {
+    var elem = $(this).parent().parent();
+    var id = elem.find('input[name=id]').val();
+    var obj= document.getElementsByName('select_goods');
+    var goods_ids = '';
+    var j = 0;
+    for(var i=0; i < obj.length; i++) {
+        if(obj[i].checked) {
+            goods_ids += obj[i].value+',';
+            j++;
+        }
+    }
+    if (j <= 0) {
+        alert("请选择要删除的商品");
+    } else {
+        load_delete_machine(goods_ids);
+    }
+});
+
+function load_delete_machine(goods_ids){
+    var modal_form = $('#div-delete form');
+    modal_form.find('input[name=choose_goods_ids]').val(goods_ids)
+    modal_form.attr('action','/goods/delete')
+    $('#div-delete').modal('toggle');
+}
+
+$('#div-btn-delete').click(function(e){
+    e.preventDefault();
+    $.post($('#div-delete form').attr('action'), $('#div-delete form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "0"){
+            location.reload()
+        } else {
+            alert("删除失败")
+        }
+    })
+});
+
+$('#div-btn-edit').click(function(e){
+    e.preventDefault();
+    $.post($('#div-edit form').attr('action'), $('#div-edit form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "1"){
+            location.reload()
+        }else{
+            SwitchStatusCode(data)
+        }
+    })
+});
+
+function search_test() {
+    const obj1=document.getElementById("search_good_id").value;
+    const obj2=document.getElementById("search_good_title").value;
+    const obj3=document.getElementById("search_proxy_id").value;
+    const obj4=document.getElementById("search_proxy_shop").value;
+    if (obj1 == "" && obj2 == "" && obj3 == "" && obj4 == "") {
+        alert("填写搜索条件");
+        return false;
+    }
+    return true
+}
+</script>
+{% endblock %}

@@ -1,7 +1,7 @@
 # coding=utf-8
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, flash, send_from_directory
 from CTFd.utils import authed, judge_result, allowed_file, get_file_suffix
-from CTFd.models import db, GoodBaseInfo, GoodSkuInfo, SkuProxyInfo, get_id, DisplayGoodInfo, getPlatform
+from CTFd.models import db, GoodBaseInfo, GoodSkuInfo, SkuProxyInfo, get_id, DisplayGoodInfo, getPlatform, PddOrderInfo
 from flask import current_app as app
 from werkzeug.utils import secure_filename
 
@@ -395,3 +395,13 @@ def init_views(app):
         db.session.commit()
         db.session.close()
         return "0"
+
+    @app.route('/pdd/record', methods=['GET', 'POST'])
+    def record():
+        page = request.args.get('page', 1, type=int)
+        pagination = PddOrderInfo.query.order_by(PddOrderInfo.order_time.desc()).paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
+        goods = pagination.items
+        total_count = db.session.query(db.func.count(PddOrderInfo.id)).first()[0]
+        viewfunc="record"
+        return render_template('record.html', viewfunc=viewfunc, pagination=pagination, goods=goods, lm_total=total_count)
+
