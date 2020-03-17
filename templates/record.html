@@ -144,7 +144,7 @@
             <div id="search">
                 <input name='nonce' type='hidden' value="{{ nonce }}">
                 <div id="wrap" class="form-group" style="width: 1200px" align="center">
-                    <label class="control-label" style="width: 50px">订单状态</label>
+                    <label class="form-control host-input input_box" style="width: 50px">订单状态</label>
                     <select name="search_order_status" id="search_order_status" style="width: 100px" class="form-control host-input input-box" >
                         {% if status == 0 %}
                             <option value="0" selected="selected">全部</option>
@@ -152,34 +152,34 @@
                             <option value="0">全部</option>
                         {% endif %}
                         {% if status == 1 %}
-                            <option value="0" selected="selected">待付款</option>
+                            <option value="1" selected="selected">待付款</option>
                         {% else %}
-                            <option value="0">待付款</option>
+                            <option value="1">待付款</option>
                         {% endif %}
                         {% if status == 2 %}
-                            <option value="0" selected="selected">待发货</option>
+                            <option value="2" selected="selected">待发货</option>
                         {% else %}
-                            <option value="0">待发货</option>
+                            <option value="2">待发货</option>
                         {% endif %}
                         {% if status == 3 %}
-                            <option value="0" selected="selected">待收货</option>
+                            <option value="3" selected="selected">待收货</option>
                         {% else %}
-                            <option value="0">待收货</option>
+                            <option value="3">待收货</option>
                         {% endif %}
                         {% if status == 4 %}
-                            <option value="0" selected="selected">待评价</option>
+                            <option value="4" selected="selected">待评价</option>
                         {% else %}
-                            <option value="0">待评价</option>
+                            <option value="4">待评价</option>
                         {% endif %}
                         {% if status == 5 %}
-                            <option value="0" selected="selected">已取消</option>
+                            <option value="5" selected="selected">已取消</option>
                         {% else %}
-                            <option value="0">已取消</option>
+                            <option value="5">已取消</option>
                         {% endif %}
                         {% if status == 6 %}
-                            <option value="0" selected="selected">其他</option>
+                            <option value="6" selected="selected">其他</option>
                         {% else %}
-                            <option value="0">其他</option>
+                            <option value="6">其他</option>
                         {% endif %}
                     </select>
                     <input type="text" class="form-control host-input input_box"  name="search_order_id" id="search_order_id"  width="200px" value="{{ search_order_id}}" placeholder="订单号">
@@ -194,49 +194,49 @@
                             <option value="0">全部</option>
                         {% endif %}
                         {% if status == 1 %}
-                            <option value="0" selected="selected">中通</option>
+                            <option value="1" selected="selected">中通</option>
                         {% else %}
-                            <option value="0">中通</option>
+                            <option value="1">中通</option>
                         {% endif %}
                         {% if status == 2 %}
-                            <option value="0" selected="selected">邮政</option>
+                            <option value="2" selected="selected">邮政</option>
                         {% else %}
-                            <option value="0">邮政</option>
+                            <option value="2">邮政</option>
                         {% endif %}
                         {% if status == 3 %}
-                            <option value="0" selected="selected">圆通</option>
+                            <option value="3" selected="selected">圆通</option>
                         {% else %}
-                            <option value="0">圆通</option>
+                            <option value="3">圆通</option>
                         {% endif %}
                         {% if status == 4 %}
-                            <option value="0" selected="selected">申通</option>
+                            <option value="4" selected="selected">申通</option>
                         {% else %}
-                            <option value="0">申通</option>
+                            <option value="4">申通</option>
                         {% endif %}
                         {% if status == 5 %}
-                            <option value="0" selected="selected">顺丰</option>
+                            <option value="5" selected="selected">顺丰</option>
                         {% else %}
-                            <option value="0">顺丰</option>
+                            <option value="5">顺丰</option>
                         {% endif %}
                         {% if status == 6 %}
-                            <option value="0" selected="selected">韵达</option>
+                            <option value="6" selected="selected">韵达</option>
                         {% else %}
-                            <option value="0">韵达</option>
+                            <option value="6">韵达</option>
                         {% endif %}
                         {% if status == 7 %}
-                            <option value="0" selected="selected">百世</option>
+                            <option value="7" selected="selected">百世</option>
                         {% else %}
-                            <option value="0">百世</option>
+                            <option value="7">百世</option>
                         {% endif %}
                         {% if status == 8 %}
-                            <option value="0" selected="selected">天天</option>
+                            <option value="8" selected="selected">天天</option>
                         {% else %}
-                            <option value="0">天天</option>
+                            <option value="8">天天</option>
                         {% endif %}
                         {% if status == 9 %}
-                            <option value="0" selected="selected">其他</option>
+                            <option value="9" selected="selected">其他</option>
                         {% else %}
-                            <option value="0">其他</option>
+                            <option value="9">其他</option>
                         {% endif %}
                     </select>
                     <button type="button" id="btn-search-order" class="btn btn-sm btn-primary btn-search-order" >查找</button>
