@@ -470,9 +470,9 @@ def init_views(app):
                                           _pay_way = old_record.pay_way,
                                           _goods=order_info.get_order_goods(),
                                           _pay_status=order_info.pay_status)
-                old_record.set_express_info(_express_company = old_record.express,
+                old_record.set_express_info(_express_company = old_record.express_company,
                                             _mobile = old_record.mobile,
-                                            _express_address = old_record.address,
+                                            _express_address = old_record.express_address,
                                             _receive_name = old_record.receive_name,
                                             _express_id=order_info.express_id,
                                             _send_time=order_info.shipping_time,
