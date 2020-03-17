@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 import re
 import json
 import yaml
+def get_domain():
+    return "http://mobile.yangkeduo.com/"
 class PingDuoDuoGood:
     def __init__(self, _good_name="", _good_number="", _good_price="", _good_link_url=""):
         self.goods_name = _good_name
@@ -41,7 +43,7 @@ class MallInfo:
         if data is not None:
             self.id = get_not_none(data, "id")
             self.mall_name = get_not_none(data, "mall_name")
-            self.mall_url = get_not_none(data, "mall_url")
+            self.mall_url = get_domain() + get_not_none(data, "mall_url")
         return self
 
 class OrderInfo:
@@ -72,8 +74,11 @@ class OrderInfo:
         self.order_goods = []
         if order_goods is not None:
             for goods in order_goods:
-                self.order_goods.append(PingDuoDuoGood().parse(goods))
+                goods_info = PingDuoDuoGood().parse(goods)
+                self.order_goods.append(goods_info.to_string())
         return self
+    def get_order_goods(self):
+        return "\n".join(self.order_goods)
 
 
 

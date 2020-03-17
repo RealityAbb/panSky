@@ -1241,6 +1241,7 @@ class PddOrderInfo(db.Model):
     order_status_str = db.Column(db.String(64))
     order_time = db.Column(db.Integer)
     order_time_str = db.Column(db.String(32))
+    goods = db.Column(db.String(512)) #商品
 
     pay_way = db.Column(db.String(32))
     pay_time = db.Column(db.Integer)
@@ -1254,7 +1255,6 @@ class PddOrderInfo(db.Model):
     express_company = db.Column(db.String(32)) #快递公司
     send_time = db.Column(db.Integer) #发货时间
     send_time_str = db.Column(db.String(32)) #发货时间
-    goods = db.Column(db.String(512)) #商品
     mall_id = db.Column(db.String(64))
     mall_name = db.Column(db.String(128))
     mall_url = db.Column(db.String(128))
@@ -1298,6 +1298,7 @@ class PddOrderInfo(db.Model):
                        _pay_way = "",
                        _pay_status = 0,
                        _pay_time = 0,
+                       _goods = ""
                        ):
         self.order_sn = _order_sn
         self.order_status = _order_status
@@ -1310,6 +1311,9 @@ class PddOrderInfo(db.Model):
         self.pay_status_str = convert_pay_status(_pay_status)
         self.pay_time = _pay_time
         self.pay_time_str = convert_timestamp(_pay_time)
+
+        self.goods = _goods
+
 
     def set_express_info(self,
                          _express_company = "",
@@ -1330,7 +1334,7 @@ class PddOrderInfo(db.Model):
         self.express_id = _express_id
         self.send_time = _send_time
         self.send_time_str = convert_timestamp(_send_time)
-    def set_mall_info(self, _id, _mall_url, _mall_name):
+    def set_mall_info(self, _id, _mall_name, _mall_url):
         self.mall_id = _id
         self.mall_url = _mall_url
         self.mall_name = _mall_name

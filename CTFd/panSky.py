@@ -427,6 +427,7 @@ def init_views(app):
                                   _order_status=order_info.order_status,
                                   _order_time=order_info.order_time,
                                   _pay_way=detail.pay_way,
+                                  _goods=order_info.get_order_goods(),
                                   _pay_status=order_info.pay_status)
             record.set_express_info(_express_company=detail.express,
                                     _mobile=detail.mobile,
