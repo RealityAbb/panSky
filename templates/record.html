@@ -139,6 +139,7 @@
                <!--  <button type="button" class="btn btn-sm btn-warning" id="btn-import-machine">导入密码机</button>&nbsp;&nbsp;&nbsp; -->
             </div>
             <div class="button-bar" style="float:right">
+                <button type="button" class="btn btn-sm btn-primary btn-create" id="btn-record-analyse">异常订单分析</button>&nbsp;&nbsp;&nbsp;
                 <button type="button" class="btn btn-sm btn-primary btn-create" id="btn-record-refresh">一键更新</button>&nbsp;&nbsp;&nbsp;
                 <a href="/pdd/record"><button type="button" class="btn btn-sm btn-primary">显示全部订单</button></a>&nbsp;&nbsp;&nbsp;
                 <button type="button" class="btn btn-sm glyphicon glyphicon-refresh"></button>
@@ -543,6 +544,25 @@ $(".btn-search-order").click(function () {
     const search_order_express = document.getElementById("search_order_express");
     const express = search_order_express.options[search_order_express.selectedIndex].value;
     window.location.href = "/pdd/record?" + "sn=" + search_order_id
+        + "&receive_name=" + search_order_name
+        + "&receive_address=" + search_order_address
+        + "&mobile=" + search_order_mobile
+        + "&status=" + status
+        + "&express=" + express
+});
+
+
+$('#btn-record-analyse').click(function(e){
+    const elem = $(this).parent();
+    const search_order_id = elem.find('input[name=search_order_id]').val();
+    const search_order_name = elem.find('input[name=search_order_name]').val();
+    const search_order_address = elem.find('input[name=search_order_address]').val();
+    const search_order_mobile = elem.find('input[name=search_order_mobile]').val();
+    const search_order_status = document.getElementById("search_order_status");
+    const status = search_order_status.options[search_order_status.selectedIndex].value;
+    const search_order_express = document.getElementById("search_order_express");
+    const express = search_order_express.options[search_order_express.selectedIndex].value;
+    window.location.href = "/pdd/analyse?" + "sn=" + search_order_id
         + "&receive_name=" + search_order_name
         + "&receive_address=" + search_order_address
         + "&mobile=" + search_order_mobile

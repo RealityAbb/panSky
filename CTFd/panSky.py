@@ -427,8 +427,49 @@ def init_views(app):
         goods = pagination.items
         total_count = db.session.query(db.func.count(PddOrderInfo.id)).first()[0]
         viewfunc=".record"
-        print status_code, express_code
         return render_template('record.html', viewfunc=viewfunc, pagination=pagination, goods=goods,
+                               lm_total=total_count,
+                               search_order_id=order_sn,
+                               search_order_name=receive_name,
+                               search_order_address=receive_address,
+                               search_order_express = express,
+                               status = status_code,
+                               express = express_code,
+                               search_order_mobile = mobile)
+    @app.route('/pdd/record', methods=['GET', 'POST'])
+    def analyse():
+        page = request.args.get('page', 1, type=int)
+        order_sn = request.args.get("sn", "", type=str)
+        status_code = 5
+        status = convert_status_code_status(status_code)
+        receive_name = request.args.get("receive_name", "", type=str)
+        receive_address = request.args.get("address", "", type=str)
+        express_code = request.args.get("express",0, type=int)
+        express = convert_code_to_express(express_code)
+        mobile = request.args.get("mobile", "", type=str)
+        query = PddOrderInfo.query
+        if order_sn is not None and order_sn != "":
+            query = query.filter_by(order_sn=order_sn)
+        if status is not None and status != "":
+            query = query.filter(PddOrderInfo.order_status_str.like("%" + status + '%'))
+        if mobile is not None and mobile != "":
+            query = query.filter(PddOrderInfo.mobile.like("%" + mobile + '%'))
+        if receive_name is not None and receive_name != "":
+            query = query.filter(PddOrderInfo.receive_name.like("%" + receive_name + '%'))
+        if receive_address is not None and receive_address != "":
+            query = query.filter(PddOrderInfo.express_address.like("%" + receive_address + '%'))
+        if express is not None and express != "":
+            query = query.filter(PddOrderInfo.express_company.like("%" + express + '%'))
+        pagination = query.order_by(PddOrderInfo.order_time.desc()).paginate(page, per_page=10, error_out=False)
+        goods = pagination.items
+        new_goods = []
+        for goods in goods:
+            relative_goods = PddOrderInfo.query.filter_by(mobile=goods.mobile).all()
+            new_goods.extend(relative_goods)
+            new_goods.append(goods)
+        total_count = db.session.query(db.func.count(PddOrderInfo.id)).first()[0]
+        viewfunc=".analyse"
+        return render_template('record.html', viewfunc=viewfunc, pagination=pagination, goods=new_goods,
                                lm_total=total_count,
                                search_order_id=order_sn,
                                search_order_name=receive_name,
