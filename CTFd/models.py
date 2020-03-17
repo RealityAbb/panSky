@@ -1294,6 +1294,7 @@ class PddOrderInfo(db.Model):
     def set_order_info(self,
                        _order_sn = "",
                        _order_status = 0,
+                       _order_status_str = "",
                        _order_time = 0,
                        _pay_way = "",
                        _pay_status = 0,
@@ -1302,7 +1303,7 @@ class PddOrderInfo(db.Model):
                        ):
         self.order_sn = _order_sn
         self.order_status = _order_status
-        self.order_status_str = convert_order_status(_order_status)
+        self.order_status_str = _order_status_str
         self.order_time = _order_time
         self.order_time_str = convert_timestamp(_order_time)
 

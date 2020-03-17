@@ -5,7 +5,7 @@ from CTFd.models import db, GoodBaseInfo, GoodSkuInfo, SkuProxyInfo, get_id, Dis
 from flask import current_app as app
 from werkzeug.utils import secure_filename
 from CTFd.pddCrawing import PinDuoDuo
-from CTFd.orderModel import Order, DetailInfo, OrderInfo, MallInfo
+from CTFd.orderModel import Order, DetailInfo, OrderInfo, MallInfo, convert_code_to_express, convert_status_code_status
 
 import time
 import hashlib
@@ -403,16 +403,16 @@ def init_views(app):
     def record():
         page = request.args.get('page', 1, type=int)
         order_sn = request.args.get("sn", "", type=str)
-        status = request.args.get('status', -1, type=int)
+        status = convert_status_code_status(request.args.get('status', 0, type=int))
         receive_name = request.args.get("receive_name", "", type=str)
         receive_address = request.args.get("address", "", type=str)
-        express = request.args.get("express","", type=str)
+        express = convert_code_to_express(request.args.get("express",0, type=int))
         mobile = request.args.get("mobile", "", type=str)
         query = PddOrderInfo.query
         if order_sn is not None and order_sn != "":
             query = query.filter_by(order_sn=order_sn)
-        if status >= 0 :
-            query = query.filter_by(order_status=status)
+        if status is not None and status != "":
+            query = query.filter(PddOrderInfo.order_status_str.like("%" + status + '%'))
         if mobile is not None and mobile != "":
             query = query.filter(PddOrderInfo.mobile.like("%" + mobile + '%'))
         if receive_name is not None and receive_name != "":
@@ -451,6 +451,7 @@ def init_views(app):
             record = PddOrderInfo(record_info.user_id)
             record.set_order_info(_order_sn=order_info.order_sn,
                                   _order_status=order_info.order_status,
+                                  _order_status_str=order_info.order_status_str,
                                   _order_time=order_info.order_time,
                                   _pay_way=detail.pay_way,
                                   _goods=order_info.get_order_goods(),

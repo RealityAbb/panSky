@@ -59,6 +59,7 @@ class OrderInfo:
         self.mall_info = MallInfo()
         self.express_id = ""
         self.order_goods = []
+        self.order_status_str = ""
     def parse(self, data):
         self.order_sn = get_not_none(data, "order_sn")
         self.order_status = get_int_not_none(data, "order_status", 0)
@@ -70,6 +71,7 @@ class OrderInfo:
         self.order_link_url = get_not_none(data, "order_link_url")
         self.mall_info = MallInfo().parse(data.get("mall"))
         self.express_id = get_not_none(data, "tracking_number")
+        self.order_status_str = get_not_none(data, "order_status_prompt")
         order_goods = data.get("order_goods")
         self.order_goods = []
         if order_goods is not None:
@@ -81,7 +83,44 @@ class OrderInfo:
         return "\n".join(self.order_goods)
 
 
-
+def convert_status_code_status(code):
+    if code == 0:
+        return ""
+    elif code == 1:
+        return "付款"
+    elif code == 2:
+        return "发货"
+    elif code == 3:
+        return "收货"
+    elif code == 4:
+        return "评价"
+    elif code == 5:
+        return "取消"
+    elif code == 6:
+        return "其他"
+    return ""
+def convert_code_to_express(code):
+    if code == 0:
+        return ""
+    elif code == 1:
+        return "中通"
+    elif code == 2:
+        return "邮政"
+    elif code == 3:
+        return "圆通"
+    elif code == 4:
+        return "申通"
+    elif code == 5:
+        return "顺丰"
+    elif code == 6:
+        return "韵达"
+    elif code == 7:
+        return "百世"
+    elif code == 8:
+        return "天天"
+    elif code == 9:
+        return "其他"
+    return ""
 
 class DetailInfo:
     @staticmethod
