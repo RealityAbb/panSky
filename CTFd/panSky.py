@@ -447,10 +447,14 @@ def init_views(app):
     @app.route('/record/refresh', methods=['POST'])
     def record_refresh():
         global PDD_COOKIES
+        day = request.args.get("time", 0, type=int)
         if PDD_COOKIES is None or PDD_COOKIES == "":
             return "1"
-        session = PinDuoDuo(PDD_COOKIES)
+        current_time = int(time.time())
+        threshold = current_time - 86400000 * day if day > 0 else 0
+        session = PinDuoDuo(PDD_COOKIES, threshold)
         record_list = session.start()
+        print 'refresh record count = ' + str(len(record_list))
         new_record_list = []
         for order_info in record_list:
             old_record = PddOrderInfo.query.filter_by(order_sn=order_info.order_sn).first()

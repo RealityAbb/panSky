@@ -32,8 +32,9 @@ def set_user_agent():
     return user_agent
 COUNT_PER_TIMES = 50
 class PinDuoDuo:
-    def __init__(self, _cookie):
+    def __init__(self, _cookie, threshold = 0):
         self.cookies_str = _cookie
+        self.threshold = threshold
         self.cookies = {}  # 申明一个字典用于存储手动复制的cookies
         self.res_cookies_txt = ""  # 申明刚开始浏览器返回的cookies为空字符串
         self.parse_cookies()
@@ -109,6 +110,8 @@ class PinDuoDuo:
         data = json.loads(response.text, encoding="utf-8")
         data = byteify(data)
         orders = data.get("orders")
+        if orders is None:
+            return []
         order_list = []
         for order in orders:
             order_info = OrderInfo()
@@ -124,11 +127,10 @@ class PinDuoDuo:
         ## 请求全部订单数据
         all_order_list = []
         order_list = self.query_record_list(self.session, 0)
-        while len(order_list) >= COUNT_PER_TIMES:
+        while len(order_list) >= COUNT_PER_TIMES and order_list[-1].order_time > self.threshold:
             all_order_list.extend(order_list)
             order_list = self.query_record_list(self.session, order_list[-1].order_sn)
         all_order_list.extend(order_list)
-        result = []
         return all_order_list
     def close(self):
         self.session = None
