@@ -94,8 +94,6 @@ class PinDuoDuo:
                 result = all_value[len(tag) + start : end]
                 js = json.loads(result, encoding="utf-8")
                 js = byteify(js)
-                with open('result.txt', "w") as f:
-                    f.write(str(js["data"]))
                 detail = DetailInfo()
                 detail.parse(js["data"])
                 return detail
