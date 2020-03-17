@@ -464,9 +464,8 @@ def init_views(app):
         goods = pagination.items
         new_goods = []
         for goods in goods:
-            relative_goods = PddOrderInfo.query.filter_by(mobile=goods.mobile).all()
+            relative_goods = PddOrderInfo.query.filter_by(mobile=goods.mobile).order_by(PddOrderInfo.order_time.desc()).all()
             new_goods.extend(relative_goods)
-            new_goods.append(goods)
         total_count = db.session.query(db.func.count(PddOrderInfo.id)).first()[0]
         viewfunc=".analyse"
         return render_template('record.html', viewfunc=viewfunc, pagination=pagination, goods=new_goods,
