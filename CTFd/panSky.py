@@ -408,7 +408,6 @@ def init_views(app):
         receive_address = request.args.get("address", "", type=str)
         express = request.args.get("express","", type=str)
         mobile = request.args.get("mobile", "", type=str)
-        print receive_name
         query = PddOrderInfo.query
         if order_sn is not None and order_sn != "":
             query = query.filter_by(order_sn=order_sn)
@@ -416,11 +415,11 @@ def init_views(app):
             query = query.filter_by(order_status=status)
         if mobile is not None and mobile != "":
             query = query.filter(PddOrderInfo.mobile.like("%" + mobile + '%'))
-        if receive_name is not None and mobile != "":
+        if receive_name is not None and receive_name != "":
             query = query.filter(PddOrderInfo.receive_name.like("%" + receive_name + '%'))
-        if receive_address is not None and mobile != "":
+        if receive_address is not None and receive_address != "":
             query = query.filter(PddOrderInfo.express_address.like("%" + receive_address + '%'))
-        if express is not None and mobile != "":
+        if express is not None and express != "":
             query = query.filter(PddOrderInfo.express_company.like("%" + express + '%'))
         pagination = query.order_by(PddOrderInfo.order_time.desc()).paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
         goods = pagination.items
