@@ -436,7 +436,7 @@ def init_views(app):
                                status = status_code,
                                express = express_code,
                                search_order_mobile = mobile)
-    @app.route('/pdd/record', methods=['GET', 'POST'])
+    @app.route('/pdd/analyse', methods=['GET', 'POST'])
     def analyse():
         page = request.args.get('page', 1, type=int)
         order_sn = request.args.get("sn", "", type=str)

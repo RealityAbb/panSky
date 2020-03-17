@@ -480,11 +480,9 @@
                         </tbody>
                    </table>
                 {% if pagination %}
-                    {% if viewfunc==".record" %}
                     <div calss="pagination" align="center">
                         {{ macrorecord.pagination_widget(pagination, viewfunc, status, search_order_id, search_order_name, search_order_address, search_order_mobile, search_order_express) }}
                     </div>
-                    {% endif %}
                 {% endif %}
             </div>
         </div>
