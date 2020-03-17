@@ -451,7 +451,7 @@ def init_views(app):
         if PDD_COOKIES is None or PDD_COOKIES == "":
             return "1"
         current_time = int(time.time())
-        threshold = current_time - 86400000 * day if day > 0 else 0
+        threshold = current_time - 86400 * day if day > 0 else 0
         print threshold
         session = PinDuoDuo(PDD_COOKIES, threshold)
         record_list = session.start()

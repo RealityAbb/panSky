@@ -95,9 +95,12 @@ class PinDuoDuo:
                 js = json.loads(result, encoding="utf-8")
                 js = byteify(js)
                 detail = DetailInfo()
-                detail.parse(js["data"])
+                if js is not None:
+                    detail.parse(js["data"])
+                else:
+                    print "js is None"
                 return detail
-        return None
+        return DetailInfo()
 
     def query_record_list(self, session, offset):
         session.headers = self.headers
