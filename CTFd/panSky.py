@@ -409,6 +409,7 @@ def init_views(app):
         express = convert_code_to_express(request.args.get("express",0, type=int))
         mobile = request.args.get("mobile", "", type=str)
         query = PddOrderInfo.query
+        print status, receive_name, receive_address, express, mobile
         if order_sn is not None and order_sn != "":
             query = query.filter_by(order_sn=order_sn)
         if status is not None and status != "":
