@@ -403,14 +403,14 @@ def init_views(app):
     def record():
         page = request.args.get('page', 1, type=int)
         order_sn = request.args.get("sn", "", type=str)
-        status = convert_status_code_status(request.args.get('status', 0, type=int))
+        status_code = request.args.get('status', 0, type=int)
+        status = convert_status_code_status(status_code)
         receive_name = request.args.get("receive_name", "", type=str)
         receive_address = request.args.get("address", "", type=str)
-        print type(request.args.get("express",0, type=int))
-        express = convert_code_to_express(request.args.get("express",0, type=int))
+        express_code = request.args.get("express",0, type=int)
+        express = convert_code_to_express(express_code)
         mobile = request.args.get("mobile", "", type=str)
         query = PddOrderInfo.query
-        print status, receive_name, receive_address, express, mobile
         if order_sn is not None and order_sn != "":
             query = query.filter_by(order_sn=order_sn)
         if status is not None and status != "":
@@ -433,7 +433,8 @@ def init_views(app):
                                search_order_name=receive_name,
                                search_order_address=receive_address,
                                search_order_express = express,
-                               status = status,
+                               status = status_code,
+                               express = express_code,
                                search_order_mobile = mobile)
 
     @app.route('/record/cookie', methods=['POST'])
