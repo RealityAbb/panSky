@@ -539,9 +539,9 @@ $(".btn-search-order").click(function () {
     const search_order_address = elem.find('input[name=search_order_address]').val();
     const search_order_mobile = elem.find('input[name=search_order_mobile]').val();
     const search_order_status = document.getElementById("search_order_status");
-    const status = search_order_status.value;
+    const status = search_order_status.options[search_order_status.selectedIndex].value;
     const search_order_express = document.getElementById("search_order_express");
-    const express = search_order_express.value;
+    const express = search_order_express.options[search_order_express.selectedIndex].value;
     window.location.href = "/pdd/record?" + "sn=" + search_order_id
         + "&receive_name=" + search_order_name
         + "&receive_address=" + search_order_address
@@ -669,16 +669,5 @@ $('#div-btn-edit').click(function(e){
     })
 });
 
-function search_test() {
-    const obj1=document.getElementById("search_good_id").value;
-    const obj2=document.getElementById("search_good_title").value;
-    const obj3=document.getElementById("search_proxy_id").value;
-    const obj4=document.getElementById("search_proxy_shop").value;
-    if (obj1 == "" && obj2 == "" && obj3 == "" && obj4 == "") {
-        alert("填写搜索条件");
-        return false;
-    }
-    return true
-}
 </script>
 {% endblock %}
