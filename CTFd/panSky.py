@@ -457,17 +457,22 @@ def init_views(app):
                 new_record_list.append(Order(order_info, detail))
             else:
                 old_record.set_order_info(_order_sn=order_info.order_sn,
-                                      _order_status=order_info.order_status,
-                                      _order_status_str=order_info.order_status_str,
-                                      _order_time=order_info.order_time,
-                                      _goods=order_info.get_order_goods(),
-                                      _pay_status=order_info.pay_status)
-                old_record.set_express_info(_express_id=order_info.express_id,
-                                        _send_time=order_info.shipping_time,
-                                        _receive_time=order_info.receive_time)
+                                          _order_status=order_info.order_status,
+                                          _order_status_str=order_info.order_status_str,
+                                          _order_time=order_info.order_time,
+                                          _pay_way = old_record.pay_way,
+                                          _goods=order_info.get_order_goods(),
+                                          _pay_status=order_info.pay_status)
+                old_record.set_express_info(_express_company = old_record.express,
+                                            _mobile = old_record.mobile,
+                                            _express_address = old_record.address,
+                                            _receive_name = old_record.receive_name,
+                                            _express_id=order_info.express_id,
+                                            _send_time=order_info.shipping_time,
+                                            _receive_time=order_info.receive_time)
                 old_record.set_mall_info(order_info.mall_info.id,
                                          order_info.mall_info.mall_name,
-                                        order_info.mall_info.mall_url)
+                                         order_info.mall_info.mall_url)
                 db.session.add(old_record)
 
         for record_info in new_record_list:
