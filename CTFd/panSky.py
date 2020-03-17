@@ -425,7 +425,13 @@ def init_views(app):
         goods = pagination.items
         total_count = db.session.query(db.func.count(PddOrderInfo.id)).first()[0]
         viewfunc="record"
-        return render_template('record.html', viewfunc=viewfunc, pagination=pagination, goods=goods, lm_total=total_count)
+        return render_template('record.html', viewfunc=viewfunc, pagination=pagination, goods=goods,
+                               lm_total=total_count,
+                               search_order_id=order_sn,
+                               search_order_name=receive_name,
+                               search_order_address=receive_address,
+                               search_order_express = express,
+                               search_order_mobile = mobile)
 
     @app.route('/record/cookie', methods=['POST'])
     def set_cookie():
