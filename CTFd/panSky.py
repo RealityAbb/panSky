@@ -402,7 +402,24 @@ def init_views(app):
     @app.route('/pdd/record', methods=['GET', 'POST'])
     def record():
         page = request.args.get('page', 1, type=int)
-        pagination = PddOrderInfo.query.order_by(PddOrderInfo.order_time.desc()).paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
+        order_sn = request.args.get("sn", "", type=str)
+        status = request.args.get('status', -1, type=int)
+        receive_name = request.args.get("receive_name", "", type=str)
+        receive_address = request.args.get("address", "", type=str)
+        express = request.args.get("express","", type=str)
+        mobile = request.args.get("mobile", "", type=str)
+        query = PddOrderInfo.query
+        if order_sn is not None and order_sn != "":
+            query = query.filter_by(order_sn=order_sn)
+        if status >= 0 :
+            query = query.filter_by(order_status=status)
+        if receive_name is not None and receive_name != "":
+            query = query.filter(PddOrderInfo.receive_name.like("%" + receive_name + '%'),
+                                 PddOrderInfo.express_address.like("%" + receive_address + '%'),
+                                 PddOrderInfo.receive_name.like("%" + receive_name + '%'),
+                                 PddOrderInfo.express_address.like("%" + express + '%'),
+                                 PddOrderInfo.mobile.like("%" + mobile + '%'))
+        pagination = query(PddOrderInfo.order_time.desc()).paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
         goods = pagination.items
         total_count = db.session.query(db.func.count(PddOrderInfo.id)).first()[0]
         viewfunc="record"
