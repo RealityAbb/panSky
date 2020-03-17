@@ -521,12 +521,10 @@ $(".btn-search-order").click(function () {
     const search_order_name = elem.find('input[name=search_order_name]').val();
     const search_order_address = elem.find('input[name=search_order_address]').val();
     const search_order_mobile = elem.find('input[name=search_order_mobile]').val();
-    const search_order_status = elem.find('select[name=search_order_status]');
-    const index= search_order_status.selectedIndex;
-    const status = search_order_status[index].value;
-    const search_order_express = elem.find('select[name=search_order_express]');
-    const express_index= search_order_express.selectedIndex;
-    const express = search_order_status[express_index].value;
+    const search_order_status = document.getElementById("search_order_status");
+    const status = search_order_status.value;
+    const search_order_express = document.getElementById("search_order_express");
+    const express = search_order_express.value;
     window.location.href = "/pdd/record?" + "sn=" + search_order_id
         + "&receive_name=" + search_order_name
         + "&receive_address=" + search_order_address
