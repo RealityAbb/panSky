@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% import "macros.html" as macros %}
-{% import "macroselect.html" as macroselect %}
+{% import "macrorecord.html" as macrorecord %}
 {% block title %}
 店铺管理
 {% endblock %}
@@ -502,11 +502,7 @@
                 {% if pagination %}
                     {% if viewfunc==".record" %}
                     <div calss="pagination" align="center">
-                        {{ macros.pagination_widget(pagination, viewfunc) }}
-                    </div>
-                    {% elif viewfunc==".search" %}
-                    <div calss="pagination" align="center">
-                        {{ macroselect.pagination_widget(pagination, viewfunc, search_good_id, search_good_title, search_proxy_id) }}
+                        {{ macrorecord.pagination_widget(pagination, viewfunc, status, search_order_id, search_order_name, search_order_address, search_order_mobile, search_order_express) }}
                     </div>
                     {% endif %}
                 {% endif %}
