@@ -472,6 +472,7 @@ def init_views(app):
                                           _pay_status=order_info.pay_status)
                 old_record.set_express_info(_express_company = old_record.express_company,
                                             _mobile = old_record.mobile,
+                                            _express_status=order_info.shipping_status,
                                             _express_address = old_record.express_address,
                                             _receive_name = old_record.receive_name,
                                             _express_id=order_info.express_id,
@@ -494,7 +495,8 @@ def init_views(app):
                                   _goods=order_info.get_order_goods(),
                                   _pay_status=order_info.pay_status)
             new_record.set_express_info(_express_company="" if detail is None else detail.express,
-                                    _mobile="" if detail is None else detail.mobile,
+                                        _express_status=order_info.shipping_status,
+                                        _mobile="" if detail is None else detail.mobile,
                                     _express_address="" if detail is None else detail.address,
                                     _receive_name="" if detail is None else detail.receive_name,
                                     _express_id=order_info.express_id,

@@ -60,6 +60,7 @@ class OrderInfo:
         self.express_id = ""
         self.order_goods = []
         self.order_status_str = ""
+        self.shipping_status = 0
     def parse(self, data):
         self.order_sn = get_not_none(data, "order_sn")
         self.order_status = get_int_not_none(data, "order_status", 0)
@@ -72,6 +73,7 @@ class OrderInfo:
         self.mall_info = MallInfo().parse(data.get("mall"))
         self.express_id = get_not_none(data, "tracking_number")
         self.order_status_str = get_not_none(data, "order_status_prompt")
+        self.shipping_status = get_int_not_none(data, "shipping_status", 0)
         order_goods = data.get("order_goods")
         self.order_goods = []
         if order_goods is not None:
