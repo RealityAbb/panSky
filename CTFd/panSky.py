@@ -412,13 +412,11 @@ def init_views(app):
     def set_cookie():
         global PDD_COOKIES
         PDD_COOKIES = request.form["set_cookie_value"]
-        print PDD_COOKIES
         return "0"
 
     @app.route('/record/refresh', methods=['POST'])
     def record_refresh():
         global PDD_COOKIES
-        print PDD_COOKIES
         session = PinDuoDuo(PDD_COOKIES)
         records = session.start()
         for record_info in records:
@@ -432,6 +430,7 @@ def init_views(app):
                                   _pay_status=order_info.pay_status)
             record.set_express_info(_express_company=detail.express,
                                     _mobile=detail.mobile,
+                                    _express_address=detail.address,
                                     _receive_name=detail.receive_name,
                                     _express_id=order_info.express_id,
                                     _send_time=order_info.shipping_time,

@@ -491,7 +491,6 @@
                             {% for good in goods %}
                                 <tr style="overflow-x: auto;" onClick="select_change({{ good.good_id }})">
                                 <td> <input type="checkbox" name="select_goods" class="checkboxes" value="{{good.good_id}}" onclick="if(this.checked){this.parentNode.parentNode.style.background='#e5f5f5';}else{this.parentNode.parentNode.style.background=''}"></td>
-                                <td class="order_id">{{ good.id}}</td>
                                 <td class="order_sn" >{{good.order_sn}}</td>
                                 <td class="order_status_str">{{ good.order_status_str}}</td>
                                 <td class="order_time_str">{{good.order_time_str}}</td>
