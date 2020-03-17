@@ -145,7 +145,7 @@
                 <input name='nonce' type='hidden' value="{{ nonce }}">
                 <div id="wrap" class="form-group" style="width: 1200px" align="center">
                     <label class="control-label" style="width: 50px">订单状态</label>
-                    <select name="search_order_status" id="search_order_status" style="width: 100px" class="form-control host-input input-content" >
+                    <select name="search_order_status" id="search_order_status" style="width: 100px" class="form-control host-input input-box" >
                         {% if status == 0 %}
                             <option value="0" selected="selected">全部</option>
                         {% else %}
@@ -187,7 +187,7 @@
                     <input type="text" class="form-control host-input input_box"  name="search_order_address" id="search_go" width="200px"  value="{{ search_order_address}}" placeholder="收件地址">
                     <input type="text" class="form-control host-input input_box"  name="search_order_mobile" id="search_proxy_shop" width="200px" value="{{ search_order_mobile}}" placeholder="联系电话">
                     <label class="control-label input-label" style="width: 50px">快递</label>
-                    <select name="search_order_express" id="search_order_express" style="width: 100px" class="form-control host-input input-content">
+                    <select name="search_order_express" id="search_order_express" style="width: 100px" class="form-control host-input input-box">
                         {% if status == 0 %}
                             <option value="0" selected="selected">全部</option>
                         {% else %}
