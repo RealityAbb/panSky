@@ -413,12 +413,11 @@ def init_views(app):
             query = query.filter_by(order_sn=order_sn)
         if status >= 0 :
             query = query.filter_by(order_status=status)
-        if receive_name is not None and receive_name != "":
-            query = query.filter(PddOrderInfo.receive_name.like("%" + receive_name + '%'),
-                                 PddOrderInfo.express_address.like("%" + receive_address + '%'),
-                                 PddOrderInfo.receive_name.like("%" + receive_name + '%'),
-                                 PddOrderInfo.express_address.like("%" + express + '%'),
-                                 PddOrderInfo.mobile.like("%" + mobile + '%'))
+        query = query.filter(PddOrderInfo.receive_name.like("%" + receive_name + '%'),
+                             PddOrderInfo.express_address.like("%" + receive_address + '%'),
+                             PddOrderInfo.receive_name.like("%" + receive_name + '%'),
+                             PddOrderInfo.express_address.like("%" + express + '%'),
+                             PddOrderInfo.mobile.like("%" + mobile + '%'))
         pagination = query.order_by(PddOrderInfo.order_time.desc()).paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
         goods = pagination.items
         total_count = db.session.query(db.func.count(PddOrderInfo.id)).first()[0]
