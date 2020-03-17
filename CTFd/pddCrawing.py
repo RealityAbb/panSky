@@ -30,7 +30,7 @@ def set_user_agent():
     ]
     user_agent = random.choice(USER_AGENTS)
     return user_agent
-COUNT_PER_TIMES = 10
+COUNT_PER_TIMES = 50
 class PinDuoDuo:
     def __init__(self, _cookie):
         self.cookies_str = _cookie
@@ -62,6 +62,7 @@ class PinDuoDuo:
                         "Collection": "keep-alive",
                         "Cache-Control": "max-age=0",
                         "User-Agent": set_user_agent()}
+        self.session = None
     # 读取mycookies.txt中的cookies
     def parse_cookies(self):
         cookies_txt = self.cookies_str.strip(';')  # 读取文本内容
@@ -75,9 +76,9 @@ class PinDuoDuo:
         ##print cookiesJar
         return cookies_jar
 
-    def query_detail(self, session, url):
-        session.headers = self.get_detail_headers
-        response = session.get(url)
+    def query_detail(self, url):
+        self.session.headers = self.get_detail_headers
+        response = self.session.get(url)
         soup = BeautifulSoup(response.text, "lxml")
         p = re.compile('window.rawData=(.*);')
         scripts = soup.find_all("script", {"src": False})
@@ -116,23 +117,22 @@ class PinDuoDuo:
         return order_list
     def start(self):
         # 开启一个session会话
-        session = requests.session()
+        self.session = requests.session()
         # 设置请求头信息
         # 将cookiesJar赋值给会话
-        session.cookies = self.cookies_jar
+        self.session.cookies = self.cookies_jar
         ## 请求全部订单数据
         all_order_list = []
-        order_list = self.query_record_list(session, 0)
+        order_list = self.query_record_list(self.session, 0)
         while len(order_list) >= COUNT_PER_TIMES:
             all_order_list.extend(order_list)
-            order_list = self.query_record_list(session, order_list[-1].order_sn)
+            order_list = self.query_record_list(self.session, order_list[-1].order_sn)
         all_order_list.extend(order_list)
         result = []
-        for order in all_order_list:
-            order_detail_url = self.get_detail_url_domain + order.order_link_url
-            detail = self.query_detail(session, order_detail_url)
-            result.append(Order(self.user_id, order, detail))
-        return result
+        return all_order_list
+    def close(self):
+        self.session = None
+
 if __name__ == '__main__':
     cookie = "api_uid=CiS3pV5XK+a4+gA9HAy9Ag==; _nano_fp=XpdJX5m8Xpg8npTxlT_aGkXe9DO4t3ayz8s5eVIc; ua=Mozilla%2F5.0%20(Macintosh%3B%20Intel%20Mac%20OS%20X%2010_13_6)%20AppleWebKit%2F537.36%20(KHTML%2C%20like%20Gecko)%20Chrome%2F80.0.3987.132%20Safari%2F537.36; webp=1; msec=1800000; PDDAccessToken=KIUAD4UTI3X3TR7NOWQ27MEZUC7YEEYPZNVVR7THRC5265RRJT5A1111208; pdd_user_id=5722344946962; pdd_user_uin=NCX3F2DDNZ2KHCEFQF7AGFWOTE_GEXDA; rec_list_orders=rec_list_orders_bIzOsY; rec_list_personal=rec_list_personal_l316cx; JSESSIONID=702FDDC9E5D6E5C1E6CD043395B7EA10"
     pdd = PinDuoDuo(cookie)

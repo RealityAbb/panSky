@@ -448,27 +448,49 @@ def init_views(app):
     def record_refresh():
         global PDD_COOKIES
         session = PinDuoDuo(PDD_COOKIES)
-        records = session.start()
-        for record_info in records:
+        record_list = session.start()
+        new_record_list = []
+        for order_info in record_list:
+            old_record = PddOrderInfo.query.filter_by(order_sn=order_info.order_sn).first()
+            if old_record is None:
+                detail = session.query_detail(session.get_detail_url_domain + order_info.order_link_url)
+                new_record_list.append(Order(order_info, detail))
+            else:
+                old_record.set_order_info(_order_sn=order_info.order_sn,
+                                      _order_status=order_info.order_status,
+                                      _order_status_str=order_info.order_status_str,
+                                      _order_time=order_info.order_time,
+                                      _goods=order_info.get_order_goods(),
+                                      _pay_status=order_info.pay_status)
+                old_record.set_express_info(_express_id=order_info.express_id,
+                                        _send_time=order_info.shipping_time,
+                                        _receive_time=order_info.receive_time)
+                old_record.set_mall_info(order_info.mall_info.id,
+                                         order_info.mall_info.mall_name,
+                                        order_info.mall_info.mall_url)
+                db.session.add(old_record)
+
+        for record_info in new_record_list:
             detail = record_info.detail_info
             order_info = record_info.order_info
-            record = PddOrderInfo(record_info.user_id)
-            record.set_order_info(_order_sn=order_info.order_sn,
+            new_record = PddOrderInfo(record_info.user_id)
+            new_record.set_order_info(_order_sn=order_info.order_sn,
                                   _order_status=order_info.order_status,
                                   _order_status_str=order_info.order_status_str,
                                   _order_time=order_info.order_time,
                                   _pay_way=detail.pay_way,
                                   _goods=order_info.get_order_goods(),
                                   _pay_status=order_info.pay_status)
-            record.set_express_info(_express_company=detail.express,
+            new_record.set_express_info(_express_company=detail.express,
                                     _mobile=detail.mobile,
                                     _express_address=detail.address,
                                     _receive_name=detail.receive_name,
                                     _express_id=order_info.express_id,
                                     _send_time=order_info.shipping_time,
                                     _receive_time=order_info.receive_time)
-            record.set_mall_info(order_info.mall_info.id, order_info.mall_info.mall_name, order_info.mall_info.mall_url)
-            db.session.add(record)
+            new_record.set_mall_info(order_info.mall_info.id, order_info.mall_info.mall_name, order_info.mall_info.mall_url)
+            db.session.add(new_record)
+        session.close()
         db.session.commit()
         db.session.close()
         return "0"
