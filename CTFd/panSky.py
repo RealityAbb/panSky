@@ -452,6 +452,7 @@ def init_views(app):
             return "1"
         current_time = int(time.time())
         threshold = current_time - 86400000 * day if day > 0 else 0
+        print threshold
         session = PinDuoDuo(PDD_COOKIES, threshold)
         record_list = session.start()
         print 'refresh record count = ' + str(len(record_list))
