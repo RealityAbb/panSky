@@ -408,6 +408,7 @@ def init_views(app):
         receive_address = request.args.get("address", "", type=str)
         express = request.args.get("express","", type=str)
         mobile = request.args.get("mobile", "", type=str)
+        print receive_name
         query = PddOrderInfo.query
         if order_sn is not None and order_sn != "":
             query = query.filter_by(order_sn=order_sn)
