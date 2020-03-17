@@ -419,7 +419,7 @@ def init_views(app):
                                  PddOrderInfo.receive_name.like("%" + receive_name + '%'),
                                  PddOrderInfo.express_address.like("%" + express + '%'),
                                  PddOrderInfo.mobile.like("%" + mobile + '%'))
-        pagination = query(PddOrderInfo.order_time.desc()).paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
+        pagination = query.order_by(PddOrderInfo.order_time.desc()).paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
         goods = pagination.items
         total_count = db.session.query(db.func.count(PddOrderInfo.id)).first()[0]
         viewfunc="record"
