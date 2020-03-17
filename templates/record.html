@@ -617,6 +617,8 @@ $('#btn-record-refresh').click(function(e){
             'nonce':'{{ nonce }}',
         }, function(data){
             if (data == "1") {
+                zhezhao.style.display="none";
+                login.style.display="none";
                 alert("先设置Cookies")
             } else {
                 window.location.href = "/pdd/record"
