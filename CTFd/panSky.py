@@ -447,6 +447,8 @@ def init_views(app):
     @app.route('/record/refresh', methods=['POST'])
     def record_refresh():
         global PDD_COOKIES
+        if PDD_COOKIES is None or PDD_COOKIES == "":
+            return "1"
         session = PinDuoDuo(PDD_COOKIES)
         record_list = session.start()
         new_record_list = []
@@ -454,7 +456,7 @@ def init_views(app):
             old_record = PddOrderInfo.query.filter_by(order_sn=order_info.order_sn).first()
             if old_record is None:
                 detail = session.query_detail(session.get_detail_url_domain + order_info.order_link_url)
-                new_record_list.append(Order(order_info, detail))
+                new_record_list.append(Order(session.user_id, order_info, detail))
             else:
                 old_record.set_order_info(_order_sn=order_info.order_sn,
                                           _order_status=order_info.order_status,

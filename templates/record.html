@@ -616,7 +616,11 @@ $('#btn-record-refresh').click(function(e){
     $.post('/record/refresh', {
             'nonce':'{{ nonce }}',
         }, function(data){
-            window.location.href = "/pdd/record"
+            if (data == "1") {
+                alert("先设置Cookies")
+            } else {
+                window.location.href = "/pdd/record"
+            }
         })
 });
 
@@ -650,7 +654,6 @@ $('#div-btn-delete').click(function(e){
         if (data == "0"){
             alert("设置成功")
             $('#div-delete').modal('hide');
-
         }
     })
 });
