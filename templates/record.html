@@ -552,20 +552,7 @@ $(".btn-search-order").click(function () {
 
 $('#btn-record-analyse').click(function(e){
     const elem = $(this).parent();
-    const search_order_id = elem.find('input[name=search_order_id]').val();
-    const search_order_name = elem.find('input[name=search_order_name]').val();
-    const search_order_address = elem.find('input[name=search_order_address]').val();
-    const search_order_mobile = elem.find('input[name=search_order_mobile]').val();
-    const search_order_status = document.getElementById("search_order_status");
-    const status = search_order_status.options[search_order_status.selectedIndex].value;
-    const search_order_express = document.getElementById("search_order_express");
-    const express = search_order_express.options[search_order_express.selectedIndex].value;
-    window.location.href = "/pdd/analyse?" + "sn=" + search_order_id
-        + "&receive_name=" + search_order_name
-        + "&receive_address=" + search_order_address
-        + "&mobile=" + search_order_mobile
-        + "&status=" + status
-        + "&express=" + express
+    window.location.href = "/pdd/analyse?"
 });
 
 
