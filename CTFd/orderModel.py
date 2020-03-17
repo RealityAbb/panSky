@@ -100,6 +100,7 @@ def convert_status_code_status(code):
         return "其他"
     return ""
 def convert_code_to_express(code):
+    print "code = " + str(code)
     if code == 0:
         return ""
     elif code == 1:

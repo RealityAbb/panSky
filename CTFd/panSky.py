@@ -406,6 +406,7 @@ def init_views(app):
         status = convert_status_code_status(request.args.get('status', 0, type=int))
         receive_name = request.args.get("receive_name", "", type=str)
         receive_address = request.args.get("address", "", type=str)
+        print type(request.args.get("express",0, type=int))
         express = convert_code_to_express(request.args.get("express",0, type=int))
         mobile = request.args.get("mobile", "", type=str)
         query = PddOrderInfo.query
