@@ -122,118 +122,6 @@
 
 
 </style>
-<!--添加商品--->
-<div class="modal fade" id="div-create" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">添加商品</h4>
-            </div>
-            <form method="POST" action="/good/new" enctype="multipart/form-data">
-                <input name='nonce' type='hidden' value="{{ nonce }}">
-                <div class="panel-body">
-                    <div class="form-group input-container-left">
-                        <label for="host" class="control-label input-label">商品ID</label>
-                        <input type="text" class="form-control host-input input-content"  name="good_id" id="good_id" placeholder="商品ID" required>
-                    </div>
-                    <div class="form-group input-container-right">
-                        <label class="control-label input-label">商品名称</label>
-                        <input type="text" name="good_name" class="form-control host-input input-content" placeholder="商品名称"></input>
-                    </div>
-                    <div class="form-group input-container-left">
-                        <label class="control-label input-label">包含视频</label>
-                        <select name="has_video" id="good_has_video" class="form-control host-input input-content" >
-                            <option value="0" selected = "selected">否</option>
-                            <option value="1">是</option>
-                        </select>
-                    </div>
-                    <div class="form-group input-container-right">
-                          <label class="control-label input-label">类目</label>
-                          <input type="text" name="category" class="form-control host-input input-content" value="家务/地板清洁" placeholder="家务/地板清洁"></input>
-                    </div>
-                    <div class="form-group input-container-left">
-                        <label class="control-label input-label">商品简介</label>
-                        <input type="text" class="form-control host-input input-container input-content" name="description" id="description" placeholder="简介">
-                    </div>
-                    <div class="form-group input-container-right">
-                        <label class="control-label input-label">优惠劵</label>
-                        <input type="number" class="form-control host-input input-content" name="coupon" id="coupon" placeholder="0.0" step="0.01">
-                    </div>
-                    <HR/>
-                    <div class="form-group input-container-left" >
-                        <label class="control-label input-label">sku链接</label>
-                        <input type="url" class="form-control host-input input-content" name="sku" id="sku"  placeholder="sku详情页链接">
-                    </div>
-                    <div class="form-group input-container-right" >
-                        <label class="control-label input-label">售价</label>
-                        <input type="number" class="form-control host-input input-content" name="price" id="price"  placeholder="0.0" step="0.01">
-                    </div>
-                    <div class="form-group input-container-left" >
-                        <label class="control-label input-label">sku规格</label>
-                        <input type="text" class="form-control host-input input-content" name="sku_description" id="sku_description"  placeholder="sku规格">
-                    </div>
-                    <div class="form-group input-container-right" >
-                        <label class="control-label input-label">代发店铺</label>
-                        <input type="text" class="form-control host-input input-content" name="proxy_shop" id="proxy_shop">
-                    </div>
-                    <div class="form-group  input-container-left">
-                        <label class="control-label input-label">代发链接</label>
-                        <input type="url" class="form-control host-input input-content" name="proxy_url" id="proxy_url"  placeholder="代发链接">
-                    </div>
-                    <div class="form-group input-container-right">
-                        <label class="control-label input-label">成本</label>
-                        <input type="number" class="form-control host-input input-content" name="cost" id="cost" placeholder="0.0" step="0.01">
-                    </div>
-                    <div class="form-group input-container-left">
-                        <label class="control-label input-label">快递</label>
-                        <input type="text" class="form-control host-input input-content" name="express" id="express" placeholder="快递">
-                    </div>
-                    <div class="form-group input-container-right">
-                        <label class="control-label input-label">邮费</label>
-                        <input type="number" class="form-control host-input input-content" name="postage" id="postage" placeholder="0.0" step="0.01">
-                    </div>
-                    <div class="form-group input-container-left">
-                        <label class="control-label input-label">发货地址</label>
-                        <input type="text" class="form-control host-input input-content" name="address" id="address">
-                    </div>
-                    <div class="form-group input-container-right">
-                        <label class="control-label input-label">产地</label>
-                        <input type="text" class="form-control host-input input-content" name="produce" id="produce">
-                    </div>
-                    <div class="form-group input-container-left">
-                        <label class="control-label input-label">赠品价值</label>
-                        <input type="number" class="form-control host-input input-content" name="prize" id="prize" placeholder="0.0" step="0.01">
-                    </div>
-                     <div class="form-group input-container-right">
-                        <label class="control-label input-label">日常限价</label>
-                        <input type="number" class="form-control host-input input-content" name="day_limit" id="day_limit"  placeholder="0.0" step="0.01">
-                    </div>
-                     <div class="form-group input-container-left">
-                        <label class="control-label input-label">活动限价</label>
-                        <input type="number" class="form-control host-input input-content" name="activity_limit" id="activity_limit"  placeholder="0.0" step="0.01">
-                    </div>
-                    <div class="form-group input-container-right">
-                        <label class="control-label input-label">资质文件</label>
-                        <input type="text" class="form-control host-input input-content" name="qualification" id="qualification" placeholder="资质文件">
-                    </div>
-                    <div class="form-group input-container-left">
-                        <label class="control-label input-label">预览图</label>
-                        <input class="input-content" type="file" name="file">
-                    </div>
-                    <div class="form-group input-container-right" >
-                        <label class="control-label input-label">备注</label>
-                        <input type="text" class="form-control host-input input-content" name="extra" id="extra" placeholder="备注" maxlength="8">
-                    </div>
-                </div>
-                <div class="panel-footer">
-                    <button for="host" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="submit" class="btn btn-primary">创建</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <div class="col-md-9" style="padding-right: 1em; width: 100% ">
     <div class="panel panel-primary">
@@ -256,10 +144,84 @@
             <div id="search">
                 <input name='nonce' type='hidden' value="{{ nonce }}">
                 <div id="wrap" class="form-group" style="width: 800px" align="center">
+                    <select name="search_order_status" id="search_order_status" style="width: 100px" class="form-control host-input input-content" >
+                        {% if status == 0 %}
+                            <option value="0" selected="selected">全部</option>
+                        {% else %}
+                            <option value="0">全部</option>
+                        {% endif %}
+                        {% if status == 1 %}
+                            <option value="0" selected="selected">待付款</option>
+                        {% else %}
+                            <option value="0">待付款</option>
+                        {% endif %}
+                        {% if status == 2 %}
+                            <option value="0" selected="selected">待发货</option>
+                        {% else %}
+                            <option value="0">待发货</option>
+                        {% endif %}
+                        {% if status == 3 %}
+                            <option value="0" selected="selected">待收货</option>
+                        {% else %}
+                            <option value="0">待收货</option>
+                        {% endif %}
+                        {% if status == 4 %}
+                            <option value="0" selected="selected">待评价</option>
+                        {% else %}
+                            <option value="0">待评价</option>
+                        {% endif %}
+                        {% if status == 5 %}
+                            <option value="0" selected="selected">已取消</option>
+                        {% else %}
+                            <option value="0">已取消</option>
+                        {% endif %}
+                        {% if status == 6 %}
+                            <option value="0" selected="selected">其他</option>
+                        {% else %}
+                            <option value="0">其他</option>
+                        {% endif %}
+                    </select>
                     <input type="text" class="form-control host-input input_box"  name="search_order_id" id="search_order_id"  width="200px" value="{{ search_order_id}}" placeholder="订单号">
                     <input type="text" class="form-control host-input input_box"  name="search_order_name" id="search_order_name" width="200px"  value="{{ search_order_name}}" placeholder="收件人">
                     <input type="text" class="form-control host-input input_box"  name="search_order_address" id="search_go" width="200px"  value="{{ search_order_address}}" placeholder="收件地址">
                     <input type="text" class="form-control host-input input_box"  name="search_order_mobile" id="search_proxy_shop" width="200px" value="{{ search_order_mobile}}" placeholder="联系电话">
+                    <select name="search_order_express" id="search_order_express" style="width: 100px" class="form-control host-input input-content">
+                        {% if status == 0 %}
+                            <option value="0" selected="selected">全部</option>
+                        {% else %}
+                            <option value="0">全部</option>
+                        {% endif %}
+                        {% if status == 1 %}
+                            <option value="0" selected="selected">中通</option>
+                        {% else %}
+                            <option value="0">中通</option>
+                        {% endif %}
+                        {% if status == 2 %}
+                            <option value="0" selected="selected">邮政</option>
+                        {% else %}
+                            <option value="0">邮政</option>
+                        {% endif %}
+                        {% if status == 3 %}
+                            <option value="0" selected="selected">圆通</option>
+                        {% else %}
+                            <option value="0">圆通</option>
+                        {% endif %}
+                        {% if status == 4 %}
+                            <option value="0" selected="selected">申通</option>
+                        {% else %}
+                            <option value="0">申通</option>
+                        {% endif %}
+                        {% if status == 5 %}
+                            <option value="0" selected="selected">顺丰</option>
+                        {% else %}
+                            <option value="0">顺丰</option>
+                        {% endif %}
+                        {% if status == 6 %}
+                            <option value="0" selected="selected">其他</option>
+                        {% else %}
+                            <option value="0">其他</option>
+                        {% endif %}
+                    </select>
                     <button type="button" id="btn-search-order" class="btn btn-sm btn-primary btn-search-order" >查找</button>
                 </div>
             </div>
@@ -551,126 +513,6 @@ $('.glyphicon-refresh').click(function(e){
         location.reload()
     }
 });
-$('.btn-good-edit').click(function(){
-    const elem = $(this).parent().parent().parent().parent().parent();
-    const good_id = elem.find('input[name=id]').val();
-    const sku_id = elem.find('input[name=sku_id]').val();
-    const proxy_id = elem.find('input[name=proxy_id]').val();
-    const title = elem.find('input[name=real_title]').val();
-    const description = elem.find('input[name=real_description]').val();
-    const category = elem.find('input[name=real_category]').val();
-    const has_video = elem.find('input[name=has_video]').val();
-    const sku_url = elem.find('input[name=sku_url]').val();
-    const price = elem.find('.price').text().trim();
-    const proxy_url = elem.find('input[name=proxy_url]').val();
-    const cost = elem.find('.cost').text().trim();
-    const coupon = elem.find('.coupon').text().trim();
-    const express = elem.find('.express').text().trim();
-    const postage = elem.find('.postage').text().trim();
-    const postage_address = elem.find('.postage_address').text().trim();
-    const produce_address = elem.find('.produce_address').text().trim();
-    const good_prize = elem.find('.good_prize').text().trim();
-    const extra = elem.find('.extra').text().trim();
-    const proxy_shop = elem.find('input[name=proxy_shop]').val();
-    const modal_form = $('#div-edit form');
-    const sku_description = elem.find('input[name=sku_description]').val();
-    modal_form.find("input[name=edit_good_id]").val(good_id);
-    modal_form.find("input[name=edit_sku_id]").val(sku_id);
-    modal_form.find("input[name=edit_proxy_id]").val(proxy_id);
-    modal_form.find("input[name=edit_good_name]").val(title);
-
-    if (has_video == "True" ) {
-        modal_form.find('select[name=edit_has_video]').find("option[value='1']").attr("selected","selected")
-    } else {
-        modal_form.find('select[name=edit_has_video]').find("option[value='0']").attr("selected","selected")
-    }
-    modal_form.find("input[name=edit_description]").val(description);
-    modal_form.find("input[name=edit_category]").val(category);
-    modal_form.find("input[name=edit_sku_url]").val(sku_url);
-    modal_form.find("input[name=edit_sku_description]").val(sku_description);
-    modal_form.find("input[name=edit_proxy_url]").val(proxy_url);
-    modal_form.find("input[name=edit_price]").val(price);
-    modal_form.find("input[name=edit_cost]").val(cost);
-    modal_form.find("input[name=edit_coupon]").val(coupon);
-    modal_form.find("input[name=edit_express]").val(express);
-    modal_form.find("input[name=edit_postage]").val(postage);
-    modal_form.find("input[name=edit_address]").val(postage_address);
-    modal_form.find("input[name=edit_produce]").val(produce_address);
-    modal_form.find("input[name=edit_prize]").val(good_prize);
-    modal_form.find("input[name=edit_extra]").val(extra);
-    modal_form.find("input[name=edit_proxy_shop]").val(proxy_shop);
-    base_info_read_only(modal_form, false);
-    sku_info_read_only(modal_form, false);
-    $('#div-edit form').attr('action', '/goods/edit');
-    $('#div-edit').modal('toggle');
-});
-$('.btn-good-sku-add').click(function() {
-    const elem = $(this).parent().parent().parent().parent().parent();
-    const good_id = elem.find('input[name=id]').val();
-
-    const has_video = elem.find('input[name=has_video]').val();
-
-    const good_prize = elem.find('.good_prize').text().trim();
-    const coupon = elem.find('.coupon').text().trim();
-    const category = elem.find('input[name=real_category]').val();
-    const title = elem.find('input[name=real_title]').val();
-    const description = elem.find('input[name=real_description]').val();
-
-    const modal_form = $('#div-edit form');
-    modal_form.find("input[name=edit_good_id]").val(good_id);
-    modal_form.find("input[name=edit_good_name]").val(title);
-    if (has_video == "True" ) {
-        modal_form.find('select[name=edit_has_video]').find("option[value='1']").attr("selected","selected")
-    } else {
-        modal_form.find('select[name=edit_has_video]').find("option[value='0']").attr("selected","selected")
-    }
-    modal_form.find("input[name=edit_description]").val(description);
-    modal_form.find("input[name=edit_coupon]").val(coupon);
-    modal_form.find("input[name=edit_prize]").val(good_prize);
-    modal_form.find("input[name=edit_category]").val(category);
-    base_info_read_only(modal_form, true);
-    sku_info_read_only(modal_form, false);
-    $('#div-edit form').attr('action', '/goods/add/sku');
-    $('#div-edit').modal('toggle');
-});
-$('.btn-good-proxy-add').click(function() {
-    const elem = $(this).parent().parent().parent().parent().parent();
-    const good_id = elem.find('input[name=id]').val();
-    const has_video = elem.find('input[name=has_video]').val();
-    const good_prize = elem.find('.good_prize').text().trim();
-    const coupon = elem.find('.coupon').text().trim();
-    const category = elem.find('input[name=real_category]').val();
-    const title = elem.find('input[name=real_title]').val();
-    const description = elem.find('input[name=real_description]').val();
-
-    const sku_url = elem.find('input[name=sku_url]').val();
-    const price = elem.find('.price').text().trim();
-    const sku_id = elem.find('input[name=sku_id]').val();
-    const sku_description = elem.find('input[name=sku_description]').val();
-
-
-    const modal_form = $('#div-edit form');
-    modal_form.find("input[name=edit_good_id]").val(good_id);
-    modal_form.find("input[name=edit_good_name]").val(title);
-    if (has_video == "True" ) {
-        modal_form.find('select[name=edit_has_video]').find("option[value='1']").attr("selected","selected")
-    } else {
-        modal_form.find('select[name=edit_has_video]').find("option[value='0']").attr("selected","selected")
-    }
-    modal_form.find("input[name=edit_description]").val(description);
-    modal_form.find("input[name=edit_category]").val(category);
-    modal_form.find("input[name=edit_coupon]").val(coupon);
-    modal_form.find("input[name=edit_prize]").val(good_prize);
-    modal_form.find("input[name=edit_sku_url]").val(sku_url);
-    modal_form.find("input[name=edit_sku_id]").val(sku_id);
-    modal_form.find("input[name=edit_price]").val(price);
-    modal_form.find("input[name=edit_sku_description]").val(sku_description);
-
-    base_info_read_only(modal_form, true);
-    sku_info_read_only(modal_form, true);
-    $('#div-edit form').attr('action', '/goods/add/proxy');
-    $('#div-edit').modal('toggle');
-});
 
 
 $(".btn-search-order").click(function () {
@@ -679,77 +521,20 @@ $(".btn-search-order").click(function () {
     const search_order_name = elem.find('input[name=search_order_name]').val();
     const search_order_address = elem.find('input[name=search_order_address]').val();
     const search_order_mobile = elem.find('input[name=search_order_mobile]').val();
+    const search_order_status = elem.find('select[name=search_order_status]');
+    const index= search_order_status.selectedIndex;
+    const status = search_order_status[index].value;
+    const search_order_express = elem.find('select[name=search_order_express]');
+    const express_index= search_order_express.selectedIndex;
+    const express = search_order_status[express_index].value;
     window.location.href = "/pdd/record?" + "sn=" + search_order_id
-        + "&receive_name="+search_order_name + "&receive_address="+search_order_address + "&mobile="+search_order_mobile
+        + "&receive_name=" + search_order_name
+        + "&receive_address=" + search_order_address
+        + "&mobile=" + search_order_mobile
+        + "&status=" + status
+        + "&express=" + express
 });
 
-$('.btn-good-sku-delete').click(function () {
-
-    const elem = $(this).parent().parent().parent().parent().parent();
-    const good_id = elem.find('input[name=id]').val();
-    const sku_id = elem.find('input[name=sku_id]').val();
-    const modal_form = $('#div-delete-sku form');
-    modal_form.find("input[name=delete_sku_good_id]").val(good_id);
-    modal_form.find("input[name=delete_sku_id]").val(sku_id)
-    $('#div-delete-sku form').attr('action', '/goods/delete/sku');
-    $('#div-delete-sku').modal('toggle');
-});
-$('.btn-good-proxy-delete').click(function () {
-    const elem = $(this).parent().parent().parent().parent().parent();
-    const good_id = elem.find('input[name=id]').val();
-    const sku_id = elem.find('input[name=sku_id]').val();
-    const proxy_id = elem.find('input[name=proxy_id]').val();
-    const modal_form = $('#div-delete-proxy form');
-    modal_form.find("input[name=delete_proxy_good_id]").val(good_id);
-    modal_form.find("input[name=delete_proxy_id]").val(proxy_id)
-    modal_form.find("input[name=delete_proxy_sku_id]").val(sku_id);
-    $('#div-delete-proxy form').attr('action', '/goods/delete/proxy');
-    $('#div-delete-proxy').modal('toggle');
-});
-$('#div-btn-delete-proxy').click(function(e){
-    e.preventDefault();
-    $.post($('#div-delete-proxy form').attr('action'), $('#div-delete-proxy form').serialize(), function(data){
-        var data = $.parseJSON(JSON.stringify(data))
-        if (data == "0"){
-            location.reload()
-        } else {
-            alert("删除失败")
-        }
-    })
-});
-
-
-function base_info_read_only(modal_form, readonly) {
-    if (readonly == true) {
-        modal_form.find("input[name=edit_good_name]").attr("readonly", "true");
-        modal_form.find("input[name=edit_description]").attr("readonly", "true");
-        modal_form.find('select[name=edit_has_video]').attr("readonly", "true");
-        modal_form.find("input[name=edit_coupon]").attr("readonly", "true");
-        modal_form.find("input[name=edit_postage_prize]").attr("readonly", "true");
-        modal_form.find("input[name=edit_category]").attr("readonly", "true");
-    } else {
-        modal_form.find("input[name=edit_good_name]").attr("readonly", false);
-        modal_form.find("input[name=edit_description]").attr("readonly", false);
-        modal_form.find('select[name=edit_has_video]').attr("readonly", false);
-        modal_form.find("input[name=edit_coupon]").attr("readonly", false);
-        modal_form.find("input[name=edit_postage_prize]").attr("readonly", false);
-        modal_form.find("input[name=edit_category]").attr("readonly", false);
-    }
-}
-
-function sku_info_read_only(modal_form, readonly) {
-    if (readonly == true) {
-        modal_form.find("input[name=edit_sku_url]").attr("readonly", "true");
-        modal_form.find("input[name=edit_price]").attr("readonly", "true");
-        modal_form.find("input[name=edit_sku_description]").attr("readonly", "true");
-    } else {
-
-        modal_form.find("input[name=edit_sku_url]").attr("readonly", false);
-        modal_form.find("input[name=edit_price]").attr("readonly", false);
-        modal_form.find("input[name=edit_sku_description]").attr("readonly", false);
-    }
-
-}
 
 
 //----------judgeoperationresult

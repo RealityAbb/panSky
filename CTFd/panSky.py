@@ -424,7 +424,7 @@ def init_views(app):
         pagination = query.order_by(PddOrderInfo.order_time.desc()).paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
         goods = pagination.items
         total_count = db.session.query(db.func.count(PddOrderInfo.id)).first()[0]
-        viewfunc="record"
+        viewfunc=".record"
         return render_template('record.html', viewfunc=viewfunc, pagination=pagination, goods=goods,
                                lm_total=total_count,
                                search_order_id=order_sn,
