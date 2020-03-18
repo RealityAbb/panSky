@@ -18,7 +18,6 @@
     float: left;
     margin-right: 20px;
     margin:10px;
-    background-image: url(/static/img/BFS_logo.gif);
     }
     .large-8 {
         width: 50%;
@@ -76,65 +75,8 @@
             </button>
             <div class="nav-left">
                 <a class="logo" href="/base"></a>
-                <a class="navbar-brand" href="/base">DMS设备管理系统</a>
+                <a class="navbar-brand" href="/main">盘天订单数据管理</a>
             </div>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse navbar-responsive-collapse">
-            <ul class="nav navbar-nav">
-                {% if admin == 1 %}
-				<li><a href="/user">用户管理</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">网络配置<span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="/netset">前置机IP管理</a></li>
-                            <li><a href="/netsetroute">前置机路由管理</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="/nettime">系统通信设置</a></li>
-                        </ul>
-                    </li>
-                </li>
-                {% elif admin == 2 %}
-                <li><a href="/equipment">密码机管理</a></li>
-                <li><a href="/certificate">证书管理</a></li>
-                 {% elif admin == 3 %}
-                <li><a href="/statistics">统计查询</a></li>
-                <li><a href="/log">日志管理</a></li>
-                 {% endif %}
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-			{% if username %}
-       		<li class="dropdown">
-				{% if admin == 1 %}
-            	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ username }}(系统管理员)<span class="caret"></span></a>
-                	<ul class="dropdown-menu" role="menu">
-                        <li><a href="/privatecenter">个人中心</a></li>
-                    	<li><a href="/logout">退出</a></li>
-                	</ul>
-				{% elif admin == 2 %}
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ username }}(安全管理员)<span class="caret"></span></a>
-                	<ul class="dropdown-menu" role="menu">
-                        <li><a href="/privatecenter">个人中心</a></li>
-                    	<li><a href="/logout">退出</a></li>
-                	</ul>
-				{% elif admin == 3 %}
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ username }}(审计管理员)<span class="caret"></span></a>
-                	<ul class="dropdown-menu" role="menu">
-                        <li><a href="/privatecenter">个人中心</a></li>
-                    	<li><a href="/logout">退出</a></li>
-                	</ul>
-				{% endif %}	
-       		 {% else %}
-           		<li><a href="/login">登录</a></li>
-       		 {% endif %}
-      		</li>
-				<li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">帮助<span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="/help">关于DMS设备管理系统</a></li>
-                        <li><a href="/restart">系统初始化</a></li>
-                    </ul>
-           		</li>
-            </ul>           
         </div>
     </div>
 </nav>
