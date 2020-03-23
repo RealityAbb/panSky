@@ -181,9 +181,14 @@
                             <option value="5">已取消</option>
                         {% endif %}
                         {% if status == 6 %}
-                            <option value="6" selected="selected">其他</option>
+                            <option value="6" selected="selected">退款</option>
                         {% else %}
-                            <option value="6">其他</option>
+                            <option value="6">退款</option>
+                        {% endif %}
+                        {% if status == 7 %}
+                            <option value="7" selected="selected">其他</option>
+                        {% else %}
+                            <option value="7">其他</option>
                         {% endif %}
                     </select>
                     <input type="text" class="form-control host-input input_box"  name="search_order_id" id="search_order_id"  width="200px" value="{{ search_order_id}}" placeholder="订单号">

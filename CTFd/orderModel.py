@@ -91,7 +91,7 @@ def convert_status_code_status(code):
     elif code == 1:
         return "付款"
     elif code == 2:
-        return "发货"
+        return "待发货"
     elif code == 3:
         return "收货"
     elif code == 4:
@@ -99,6 +99,8 @@ def convert_status_code_status(code):
     elif code == 5:
         return "取消"
     elif code == 6:
+        return "退款"
+    elif code == 7:
         return "其他"
     return ""
 def convert_code_to_express(code):
