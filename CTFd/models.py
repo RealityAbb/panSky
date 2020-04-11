@@ -1234,6 +1234,7 @@ def convert_express_status(status):
     return str(status)
 
 class PddOrderInfo(db.Model):
+    __tablename__ = 'pdd_order_info_new'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(32))
     order_sn = db.Column(db.String(32))
