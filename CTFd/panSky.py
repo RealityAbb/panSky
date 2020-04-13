@@ -464,9 +464,13 @@ def init_views(app):
         goods_all = pagination.items
         new_goods = []
         for goods in goods_all:
+            has_contain = False
             for new_good in new_goods:
                 if new_good.mobile == goods.mobile:
+                    has_contain = True
                     break
+            if has_contain:
+                continue
             relative_goods = PddOrderInfo.query.filter_by(mobile=goods.mobile).order_by(PddOrderInfo.order_time.desc()).all()
             new_goods.extend(relative_goods)
         total_count = db.session.query(db.func.count(PddOrderInfo.id)).first()[0]
