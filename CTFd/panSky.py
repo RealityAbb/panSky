@@ -406,7 +406,7 @@ def init_views(app):
         status_code = request.args.get('status', 0, type=int)
         status = convert_status_code_status(status_code)
         receive_name = request.args.get("receive_name", "", type=str)
-        receive_address = request.args.get("address", "", type=str)
+        receive_address = request.args.get("receive_address", "", type=str)
         express_code = request.args.get("express",0, type=int)
         express = convert_code_to_express(express_code)
         mobile = request.args.get("mobile", "", type=str)
@@ -461,9 +461,12 @@ def init_views(app):
         if express is not None and express != "":
             query = query.filter(PddOrderInfo.express_company.like("%" + express + '%'))
         pagination = query.order_by(PddOrderInfo.order_time.desc()).paginate(page, per_page=10, error_out=False)
-        goods = pagination.items
+        goods_all = pagination.items
         new_goods = []
-        for goods in goods:
+        for goods in goods_all:
+            for new_good in new_goods:
+                if new_good.mobile == goods.mobile:
+                    break
             relative_goods = PddOrderInfo.query.filter_by(mobile=goods.mobile).order_by(PddOrderInfo.order_time.desc()).all()
             new_goods.extend(relative_goods)
         total_count = db.session.query(db.func.count(PddOrderInfo.id)).first()[0]
