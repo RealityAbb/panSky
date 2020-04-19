@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="8cb7ffaf-662b-4ccd-8f27-7d2ef610c207" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="SOFT" />
+  </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="$PROJECT_DIR$/.idea" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectId" id="1YkqSJ9SCvMsgyX5kTLIqUZL7CS" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8cb7ffaf-662b-4ccd-8f27-7d2ef610c207" name="Default Changelist" comment="" />
+      <created>1583496938199</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1583496938199</updated>
+      <workItem from="1583496941287" duration="20000" />
+      <workItem from="1583503789924" duration="1208000" />
+      <workItem from="1583505638133" duration="6224000" />
+      <workItem from="1583550292847" duration="358000" />
+      <workItem from="1583855316975" duration="69000" />
+      <workItem from="1584112449311" duration="198000" />
+      <workItem from="1586144075469" duration="394000" />
+      <workItem from="1586144506930" duration="361000" />
+      <workItem from="1586246523575" duration="357000" />
+      <workItem from="1586583090057" duration="386000" />
+      <workItem from="1586789447450" duration="985000" />
+      <workItem from="1587288098999" duration="126000" />
+      <workItem from="1587288226668" duration="80000" />
+      <workItem from="1587288315992" duration="21000" />
+      <workItem from="1587288353263" duration="55000" />
+      <workItem from="1587288418073" duration="17000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="100" y="100" width="1720" height="880" key="DiffContextDialog" timestamp="1583509120737">
+      <screen x="0" y="23" width="1859" height="1057" />
+    </state>
+    <state x="100" y="100" width="1720" height="880" key="DiffContextDialog/54.1103.1680.1027/0.23.1859.1057@0.23.1859.1057" timestamp="1583509120737" />
+    <state x="452" y="171" key="SettingsEditor" timestamp="1587288434611">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="396" y="166" key="SettingsEditor/0.0.1680.1050@0.0.1680.1050" timestamp="1586246580460" />
+    <state x="452" y="171" key="SettingsEditor/54.1080.1680.1050/0.0.1920.1080@0.0.1920.1080" timestamp="1587288434611" />
+    <state x="438" y="190" key="SettingsEditor/54.1103.1680.1027/0.23.1859.1057@0.23.1859.1057" timestamp="1583503815069" />
+    <state x="812" y="463" key="VCS.ChangelistChooser" timestamp="1583509095776">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="812" y="463" key="VCS.ChangelistChooser/54.1080.1680.1050/0.0.1920.1080@0.0.1920.1080" timestamp="1583509095776" />
+    <state x="607" y="383" key="com.intellij.ide.util.TipDialog" timestamp="1583496945284">
+      <screen x="0" y="23" width="1856" height="1057" />
+    </state>
+    <state x="607" y="383" key="com.intellij.ide.util.TipDialog/54.1103.1680.1027/0.23.1856.1057@0.23.1856.1057" timestamp="1583496945284" />
+    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup" timestamp="1586583198398">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1586583198398" />
+  </component>
+</project>
