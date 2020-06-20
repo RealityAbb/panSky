@@ -490,7 +490,7 @@ def init_views(app):
         page = request.args.get('page', 1, type=int)
         query = PddOrderInfo.query
         current_time = int(time.time())
-        threshold = current_time - 86400 * 14
+        threshold = current_time - 86400 * 3
         query = query.filter(PddOrderInfo.order_time > threshold)
         pagination = query.order_by(PddOrderInfo.mobile).paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
         goods = pagination.items
