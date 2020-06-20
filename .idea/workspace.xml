@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8cb7ffaf-662b-4ccd-8f27-7d2ef610c207" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CTFd/panSky.py" beforeDir="false" afterPath="$PROJECT_DIR$/CTFd/panSky.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/record.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/record.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,6 +60,7 @@
       <workItem from="1587288315992" duration="21000" />
       <workItem from="1587288353263" duration="55000" />
       <workItem from="1587288418073" duration="17000" />
+      <workItem from="1592641918106" duration="705000" />
     </task>
     <servers />
   </component>
@@ -81,27 +81,15 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
-    <state x="100" y="100" width="1720" height="880" key="DiffContextDialog" timestamp="1583509120737">
-      <screen x="0" y="23" width="1859" height="1057" />
-    </state>
-    <state x="100" y="100" width="1720" height="880" key="DiffContextDialog/54.1103.1680.1027/0.23.1859.1057@0.23.1859.1057" timestamp="1583509120737" />
     <state x="452" y="171" key="SettingsEditor" timestamp="1587288434611">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="396" y="166" key="SettingsEditor/0.0.1680.1050@0.0.1680.1050" timestamp="1586246580460" />
     <state x="452" y="171" key="SettingsEditor/54.1080.1680.1050/0.0.1920.1080@0.0.1920.1080" timestamp="1587288434611" />
-    <state x="438" y="190" key="SettingsEditor/54.1103.1680.1027/0.23.1859.1057@0.23.1859.1057" timestamp="1583503815069" />
-    <state x="812" y="463" key="VCS.ChangelistChooser" timestamp="1583509095776">
+    <state x="577" y="240" width="766" height="696" key="search.everywhere.popup" timestamp="1592642335291">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="812" y="463" key="VCS.ChangelistChooser/54.1080.1680.1050/0.0.1920.1080@0.0.1920.1080" timestamp="1583509095776" />
-    <state x="607" y="383" key="com.intellij.ide.util.TipDialog" timestamp="1583496945284">
-      <screen x="0" y="23" width="1856" height="1057" />
-    </state>
-    <state x="607" y="383" key="com.intellij.ide.util.TipDialog/54.1103.1680.1027/0.23.1856.1057@0.23.1856.1057" timestamp="1583496945284" />
-    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup" timestamp="1586583198398">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
     <state x="505" y="233" width="670" height="676" key="search.everywhere.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1586583198398" />
+    <state x="577" y="240" width="766" height="696" key="search.everywhere.popup/54.1080.1680.1050/0.0.1920.1080@0.0.1920.1080" timestamp="1592642335291" />
   </component>
 </project>

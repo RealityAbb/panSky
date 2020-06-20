@@ -481,9 +481,30 @@ def init_views(app):
                                search_order_name=receive_name,
                                search_order_address=receive_address,
                                search_order_express = express,
+                               status = 0,
+                               express = 0,
+                               search_order_mobile = mobile)
+
+    @app.route('/pdd/analyse/same', methods=['GET', 'POST'])
+    def analyse_same():
+        page = request.args.get('page', 1, type=int)
+        query = PddOrderInfo.query
+        current_time = int(time.time())
+        threshold = current_time - 86400 * 14
+        query = query.filter(PddOrderInfo.order_time > threshold)
+        pagination = query.order_by(PddOrderInfo.mobile).paginate(page, per_page=PER_PAGE_COUNT, error_out=False)
+        goods = pagination.items
+        total_count = db.session.query(db.func.count(PddOrderInfo.id)).first()[0]
+        viewfunc=".same"
+        return render_template('record.html', viewfunc=viewfunc, pagination=pagination, goods=goods,
+                               lm_total=total_count,
+                               search_order_id="",
+                               search_order_name="",
+                               search_order_address="",
+                               search_order_express = "",
                                status = status_code,
                                express = express_code,
-                               search_order_mobile = mobile)
+                               search_order_mobile = "")
 
     @app.route('/record/cookie', methods=['POST'])
     def set_cookie():
