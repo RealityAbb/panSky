@@ -502,8 +502,8 @@ def init_views(app):
                                search_order_name="",
                                search_order_address="",
                                search_order_express = "",
-                               status = status_code,
-                               express = express_code,
+                               status = 0,
+                               express = 0,
                                search_order_mobile = "")
 
     @app.route('/record/cookie', methods=['POST'])
