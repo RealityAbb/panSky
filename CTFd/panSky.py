@@ -1,11 +1,13 @@
 # coding=utf-8
+import csv
+
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, flash, send_from_directory
 from CTFd.utils import authed, judge_result, allowed_file, get_file_suffix
 from CTFd.models import db, GoodBaseInfo, GoodSkuInfo, SkuProxyInfo, get_id, DisplayGoodInfo, getPlatform, PddOrderInfo
 from flask import current_app as app
 from werkzeug.utils import secure_filename
 from CTFd.pddCrawing import PinDuoDuo
-from CTFd.orderModel import Order, DetailInfo, OrderInfo, MallInfo, convert_code_to_express, convert_status_code_status
+from CTFd.orderModel import Order, DetailInfo, OrderInfo, MallInfo, convert_code_to_express, convert_status_code_status, get_good_count, get_good_info, get_good_price
 
 import time
 import hashlib
@@ -505,6 +507,49 @@ def init_views(app):
                                status = 0,
                                express = 0,
                                search_order_mobile = "")
+
+    @app.route('/pdd/analyse/download', methods=['GET'])
+    def analyse_download():
+        from flask import make_response
+        query = PddOrderInfo.query
+        current_time = int(time.time())
+        threshold = current_time - 86400 * 2
+        orders = query.filter(PddOrderInfo.order_time > threshold).order_by(PddOrderInfo.order_time.desc()).all()
+        loglist = [['订单号'.decode('utf-8').encode('gbk'),
+                    '订单状态'.decode('utf-8').encode('gbk'),
+                    '下单时间'.decode('utf-8').encode('gbk'),
+                    '快递单号'.decode('utf-8').encode('gbk'),
+                    '收件人'.decode('utf-8').encode('gbk'),
+                    '手机'.decode('utf-8').encode('gbk'),
+                    '价格'.decode('utf-8').encode('gbk'),
+                    '数量'.decode('utf-8').encode('gbk'),
+                    '商品信息'.decode('utf-8').encode('gbk')]]
+        for log in orders:
+            loglist.append([log.order_sn.decode('utf-8').encode('gbk'),
+                            log.order_status_str.decode('utf-8').encode('gbk'),
+                            log.order_time_str.decode('utf-8').encode('gbk'),
+                            log.express_id.decode('utf-8').encode('gbk'),
+                            log.receive_name.decode('utf-8').encode('gbk'),
+                            log.mobile.decode('utf-8').encode('gbk'),
+                            log.receive_name.decode('utf-8').encode('gbk'),
+                            get_good_price(log.goods).decode('utf-8').encode('gbk'),
+                            get_good_count(log.goods).decode('utf-8').encode('gbk'),
+                            get_good_info(log.goods).decode('utf-8').encode('gbk')])
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], 'order.csv')
+        logfile = open(filepath, 'wb')
+        cs = csv.writer(logfile, dialect='excel')
+        cs.writerows(loglist)
+
+        logfile.close()
+        return_file = open(filepath, 'rb')
+        os.chmod(filepath, 777)
+        response = make_response(return_file.read(), 200)
+        response.headers['Content-Description'] = 'File Transfer'
+        response.headers['Cache-Control'] = 'no-cache'
+        response.headers['Content-Type'] = 'text/csv'
+        response.headers['Content-Disposition'] = 'attachment; filename=%s' % 'order.csv'
+        return_file.close()
+        return response
 
     @app.route('/record/cookie', methods=['POST'])
     def set_cookie():

@@ -34,6 +34,28 @@ def get_not_none(data, key, default=""):
 def get_int_not_none(data, key, default = 0):
     value = data.get(key)
     return value if value is not None else default
+def get_good_count(data):
+    try:
+        return data.split(" ")[1]
+    except:
+        pass
+    return ""
+
+def get_good_price(data):
+    try:
+        price = data.split(" ")[2]
+        return str(float(price) / 100)
+    except:
+        pass
+    return ""
+
+def get_good_info(data):
+    try:
+        return data.split(" ")[0]
+    except:
+        pass
+    return ""
+
 class MallInfo:
     def __init__(self, _id = "", _mall_name = "", _mall_url = ""):
         self.id = _id

@@ -141,7 +141,8 @@
                <!--  <button type="button" class="btn btn-sm btn-warning" id="btn-import-machine">导入密码机</button>&nbsp;&nbsp;&nbsp; -->
             </div>
             <div class="button-bar" style="float:right">
-                <button type="button" class="btn btn-sm btn-primary btn-create" id="btn-record-analyse-same">异常订单分析</button>&nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-primary btn-create" id="btn-record-download">导出当日订单</button>&nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-primary btn-create" id="btn-record-analyse-same">同人订单分析</button>&nbsp;&nbsp;&nbsp;
                 <button type="button" class="btn btn-sm btn-primary btn-create" id="btn-record-analyse">异常订单分析</button>&nbsp;&nbsp;&nbsp;
                 <button type="button" class="btn btn-sm btn-primary btn-create" id="btn-record-refresh">一键更新</button>&nbsp;&nbsp;&nbsp;
                 <a href="/pdd/record"><button type="button" class="btn btn-sm btn-primary">显示全部订单</button></a>&nbsp;&nbsp;&nbsp;
@@ -562,6 +563,17 @@ $('#btn-record-analyse').click(function(e){
     const elem = $(this).parent();
     window.location.href = "/pdd/analyse?"
 });
+
+$('#btn-record-analyse-same').click(function(e){
+    const elem = $(this).parent();
+    window.location.href = "/pdd/analyse/same"
+});
+
+$('#btn-record-download').click(function(e){
+    const elem = $(this).parent();
+    window.location.href = "/pdd/analyse/download"
+});
+
 
 
 
