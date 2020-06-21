@@ -531,7 +531,6 @@ def init_views(app):
                             log.express_id.decode('utf-8').encode('gbk'),
                             log.receive_name.decode('utf-8').encode('gbk'),
                             log.mobile.decode('utf-8').encode('gbk'),
-                            log.receive_name.decode('utf-8').encode('gbk'),
                             get_good_price(log.goods).decode('utf-8').encode('gbk'),
                             get_good_count(log.goods).decode('utf-8').encode('gbk'),
                             get_good_info(log.goods).decode('utf-8').encode('gbk')])

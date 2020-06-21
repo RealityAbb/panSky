@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8cb7ffaf-662b-4ccd-8f27-7d2ef610c207" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CTFd/orderModel.py" beforeDir="false" afterPath="$PROJECT_DIR$/CTFd/orderModel.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CTFd/panSky.py" beforeDir="false" afterPath="$PROJECT_DIR$/CTFd/panSky.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/record.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/record.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +59,7 @@
       <workItem from="1587288353263" duration="55000" />
       <workItem from="1587288418073" duration="17000" />
       <workItem from="1592641918106" duration="2161000" />
-      <workItem from="1592739458448" duration="2591000" />
+      <workItem from="1592739458448" duration="2875000" />
     </task>
     <servers />
   </component>

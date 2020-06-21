@@ -42,8 +42,9 @@ def get_good_count(data):
     return ""
 
 def get_good_price(data):
+    first = data.split("\n")[0]
     try:
-        price = data.split(" ")[2]
+        price = (first.split(" "))[2]
         return str(float(price) / 100)
     except:
         pass
