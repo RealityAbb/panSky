@@ -36,7 +36,7 @@ def get_int_not_none(data, key, default = 0):
     return value if value is not None else default
 def get_good_count(data):
     try:
-        return data.split(" ")[1]
+        return data.split()[1]
     except:
         pass
     return ""
@@ -44,7 +44,7 @@ def get_good_count(data):
 def get_good_price(data):
     first = data.split("\n")[0]
     try:
-        price = (first.split(" "))[2]
+        price = (first.split())[2]
         return str(float(price) / 100)
     except:
         pass
@@ -52,7 +52,7 @@ def get_good_price(data):
 
 def get_good_info(data):
     try:
-        return data.split(" ")[0]
+        return data.split()[0]
     except:
         pass
     return ""
