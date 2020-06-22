@@ -92,8 +92,12 @@ class PinDuoDuo:
                     continue
                 end = all_value.find(";", start)
                 result = all_value[len(tag) + start : end]
-                js = json.loads(result, encoding="utf-8")
-                js = byteify(js)
+                try:
+                    js = json.loads(result, encoding="utf-8")
+                    js = byteify(js)
+                except:
+                    print result
+                    js = None
                 detail = DetailInfo()
                 if js is not None:
                     detail.parse(js["data"])

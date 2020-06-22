@@ -59,7 +59,9 @@
       <workItem from="1587288353263" duration="55000" />
       <workItem from="1587288418073" duration="17000" />
       <workItem from="1592641918106" duration="2161000" />
-      <workItem from="1592739458448" duration="3403000" />
+      <workItem from="1592739458448" duration="3791000" />
+      <workItem from="1592788261979" duration="249000" />
+      <workItem from="1592841943519" duration="272000" />
     </task>
     <servers />
   </component>
@@ -85,6 +87,10 @@
     </state>
     <state x="396" y="166" key="SettingsEditor/0.0.1680.1050@0.0.1680.1050" timestamp="1586246580460" />
     <state x="452" y="171" key="SettingsEditor/54.1080.1680.1050/0.0.1920.1080@0.0.1920.1080" timestamp="1587288434611" />
+    <state x="749" y="464" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1592841964052">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="749" y="464" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/54.1080.1680.1050/0.0.1920.1080@0.0.1920.1080" timestamp="1592841964052" />
     <state x="626" y="175" width="667" height="729" key="find.popup" timestamp="1592742583814">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
