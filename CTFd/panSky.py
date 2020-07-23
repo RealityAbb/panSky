@@ -513,7 +513,7 @@ def init_views(app):
         from flask import make_response
         query = PddOrderInfo.query
         current_time = int(time.time())
-        threshold = current_time - 86400 * 14
+        threshold = current_time - 86400 * 20
         orders = query.filter(PddOrderInfo.order_time > threshold).order_by(PddOrderInfo.order_time.desc()).all()
         loglist = [['订单号'.decode('utf-8').encode('gbk'),
                     '订单状态'.decode('utf-8').encode('gbk'),
