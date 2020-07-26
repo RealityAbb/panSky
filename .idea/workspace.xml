@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8cb7ffaf-662b-4ccd-8f27-7d2ef610c207" name="Default Changelist" comment="" />
+    <list default="true" id="8cb7ffaf-662b-4ccd-8f27-7d2ef610c207" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CTFd/panSky.py" beforeDir="false" afterPath="$PROJECT_DIR$/CTFd/panSky.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -64,6 +67,8 @@
       <workItem from="1593968794794" duration="293000" />
       <workItem from="1594203984445" duration="149000" />
       <workItem from="1595031798159" duration="61000" />
+      <workItem from="1595472046866" duration="335000" />
+      <workItem from="1595782236365" duration="70000" />
     </task>
     <servers />
   </component>
